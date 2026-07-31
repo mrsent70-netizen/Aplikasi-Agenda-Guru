@@ -3,109 +3,52 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Buku Agenda Guru - SMPN 13 Bandar Lampung</title>
+<title>Buku Agenda Guru - SMPN 13 Bandar Lampung - FIX</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script crossorigin src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7/babel.min.js"></script>
-<script>
-  // Kalau salah satu script CDN di atas gagal dimuat (mis. koneksi diblokir),
-  // tampilkan pesan yang jelas alih-alih halaman putih kosong.
-  window.addEventListener('error', function (e) {
-    if (e.target && e.target.tagName === 'SCRIPT') {
-      var root = document.getElementById('root');
-      if (root && !root.innerHTML) {
-        root.innerHTML = '<div style="max-width:600px;margin:60px auto;padding:20px;font-family:sans-serif;background:#fee2e2;border:2px solid #ef4444;border-radius:12px;color:#991b1b;">' +
-          '<b>Halaman gagal dimuat.</b><br/>Salah satu file pendukung (' + e.target.src + ') tidak berhasil diunduh oleh browser.<br/>Coba: (1) refresh halaman, (2) matikan sementara AdBlock/extension, atau (3) coba buka pakai jaringan/WiFi lain.</div>';
-      }
-    }
-  }, true);
-</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Inter:wght@400;500;600&display=swap');
   body { font-family: 'Inter', system-ui, sans-serif; }
   .font-judul { font-family: 'EB Garamond', Georgia, serif; }
-  .font-tubuh { font-family: 'Inter', system-ui, sans-serif; }
+  /* FIX 1: SEMUA LANDSCAPE COVER JADWAL JURNAL */
+  @page { size: A4 landscape; margin: 10mm 10mm 12mm 10mm; }
   @media print {
     .no-print { display: none !important; }
-    body { background: white !important; }
+    body { background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .print-page { page-break-after: always; break-after: page; }
+    .print-page:last-child { page-break-after: avoid; break-after: avoid; }
+    .no-break { page-break-inside: avoid; break-inside: avoid; }
+    /* agar cover tetap di tengah landscape */
+    #root { padding: 0 !important; }
   }
 </style>
 </head>
 <body>
 <div id="root"></div>
-
 <script type="text/plain" id="app-source">
 const { useState, useEffect, useRef, useMemo } = React;
-
-/* ------------------------------------------------------------------ */
-/* Ikon sederhana (gaya lucide), tidak butuh paket npm/bundler          */
-/* ------------------------------------------------------------------ */
 function IconBase({ paths, size = 16, className = '', ...rest }) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      {...rest}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...rest}>
       {paths.map(([tag, props], i) => React.createElement(tag, { key: i, ...props }))}
     </svg>
   );
 }
-const BookOpen = (p) => <IconBase {...p} paths={[
-  ['path', { d: 'M12 7v14' }],
-  ['path', { d: 'M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z' }],
-]} />;
-const CalendarDays = (p) => <IconBase {...p} paths={[
-  ['path', { d: 'M8 2v4' }], ['path', { d: 'M16 2v4' }],
-  ['rect', { width: 18, height: 18, x: 3, y: 4, rx: 2 }],
-  ['path', { d: 'M3 10h18' }], ['path', { d: 'M8 14h.01' }], ['path', { d: 'M12 14h.01' }],
-  ['path', { d: 'M16 14h.01' }], ['path', { d: 'M8 18h.01' }], ['path', { d: 'M12 18h.01' }], ['path', { d: 'M16 18h.01' }],
-]} />;
-const Clock3 = (p) => <IconBase {...p} paths={[
-  ['circle', { cx: 12, cy: 12, r: 10 }], ['polyline', { points: '12 6 12 12 16.5 12' }],
-]} />;
-const Download = (p) => <IconBase {...p} paths={[
-  ['path', { d: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' }],
-  ['polyline', { points: '7 10 12 15 17 10' }],
-  ['line', { x1: 12, x2: 12, y1: 15, y2: 3 }],
-]} />;
-const Plus = (p) => <IconBase {...p} paths={[
-  ['path', { d: 'M5 12h14' }], ['path', { d: 'M12 5v14' }],
-]} />;
-const Save = (p) => <IconBase {...p} paths={[
-  ['path', { d: 'M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z' }],
-  ['path', { d: 'M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7' }],
-  ['path', { d: 'M7 3v4a1 1 0 0 0 1 1h7' }],
-]} />;
-const SearchIcon = (p) => <IconBase {...p} paths={[
-  ['circle', { cx: 11, cy: 11, r: 8 }], ['path', { d: 'm21 21-4.3-4.3' }],
-]} />;
-const Trash2 = (p) => <IconBase {...p} paths={[
-  ['path', { d: 'M3 6h18' }],
-  ['path', { d: 'M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6' }],
-  ['path', { d: 'M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2' }],
-  ['line', { x1: 10, x2: 10, y1: 11, y2: 17 }],
-  ['line', { x1: 14, x2: 14, y1: 11, y2: 17 }],
-]} />;
-
-/* ------------------------------------------------------------------ */
-/* Data & util                                                         */
-/* ------------------------------------------------------------------ */
+const BookOpen = (p) => <IconBase {...p} paths={[['path', { d: 'M12 7v14' }],['path', { d: 'M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z' }],]} />;
+const CalendarDays = (p) => <IconBase {...p} paths={[['path', { d: 'M8 2v4' }], ['path', { d: 'M16 2v4' }],['rect', { width: 18, height: 18, x: 3, y: 4, rx: 2 }],['path', { d: 'M3 10h18' }], ['path', { d: 'M8 14h.01' }], ['path', { d: 'M12 14h.01' }],['path', { d: 'M16 14h.01' }], ['path', { d: 'M8 18h.01' }], ['path', { d: 'M12 18h.01' }], ['path', { d: 'M16 18h.01' }],]} />;
+const Clock3 = (p) => <IconBase {...p} paths={[['circle', { cx: 12, cy: 12, r: 10 }], ['polyline', { points: '12 6 12 12 16.5 12' }],]} />;
+const Download = (p) => <IconBase {...p} paths={[['path', { d: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' }],['polyline', { points: '7 10 12 15 17 10' }],['line', { x1: 12, x2: 12, y1: 15, y2: 3 }],]} />;
+const Plus = (p) => <IconBase {...p} paths={[['path', { d: 'M5 12h14' }], ['path', { d: 'M12 5v14' }],]} />;
+const Save = (p) => <IconBase {...p} paths={[['path', { d: 'M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z' }],['path', { d: 'M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7' }],['path', { d: 'M7 3v4a1 1 0 0 0 1 1h7' }],]} />;
+const SearchIcon = (p) => <IconBase {...p} paths={[['circle', { cx: 11, cy: 11, r: 8 }], ['path', { d: 'm21 21-4.3-4.3' }],]} />;
+const Trash2 = (p) => <IconBase {...p} paths={[['path', { d: 'M3 6h18' }],['path', { d: 'M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6' }],['path', { d: 'M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2' }],['line', { x1: 10, x2: 10, y1: 11, y2: 17 }],['line', { x1: 14, x2: 14, y1: 11, y2: 17 }],]} />;
+const Printer = (p) => <IconBase {...p} paths={[['polyline', { points: '6 9 6 2 18 2 18 9' }],['path', { d: 'M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2' }],['rect', { x: 6, y: 14, width: 12, height: 8 }],]} />;
 const STORAGE_KEY = 'agenda-guru-smpn13-data';
 const DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
-
 let uidCounter = 1;
 const uid = (prefix) => `${prefix}-${Date.now().toString(36)}-${uidCounter++}`;
-
 function buildDefaultDays() {
   return {
     Senin: [
@@ -171,76 +114,40 @@ function buildDefaultDays() {
     ],
   };
 }
-
 function buildDefaultAgenda() {
   return [
     { id: uid('ag'), tanggal: new Date().toISOString().slice(0, 10), jamKe: '', kelas: '', kdRpp: '', kompetensi: '', x: '', y: '', selesai: '', absensi: '', keterangan: '' },
   ];
 }
+const defaultCover = { namaGuru: 'SENTOT HARDIONO, S.Pd', nip: '197012152000121001', mapel: 'IPA', sekolah: 'SMP Negeri 13 Bandar Lampung', alamat: 'Jl. Marga No.57 Kel. Beringin Raya Kec. Kemiling Bandar Lampung' };
 
-const defaultCover = { namaGuru: '', nip: '', mapel: '', sekolah: 'SMP Negeri 13 Bandar Lampung', alamat: '' };
-
-/* ------------------------------------------------------------------ */
-/* Komponen utama                                                      */
-/* ------------------------------------------------------------------ */
 function AgendaGuruApp() {
   const [tab, setTab] = useState('cover');
   const [cover, setCover] = useState(defaultCover);
-  const [jadwal, setJadwal] = useState({
-    ganjil: { tp: '2025/2026', days: buildDefaultDays() },
-    genap: { tp: '2025/2026', days: buildDefaultDays() },
-  });
+  const [jadwal, setJadwal] = useState({ ganjil: { tp: '2026/2027', days: buildDefaultDays() }, genap: { tp: '2026/2027', days: buildDefaultDays() }, });
   const [agenda, setAgenda] = useState(buildDefaultAgenda());
-  const [filterTgl, setFilterTgl] = useState('');
-  const [filterTeks, setFilterTeks] = useState('');
-  const [status, setStatus] = useState('idle');
-  const [loaded, setLoaded] = useState(false);
+  const [filterTgl, setFilterTgl] = useState(''); const [filterTeks, setFilterTeks] = useState('');
+  const [status, setStatus] = useState('idle'); const [loaded, setLoaded] = useState(false);
   const saveTimer = useRef(null);
 
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const data = JSON.parse(raw);
-        if (data.cover) setCover(data.cover);
-        if (data.jadwal) setJadwal(data.jadwal);
-        if (data.agenda) setAgenda(data.agenda);
-      }
-    } catch (e) {
-      // abaikan, pakai default
-    } finally {
-      setLoaded(true);
-    }
+      if (raw) { const data = JSON.parse(raw); if (data.cover) setCover(data.cover); if (data.jadwal) setJadwal(data.jadwal); if (data.agenda) setAgenda(data.agenda); }
+    } catch (e) {} finally { setLoaded(true); }
   }, []);
-
   useEffect(() => {
-    if (!loaded) return;
-    setStatus('saving');
+    if (!loaded) return; setStatus('saving');
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ cover, jadwal, agenda }));
-        setStatus('saved');
-      } catch (e) {
-        setStatus('error');
-      }
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ cover, jadwal, agenda })); setStatus('saved'); } catch (e) { setStatus('error'); }
     }, 500);
     return () => clearTimeout(saveTimer.current);
   }, [cover, jadwal, agenda, loaded]);
 
   const updateRow = (sem, day, id, field, value) => {
-    setJadwal((prev) => ({
-      ...prev,
-      [sem]: {
-        ...prev[sem],
-        days: {
-          ...prev[sem].days,
-          [day]: prev[sem].days[day].map((r) => (r.id === id ? { ...r, [field]: value } : r)),
-        },
-      },
-    }));
+    setJadwal((prev) => ({ ...prev, [sem]: { ...prev[sem], days: { ...prev[sem].days, [day]: prev[sem].days[day].map((r) => (r.id === id ? { ...r, [field]: value } : r)), }, }));
   };
-
   const addRow = (sem, day) => {
     setJadwal((prev) => {
       const rows = prev[sem].days[day];
@@ -248,31 +155,16 @@ function AgendaGuruApp() {
       return { ...prev, [sem]: { ...prev[sem], days: { ...prev[sem].days, [day]: [...rows, newRow] } } };
     });
   };
-
   const removeRow = (sem, day, id) => {
     setJadwal((prev) => {
-      const rows = prev[sem].days[day];
-      if (rows.length <= 1) return prev;
+      const rows = prev[sem].days[day]; if (rows.length <= 1) return prev;
       return { ...prev, [sem]: { ...prev[sem], days: { ...prev[sem].days, [day]: rows.filter((r) => r.id !== id) } } };
     });
   };
-
-  const setTp = (sem, value) => {
-    setJadwal((prev) => ({ ...prev, [sem]: { ...prev[sem], tp: value } }));
-  };
-
-  const updateAgenda = (id, field, value) => {
-    setAgenda((prev) => prev.map((r) => (r.id === id ? { ...r, [field]: value } : r)));
-  };
-  const addAgenda = () => {
-    setAgenda((prev) => [
-      { id: uid('ag'), tanggal: new Date().toISOString().slice(0, 10), jamKe: '', kelas: '', kdRpp: '', kompetensi: '', x: '', y: '', selesai: '', absensi: '', keterangan: '' },
-      ...prev,
-    ]);
-  };
-  const removeAgenda = (id) => {
-    setAgenda((prev) => (prev.length <= 1 ? prev : prev.filter((r) => r.id !== id)));
-  };
+  const setTp = (sem, value) => { setJadwal((prev) => ({ ...prev, [sem]: { ...prev[sem], tp: value } })); };
+  const updateAgenda = (id, field, value) => { setAgenda((prev) => prev.map((r) => (r.id === id ? { ...r, [field]: value } : r))); };
+  const addAgenda = () => { setAgenda((prev) => [{ id: uid('ag'), tanggal: new Date().toISOString().slice(0, 10), jamKe: '', kelas: '', kdRpp: '', kompetensi: '', x: '', y: '', selesai: '', absensi: '', keterangan: '' }, ...prev,]); };
+  const removeAgenda = (id) => { setAgenda((prev) => (prev.length <= 1 ? prev : prev.filter((r) => r.id !== id))); };
 
   const filteredAgenda = useMemo(() => {
     return agenda.filter((r) => {
@@ -282,18 +174,58 @@ function AgendaGuruApp() {
     });
   }, [agenda, filterTgl, filterTeks]);
 
-  const totalSlot = useMemo(() => {
-    return DAYS.reduce((sum, d) => sum + jadwal.ganjil.days[d].filter((r) => r.no !== '-').length, 0);
-  }, [jadwal]);
+  const totalSlot = useMemo(() => { return DAYS.reduce((sum, d) => sum + jadwal.ganjil.days[d].filter((r) => r.no !== '-').length, 0); }, [jadwal]);
 
   const exportJson = () => {
     const blob = new Blob([JSON.stringify({ cover, jadwal, agenda }, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `agenda-guru-${(cover.namaGuru || 'guru').replace(/\s+/g, '-').toLowerCase()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `agenda-guru-${(cover.namaGuru || 'guru').replace(/\s+/g, '-').toLowerCase()}.json`; a.click(); URL.revokeObjectURL(url);
+  };
+
+  const cetakSemua = () => {
+    const w = window.open('', '_blank');
+    const coverHtml = `
+      <div class="print-page" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:90vh;text-align:center;">
+        <img src="https://i.ibb.co.com/Zz9dbRD/logosmp13.png" style="width:110px;height:110px;object-fit:contain;margin-bottom:20px"/>
+        <h1 style="font-family:'EB Garamond';font-size:42px;font-weight:700;letter-spacing:2px">AGENDA GURU</h1>
+        <h2 style="font-size:18px;letter-spacing:6px;color:#166534;font-weight:600;margin-top:4px">TUGAS MENGAJAR</h2>
+        <div style="width:100px;height:4px;background:#166534;margin:12px auto;border-radius:4px"></div>
+        <div style="margin-top:30px;background:white;border:3px solid #166534;border-radius:16px;padding:28px 36px;max-width:600px;width:100%;text-align:left;">
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:12px;font-size:14px;line-height:1.6">
+            <div style="font-weight:700;text-transform:uppercase;font-size:11px;color:#666">Nama Guru</div><div>: <b>${cover.namaGuru}</b></div>
+            <div style="font-weight:700;text-transform:uppercase;font-size:11px;color:#666">NIP / NUPTK</div><div>: ${cover.nip}</div>
+            <div style="font-weight:700;text-transform:uppercase;font-size:11px;color:#666">Mata Pelajaran</div><div>: ${cover.mapel}</div>
+            <div style="font-weight:700;text-transform:uppercase;font-size:11px;color:#666">Nama Sekolah</div><div>: ${cover.sekolah}</div>
+            <div style="font-weight:700;text-transform:uppercase;font-size:11px;color:#666">Alamat Sekolah</div><div>: ${cover.alamat}</div>
+            <div style="font-weight:700;text-transform:uppercase;font-size:11px;color:#666">TP</div><div>: ${jadwal.ganjil.tp}</div>
+          </div>
+        </div>
+        <div style="margin-top:30px;display:flex;justify-content:space-between;width:100%;max-width:700px;font-size:12px" class="no-break">
+          <div style="text-align:center">Mengetahui,<br/>Kepala SMP Negeri 13 Bandar Lampung<br/><br/><br/><br/><b>Hj. AMAROH, S.Pd.MM</b><br/>NIP. 196711211990032009</div>
+          <div style="text-align:center">Bandar Lampung, Juli 2026<br/>Guru Mata Pelajaran<br/><br/><br/><br/><b>${cover.namaGuru}</b><br/>NIP. ${cover.nip}</div>
+        </div>
+      </div>
+    `;
+    let jadwalHtml = `<div class="print-page"><h2 style="text-align:center;font-weight:700;font-size:16px;margin-bottom:10px">JADWAL MENGAJAR SEMESTER GANJIL TP ${jadwal.ganjil.tp} - WAKTU KBM RESMI</h2><div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center">`;
+    DAYS.forEach(day=>{
+      const rows = jadwal.ganjil.days[day];
+      jadwalHtml += `<div style="border:1px solid #166534;border-radius:8px;overflow:hidden;min-width:210px;flex:1"><div style="background:#166534;color:white;text-align:center;padding:6px;font-weight:700;font-size:11px">${day.toUpperCase()} - ${rows.length} SESI</div><table style="width:100%;border-collapse:collapse;font-size:9px"><tr style="background:#dcfce7"><th style="border:1px solid #ddd;padding:3px">JAM</th><th style="border:1px solid #ddd;padding:3px">WAKTU</th><th style="border:1px solid #ddd;padding:3px">KEGIATAN/KELAS</th></tr>`;
+      rows.forEach(r=>{
+        const bg = r.no=='-' ? (r.kegiatan.toLowerCase().includes('istirahat') ? '#fef9c3' : '#dbeafe') : 'white';
+        jadwalHtml += `<tr style="background:${bg}"><td style="border:1px solid #ddd;padding:3px;text-align:center;font-weight:600">${r.no}</td><td style="border:1px solid #ddd;padding:3px;text-align:center">${r.pukul}</td><td style="border:1px solid #ddd;padding:3px;text-align:center;font-weight:600">${r.kegiatan}</td></tr>`;
+      });
+      jadwalHtml += `</table></div>`;
+    });
+    jadwalHtml += `</div><div style="margin-top:12px;display:flex;justify-content:space-between;font-size:11px" class="no-break"><div style="text-align:center">Mengetahui,<br/>Kepala SMP Negeri 13 Bandar Lampung<br/><br/><br/><b>Hj. AMAROH, S.Pd.MM</b><br/>NIP. 196711211990032009</div><div style="text-align:center">Bandar Lampung, Juli 2026<br/>Guru Mata Pelajaran<br/><br/><br/><b>${cover.namaGuru}</b><br/>NIP. ${cover.nip}</div></div></div>`;
+
+    let agendaHtml = `<div class="print-page"><h2 style="text-align:center;font-weight:700;font-size:16px;margin-bottom:10px">JURNAL / AGENDA HARIAN MENGAJAR - ${cover.namaGuru} - TP ${jadwal.ganjil.tp}</h2><table style="width:100%;border-collapse:collapse;font-size:9px"><tr style="background:#166534;color:white"><th style="border:1px solid #000;padding:4px">Tanggal</th><th style="border:1px solid #000;padding:4px">Jam Ke</th><th style="border:1px solid #000;padding:4px">Kelas</th><th style="border:1px solid #000;padding:4px">KD/RPP</th><th style="border:1px solid #000;padding:4px">Kompetensi</th><th style="border:1px solid #000;padding:4px">X</th><th style="border:1px solid #000;padding:4px">Y</th><th style="border:1px solid #000;padding:4px">Selesai</th><th style="border:1px solid #000;padding:4px;min-width:120px">Absensi Siswa</th><th style="border:1px solid #000;padding:4px">Ket</th></tr>`;
+    filteredAgenda.forEach(r=>{
+      agendaHtml += `<tr><td style="border:1px solid #000;padding:4px">${r.tanggal}</td><td style="border:1px solid #000;padding:4px;text-align:center">${r.jamKe}</td><td style="border:1px solid #000;padding:4px;text-align:center">${r.kelas}</td><td style="border:1px solid #000;padding:4px;text-align:center">${r.kdRpp}</td><td style="border:1px solid #000;padding:4px">${r.kompetensi}</td><td style="border:1px solid #000;padding:4px;text-align:center">${r.x}</td><td style="border:1px solid #000;padding:4px;text-align:center">${r.y}</td><td style="border:1px solid #000;padding:4px">${r.selesai}</td><td style="border:1px solid #000;padding:4px;white-space:pre-wrap;vertical-align:top">${(r.absensi||'').replace(/</g,'&lt;')}</td><td style="border:1px solid #000;padding:4px">${r.keterangan}</td></tr>`;
+    });
+    agendaHtml += `</table><div style="margin-top:20px;display:flex;justify-content:space-between;font-size:11px" class="no-break"><div style="text-align:center">Mengetahui,<br/>Kepala Sekolah<br/><br/><br/><br/><b>Hj. AMAROH, S.Pd.MM</b><br/>NIP. 196711211990032009</div><div style="text-align:center">Guru Mata Pelajaran<br/><br/><br/><br/><br/><b>${cover.namaGuru}</b><br/>NIP. ${cover.nip}</div></div></div>`;
+
+    w.document.write(`<html><head><title>Cetak Agenda Guru - ${cover.namaGuru}</title><style>@page{size:A4 landscape;margin:10mm} body{font-family:Inter,sans-serif} .print-page{page-break-after:always} .print-page:last-child{page-break-after:avoid} .no-break{page-break-inside:avoid}</style></head><body>${coverHtml}${jadwalHtml}${agendaHtml}</body></html>`);
+    w.document.close();
+    setTimeout(()=>{ w.print(); }, 500);
   };
 
   const statusLabel = status === 'saving' ? 'Menyimpan…' : status === 'saved' ? 'Tersimpan ✓' : status === 'error' ? 'Gagal menyimpan' : 'Siap';
@@ -309,52 +241,37 @@ function AgendaGuruApp() {
               <div className="text-[11px] text-neutral-500">SMPN 13 Bandar Lampung • Kurikulum Merdeka</div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <div className="flex p-1 bg-white rounded-full border border-green-200 shadow-sm">
               {[
                 { k: 'cover', label: 'COVER', icon: BookOpen },
                 { k: 'jadwal', label: 'JADWAL', icon: Clock3 },
                 { k: 'agenda', label: 'AGENDA HARIAN', icon: CalendarDays },
               ].map((m) => {
-                const Icon = m.icon;
-                const active = tab === m.k;
+                const Icon = m.icon; const active = tab === m.k;
                 return (
-                  <button
-                    key={m.k}
-                    onClick={() => setTab(m.k)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide flex items-center gap-1.5 transition ${
-                      active ? 'bg-green-700 text-white shadow' : 'text-neutral-600 hover:bg-green-100'
-                    }`}
-                  >
+                  <button key={m.k} onClick={() => setTab(m.k)} className={`px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide flex items-center gap-1.5 transition ${active ? 'bg-green-700 text-white shadow' : 'text-neutral-600 hover:bg-green-100'}`}>
                     <Icon size={14} /> {m.label}
                   </button>
                 );
               })}
             </div>
-            <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-green-200 text-xs font-medium text-neutral-500">
-              {statusLabel}
-            </span>
+            <button onClick={cetakSemua} className="px-3 py-1.5 rounded-full bg-green-800 text-white text-xs font-bold inline-flex items-center gap-1.5 shadow"><Printer size={14}/> CETAK SEMUA (LANDSCAPE)</button>
+            <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-green-200 text-xs font-medium text-neutral-500">{statusLabel}</span>
           </div>
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
         {tab === 'cover' && (
-          <div className="max-w-2xl mx-auto bg-green-100 border-2 border-green-700 rounded-2xl shadow-lg overflow-hidden">
+          <div className="print-page max-w-2xl mx-auto bg-green-100 border-2 border-green-700 rounded-2xl shadow-lg overflow-hidden">
             <div className="px-6 md:px-10 pt-8 pb-10">
-              <div className="flex justify-center mb-4">
-                <img
-                  src="https://i.ibb.co.com/Zz9dbRD/logosmp13.png"
-                  alt="Logo SMPN 13 Bandar Lampung"
-                  className="w-20 h-20 md:w-24 md:h-24 object-contain"
-                />
-              </div>
+              <div className="flex justify-center mb-4"><img src="https://i.ibb.co.com/Zz9dbRD/logosmp13.png" alt="Logo" className="w-20 h-20 md:w-24 md:h-24 object-contain"/></div>
               <div className="text-center font-judul">
                 <h1 className="text-3xl md:text-5xl font-bold text-neutral-900">AGENDA GURU</h1>
                 <h2 className="mt-1 text-base md:text-xl tracking-[0.2em] font-semibold text-green-800">TUGAS MENGAJAR</h2>
                 <div className="mt-3 w-24 h-1 bg-green-800 mx-auto rounded-full" />
               </div>
-
               <div className="mt-8 bg-white/80 border-2 border-green-700 rounded-xl p-5 md:p-8 space-y-5">
                 {[
                   { label: 'Nama Guru', key: 'namaGuru', placeholder: 'Nama lengkap dengan gelar' },
@@ -367,281 +284,123 @@ function AgendaGuruApp() {
                     <div className="md:w-36 shrink-0 text-[11px] font-bold tracking-widest uppercase text-neutral-500">{f.label}</div>
                     <div className="flex-1 border-b-2 border-dashed border-green-700/60 pb-1">
                       {f.multiline ? (
-                        <textarea
-                          value={cover[f.key]}
-                          onChange={(e) => setCover({ ...cover, [f.key]: e.target.value })}
-                          placeholder={f.placeholder}
-                          rows={2}
-                          className="w-full bg-transparent outline-none resize-none text-sm md:text-base font-medium"
-                        />
+                        <textarea value={cover[f.key]} onChange={(e) => setCover({ ...cover, [f.key]: e.target.value })} placeholder={f.placeholder} rows={2} className="w-full bg-transparent outline-none resize-none text-sm md:text-base font-medium"/>
                       ) : (
-                        <input
-                          value={cover[f.key]}
-                          onChange={(e) => setCover({ ...cover, [f.key]: e.target.value })}
-                          placeholder={f.placeholder}
-                          className="w-full bg-transparent outline-none text-sm md:text-base font-medium"
-                        />
+                        <input value={cover[f.key]} onChange={(e) => setCover({ ...cover, [f.key]: e.target.value })} placeholder={f.placeholder} className="w-full bg-transparent outline-none text-sm md:text-base font-medium"/>
                       )}
                     </div>
                   </div>
                 ))}
               </div>
-
               <div className="mt-6 flex flex-wrap gap-2 no-print">
-                <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-green-700 text-white text-xs font-semibold">
-                  <Save size={14} /> {statusLabel}
-                </span>
-                <button onClick={exportJson} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-green-300 text-xs font-medium">
-                  <Download size={14} /> Ekspor JSON
-                </button>
-              </div>
-              <div className="mt-6 text-center text-[10px] tracking-widest uppercase text-neutral-400 font-tubuh">
-                Dokumen resmi guru • Diisi setiap hari mengajar
+                <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-green-700 text-white text-xs font-semibold"><Save size={14} /> {statusLabel}</span>
+                <button onClick={exportJson} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-green-300 text-xs font-medium"><Download size={14} /> Ekspor JSON</button>
+                <button onClick={cetakSemua} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-green-800 text-white text-xs font-bold"><Printer size={14}/> Cetak Cover Landscape</button>
               </div>
             </div>
           </div>
         )}
 
         {tab === 'jadwal' && (
-          <div className="space-y-8">
-            <div className="bg-white border border-green-200 rounded-2xl p-4 md:p-6 text-xs md:text-sm leading-relaxed text-neutral-600 font-tubuh">
-              Jadwal setiap hari kini <b>independen</b>: jumlah jam, jam masuk-pulang, dan kegiatan (Upacara, IMTAQ, Istirahat, MBG + Sholat, dst) bisa berbeda-beda
-              per hari. Baris kegiatan non-mengajar cukup ditandai dengan mengisi kolom <b>No</b> dengan tanda "-".
+          <div className="print-page space-y-8">
+            <div className="bg-white border border-green-200 rounded-2xl p-4 md:p-6 text-xs md:text-sm leading-relaxed text-neutral-600">
+              Jadwal setiap hari independen: jam bisa berbeda per hari. Baris istirahat/MBG ditandai No "-".
             </div>
-
-            {['ganjil', 'genap'].map((sem) => (
+            {['ganjil'].map((sem) => (
               <div key={sem} className="bg-green-100 border border-green-200 rounded-2xl p-4 md:p-6">
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                  <h3 className="font-judul text-xl md:text-2xl font-bold text-neutral-900">
-                    JADWAL MENGAJAR SEMESTER {sem.toUpperCase()}
-                  </h3>
-                  <div className="flex items-center gap-2 text-xs">
-                    <span className="text-neutral-500">Tahun Pelajaran:</span>
-                    <input
-                      value={jadwal[sem].tp}
-                      onChange={(e) => setTp(sem, e.target.value)}
-                      className="w-28 px-2 py-1 rounded-full border border-green-300 bg-white outline-none text-xs font-semibold"
-                    />
-                  </div>
+                  <h3 className="font-judul text-xl md:text-2xl font-bold text-neutral-900">JADWAL MENGAJAR SEMESTER {sem.toUpperCase()}</h3>
+                  <div className="flex items-center gap-2 text-xs"><span className="text-neutral-500">Tahun Pelajaran:</span><input value={jadwal[sem].tp} onChange={(e) => setTp(sem, e.target.value)} className="w-28 px-2 py-1 rounded-full border border-green-300 bg-white outline-none text-xs font-semibold"/></div>
                 </div>
-
                 <div className="flex gap-3 overflow-x-auto pb-2">
                   {DAYS.map((day) => {
                     const rows = jadwal[sem].days[day];
                     return (
                       <div key={day} className="bg-white rounded-xl border border-green-300 overflow-hidden flex-shrink-0" style={{ minWidth: 230 }}>
-                        <div className="px-3 py-2 bg-green-700 text-white flex items-center justify-between">
-                          <span className="font-bold text-xs tracking-widest">{day.toUpperCase()}</span>
-                          <button onClick={() => addRow(sem, day)} className="p-1 rounded-full hover:bg-white/20 no-print" title="Tambah baris">
-                            <Plus size={13} />
-                          </button>
-                        </div>
-                        <table className="w-full text-[11px] border-collapse">
-                          <thead>
-                            <tr className="bg-green-50 text-neutral-500">
-                              <th className="p-1 border border-green-100 w-7">No</th>
-                              <th className="p-1 border border-green-100 w-20">Pukul</th>
-                              <th className="p-1 border border-green-100">Kegiatan / Kelas</th>
-                              <th className="p-1 border border-green-100 w-5 no-print" />
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {rows.map((row) => {
-                              const isBreak = row.no.trim() === '-';
-                              return (
-                                <tr key={row.id} className={isBreak ? 'bg-yellow-50' : ''}>
-                                  <td className="border border-green-100 p-0">
-                                    <input
-                                      value={row.no}
-                                      onChange={(e) => updateRow(sem, day, row.id, 'no', e.target.value)}
-                                      className="w-full text-center py-1 bg-transparent outline-none font-semibold"
-                                    />
-                                  </td>
-                                  <td className="border border-green-100 p-0">
-                                    <input
-                                      value={row.pukul}
-                                      onChange={(e) => updateRow(sem, day, row.id, 'pukul', e.target.value)}
-                                      placeholder="00:00-00:00"
-                                      className="w-full py-1 px-1 bg-transparent outline-none"
-                                    />
-                                  </td>
-                                  <td className="border border-green-100 p-0">
-                                    <input
-                                      value={row.kegiatan}
-                                      onChange={(e) => updateRow(sem, day, row.id, 'kegiatan', e.target.value)}
-                                      placeholder={isBreak ? '' : 'Kelas'}
-                                      className={`w-full py-1 px-1 bg-transparent outline-none ${isBreak ? 'italic font-medium text-green-700' : ''}`}
-                                    />
-                                  </td>
-                                  <td className="border border-green-100 p-0 text-center no-print">
-                                    <button onClick={() => removeRow(sem, day, row.id)} className="text-red-500 hover:bg-red-50 rounded p-1" title="Hapus baris">
-                                      <Trash2 size={11} />
-                                    </button>
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
+                        <div className="px-3 py-2 bg-green-700 text-white flex items-center justify-between"><span className="font-bold text-xs tracking-widest">{day.toUpperCase()} - {rows.length} SESI</span><button onClick={() => addRow(sem, day)} className="p-1 rounded-full hover:bg-white/20 no-print"><Plus size={13} /></button></div>
+                        <table className="w-full text-[11px] border-collapse"><thead><tr className="bg-green-50 text-neutral-500"><th className="p-1 border border-green-100 w-7">No</th><th className="p-1 border border-green-100 w-20">Pukul</th><th className="p-1 border border-green-100">Kegiatan / Kelas</th><th className="p-1 border border-green-100 w-5 no-print" /></tr></thead><tbody>{rows.map((row) => { const isBreak = row.no.trim() === '-'; return (<tr key={row.id} className={isBreak ? 'bg-yellow-50' : ''}><td className="border border-green-100 p-0"><input value={row.no} onChange={(e) => updateRow(sem, day, row.id, 'no', e.target.value)} className="w-full text-center py-1 bg-transparent outline-none font-semibold"/></td><td className="border border-green-100 p-0"><input value={row.pukul} onChange={(e) => updateRow(sem, day, row.id, 'pukul', e.target.value)} placeholder="00:00-00:00" className="w-full py-1 px-1 bg-transparent outline-none"/></td><td className="border border-green-100 p-0"><input value={row.kegiatan} onChange={(e) => updateRow(sem, day, row.id, 'kegiatan', e.target.value)} placeholder={isBreak ? '' : 'Kelas'} className={`w-full py-1 px-1 bg-transparent outline-none ${isBreak ? 'italic font-medium text-green-700' : ''}`}/></td><td className="border border-green-100 p-0 text-center no-print"><button onClick={() => removeRow(sem, day, row.id)} className="text-red-500 hover:bg-red-50 rounded p-1"><Trash2 size={11} /></button></td></tr>);})}</tbody></table>
                       </div>
                     );
                   })}
                 </div>
-
-                <div className="px-1 pt-3 text-[10px] text-neutral-500 flex justify-between flex-wrap gap-2">
-                  <span>Tanda tangan Kepala Sekolah</span>
-                  <span>Tanda tangan Guru Ybs: {cover.namaGuru || '..........................'}</span>
-                </div>
+                <div className="no-break px-1 pt-6 text-[11px] flex justify-between flex-wrap gap-2"><span className="text-center">Mengetahui,<br/>Kepala SMP Negeri 13 Bandar Lampung<br/><br/><br/><b>Hj. AMAROH, S.Pd.MM</b><br/>NIP. 196711211990032009</span><span className="text-center">Bandar Lampung, Juli 2026<br/>Guru Mata Pelajaran<br/><br/><br/><b>{cover.namaGuru}</b><br/>NIP. {cover.nip}</span></div>
+                <div className="mt-4 no-print"><button onClick={cetakSemua} className="px-4 py-2 rounded-full bg-green-800 text-white text-xs font-bold inline-flex items-center gap-1"><Printer size={14}/> Cetak Jadwal Landscape (1 Halaman)</button></div>
               </div>
             ))}
           </div>
         )}
 
         {tab === 'agenda' && (
-          <div className="bg-green-100 border border-green-200 rounded-2xl p-4 md:p-6">
+          <div className="print-page bg-green-100 border border-green-200 rounded-2xl p-4 md:p-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h3 className="font-judul text-xl md:text-2xl font-bold">Agenda Harian Mengajar</h3>
-                <p className="text-[11px] text-neutral-500 mt-1">Diisi setiap hari mengajar, sesuai jam pada jadwal</p>
-              </div>
+              <div><h3 className="font-judul text-xl md:text-2xl font-bold">Agenda Harian Mengajar</h3><p className="text-[11px] text-neutral-500 mt-1">Absensi sekarang bisa ENTER beberapa baris siswa tidak masuk</p></div>
               <div className="no-print flex flex-wrap items-center gap-2">
-                <div className="flex items-center gap-1.5 bg-white border border-green-300 rounded-full px-2 py-1">
-                  <SearchIcon size={13} className="text-neutral-400" />
-                  <input
-                    value={filterTeks}
-                    onChange={(e) => setFilterTeks(e.target.value)}
-                    placeholder="Cari kelas / materi"
-                    className="w-36 md:w-44 outline-none text-xs bg-transparent"
-                  />
-                </div>
-                <input
-                  type="date"
-                  value={filterTgl}
-                  onChange={(e) => setFilterTgl(e.target.value)}
-                  className="px-2 py-1.5 rounded-full border border-green-300 bg-white text-xs"
-                />
-                {filterTgl && (
-                  <button onClick={() => setFilterTgl('')} className="text-[11px] underline">
-                    Reset
-                  </button>
-                )}
-                <button onClick={addAgenda} className="px-3 py-1.5 rounded-full bg-green-700 text-white text-xs font-semibold inline-flex items-center gap-1">
-                  <Plus size={14} /> Tambah Baris
-                </button>
-                <button onClick={exportJson} className="px-3 py-1.5 rounded-full bg-white border border-green-300 text-xs font-medium inline-flex items-center gap-1">
-                  <Download size={12} /> Ekspor
-                </button>
+                <div className="flex items-center gap-1.5 bg-white border border-green-300 rounded-full px-2 py-1"><SearchIcon size={13} className="text-neutral-400" /><input value={filterTeks} onChange={(e) => setFilterTeks(e.target.value)} placeholder="Cari kelas / materi" className="w-36 md:w-44 outline-none text-xs bg-transparent"/></div>
+                <input type="date" value={filterTgl} onChange={(e) => setFilterTgl(e.target.value)} className="px-2 py-1.5 rounded-full border border-green-300 bg-white text-xs"/>
+                {filterTgl && (<button onClick={() => setFilterTgl('')} className="text-[11px] underline">Reset</button>)}
+                <button onClick={addAgenda} className="px-3 py-1.5 rounded-full bg-green-700 text-white text-xs font-semibold inline-flex items-center gap-1"><Plus size={14} /> Tambah Baris</button>
+                <button onClick={exportJson} className="px-3 py-1.5 rounded-full bg-white border border-green-300 text-xs font-medium inline-flex items-center gap-1"><Download size={12} /> Ekspor</button>
+                <button onClick={cetakSemua} className="px-3 py-1.5 rounded-full bg-green-800 text-white text-xs font-bold inline-flex items-center gap-1"><Printer size={12}/> Cetak Landscape</button>
               </div>
             </div>
 
-            <div className="mt-4 grid md:grid-cols-3 gap-2 text-[11px] font-tubuh">
-              <div className="bg-white/80 rounded-lg border border-green-200 p-2">
-                <b>X</b> = Banyak pertemuan untuk 1 KD • <b>Y</b> = Pertemuan ke- • <b>KD RPP</b> = Nomor KD & RPP
-              </div>
-              <div className="bg-white/80 rounded-lg border border-green-200 p-2">
-                Selesai / Belum: tulis alasan jika belum selesai. Absensi: S/I/A atau jumlah hadir.
-              </div>
-              <div className="bg-white/80 rounded-lg border border-green-200 p-2">
-                Guru: <b>{cover.namaGuru || '-'}</b> • Mapel: <b>{cover.mapel || '-'}</b> • {totalSlot} slot jam mengajar/minggu (ganjil)
-              </div>
+            <div className="mt-4 grid md:grid-cols-3 gap-2 text-[11px]">
+              <div className="bg-white/80 rounded-lg border border-green-200 p-2"><b>X</b> = Banyak pertemuan untuk 1 KD • <b>Y</b> = Pertemuan ke-</div>
+              <div className="bg-white/80 rounded-lg border border-green-200 p-2"><b>FIX:</b> Absensi bisa ENTER contoh:<br/>1. Andre (A)<br/>2. Putri (S)</div>
+              <div className="bg-white/80 rounded-lg border border-green-200 p-2">Guru: <b>{cover.namaGuru || '-'}</b> • Mapel: <b>{cover.mapel || '-'}</b> • {totalSlot} slot/minggu</div>
             </div>
 
             <div className="mt-5 overflow-x-auto rounded-xl border border-green-700 bg-white">
-              <table className="w-full text-[11px] border-collapse" style={{ minWidth: 1100 }}>
+              <table className="w-full text-[11px] border-collapse" style={{ minWidth: 1200 }}>
                 <thead>
                   <tr className="bg-green-700 text-white text-[10px] tracking-wide">
-                    <th className="p-2 border border-green-800 w-28">Tanggal</th>
-                    <th className="p-2 border border-green-800 w-16">Jam Ke</th>
-                    <th className="p-2 border border-green-800 w-24">Kelas</th>
-                    <th className="p-2 border border-green-800 w-20">No. KD/RPP</th>
-                    <th className="p-2 border border-green-800" style={{ minWidth: 220 }}>Kompetensi Dasar / Indikator</th>
-                    <th className="p-2 border border-green-800 w-9">X</th>
-                    <th className="p-2 border border-green-800 w-9">Y</th>
-                    <th className="p-2 border border-green-800 w-32">Selesai / Belum + Alasan</th>
-                    <th className="p-2 border border-green-800 w-28">Absensi Siswa</th>
-                    <th className="p-2 border border-green-800 w-24">Keterangan</th>
-                    <th className="p-1 border border-green-800 w-8 no-print" />
+                    <th className="p-2 border border-green-800 w-28">Tanggal</th><th className="p-2 border border-green-800 w-16">Jam Ke</th><th className="p-2 border border-green-800 w-24">Kelas</th><th className="p-2 border border-green-800 w-20">No. KD/RPP</th><th className="p-2 border border-green-800" style={{ minWidth: 220 }}>Kompetensi Dasar / Indikator</th><th className="p-2 border border-green-800 w-9">X</th><th className="p-2 border border-green-800 w-9">Y</th><th className="p-2 border border-green-800 w-32">Selesai / Belum + Alasan</th><th className="p-2 border border-green-800 w-40">Absensi Siswa (ENTER)</th><th className="p-2 border border-green-800 w-24">Keterangan</th><th className="p-1 border border-green-800 w-8 no-print" />
                   </tr>
                 </thead>
                 <tbody>
                   {filteredAgenda.map((row, i) => (
                     <tr key={row.id} className={i % 2 === 0 ? 'bg-white' : 'bg-green-50'}>
-                      <td className="border border-green-100 p-0">
-                        <input type="date" value={row.tanggal} onChange={(e) => updateAgenda(row.id, 'tanggal', e.target.value)} className="w-full px-1 py-2 bg-transparent outline-none text-[11px]" />
+                      <td className="border border-green-100 p-0"><input type="date" value={row.tanggal} onChange={(e) => updateAgenda(row.id, 'tanggal', e.target.value)} className="w-full px-1 py-2 bg-transparent outline-none text-[11px]" /></td>
+                      <td className="border border-green-100 p-0"><input value={row.jamKe} onChange={(e) => updateAgenda(row.id, 'jamKe', e.target.value)} placeholder="1-2" className="w-full px-1 py-2 bg-transparent outline-none text-center" /></td>
+                      <td className="border border-green-100 p-0"><input value={row.kelas} onChange={(e) => updateAgenda(row.id, 'kelas', e.target.value)} placeholder="IX A" className="w-full px-1 py-2 bg-transparent outline-none" /></td>
+                      <td className="border border-green-100 p-0"><input value={row.kdRpp} onChange={(e) => updateAgenda(row.id, 'kdRpp', e.target.value)} placeholder="3.1" className="w-full px-1 py-2 bg-transparent outline-none text-center" /></td>
+                      <td className="border border-green-100 p-0"><input value={row.kompetensi} onChange={(e) => updateAgenda(row.id, 'kompetensi', e.target.value)} placeholder="KD / indikator" className="w-full px-2 py-2 bg-transparent outline-none" /></td>
+                      <td className="border border-green-100 p-0"><input value={row.x} onChange={(e) => updateAgenda(row.id, 'x', e.target.value)} className="w-full text-center py-2 bg-transparent outline-none" /></td>
+                      <td className="border border-green-100 p-0"><input value={row.y} onChange={(e) => updateAgenda(row.id, 'y', e.target.value)} className="w-full text-center py-2 bg-transparent outline-none" /></td>
+                      <td className="border border-green-100 p-0"><input value={row.selesai} onChange={(e) => updateAgenda(row.id, 'selesai', e.target.value)} placeholder="Selesai / Belum" className="w-full px-1 py-2 bg-transparent outline-none" /></td>
+                      <td className="border border-green-100 p-0 align-top" style={{ verticalAlign: 'top' }}>
+                        {/* FIX 2: TEXTAREA MULTILINE BISA ENTER */}
+                        <textarea
+                          value={row.absensi}
+                          onChange={(e) => updateAgenda(row.id, 'absensi', e.target.value)}
+                          placeholder={"Contoh:\n1. Andre (A)\n2. Putri (S)\n3. Budi (I)"}
+                          rows={3}
+                          style={{ whiteSpace: 'pre-wrap', minHeight: '60px' }}
+                          className="w-full px-2 py-2 bg-transparent outline-none resize-y text-[11px] leading-4"
+                        />
                       </td>
-                      <td className="border border-green-100 p-0">
-                        <input value={row.jamKe} onChange={(e) => updateAgenda(row.id, 'jamKe', e.target.value)} placeholder="1-2" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
-                      </td>
-                      <td className="border border-green-100 p-0">
-                        <input value={row.kelas} onChange={(e) => updateAgenda(row.id, 'kelas', e.target.value)} placeholder="IX A" className="w-full px-1 py-2 bg-transparent outline-none" />
-                      </td>
-                      <td className="border border-green-100 p-0">
-                        <input value={row.kdRpp} onChange={(e) => updateAgenda(row.id, 'kdRpp', e.target.value)} placeholder="3.1" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
-                      </td>
-                      <td className="border border-green-100 p-0">
-                        <input value={row.kompetensi} onChange={(e) => updateAgenda(row.id, 'kompetensi', e.target.value)} placeholder="KD / indikator" className="w-full px-2 py-2 bg-transparent outline-none" />
-                      </td>
-                      <td className="border border-green-100 p-0">
-                        <input value={row.x} onChange={(e) => updateAgenda(row.id, 'x', e.target.value)} className="w-full text-center py-2 bg-transparent outline-none" />
-                      </td>
-                      <td className="border border-green-100 p-0">
-                        <input value={row.y} onChange={(e) => updateAgenda(row.id, 'y', e.target.value)} className="w-full text-center py-2 bg-transparent outline-none" />
-                      </td>
-                      <td className="border border-green-100 p-0">
-                        <input value={row.selesai} onChange={(e) => updateAgenda(row.id, 'selesai', e.target.value)} placeholder="Selesai / Belum" className="w-full px-1 py-2 bg-transparent outline-none" />
-                      </td>
-                      <td className="border border-green-100 p-0">
-                        <input value={row.absensi} onChange={(e) => updateAgenda(row.id, 'absensi', e.target.value)} placeholder="Hadir 32" className="w-full px-1 py-2 bg-transparent outline-none" />
-                      </td>
-                      <td className="border border-green-100 p-0">
-                        <input value={row.keterangan} onChange={(e) => updateAgenda(row.id, 'keterangan', e.target.value)} className="w-full px-1 py-2 bg-transparent outline-none" />
-                      </td>
-                      <td className="border border-green-100 p-0 text-center no-print">
-                        <button onClick={() => removeAgenda(row.id)} className="p-1.5 hover:bg-red-50 rounded text-red-500">
-                          <Trash2 size={12} />
-                        </button>
-                      </td>
+                      <td className="border border-green-100 p-0"><input value={row.keterangan} onChange={(e) => updateAgenda(row.id, 'keterangan', e.target.value)} className="w-full px-1 py-2 bg-transparent outline-none" /></td>
+                      <td className="border border-green-100 p-0 text-center no-print"><button onClick={() => removeAgenda(row.id)} className="p-1.5 hover:bg-red-50 rounded text-red-500"><Trash2 size={12} /></button></td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-
-            <div className="mt-3 flex flex-wrap justify-between text-[10px] text-neutral-500 gap-2">
-              <div>
-                Total baris: {filteredAgenda.length} dari {agenda.length} • Filter: {filterTgl || 'Semua tanggal'} {filterTeks ? `• Cari: ${filterTeks}` : ''}
-              </div>
-              <div className="flex gap-4">
-                <span>Paraf Guru: ........................</span>
-                <span>Paraf Kepsek / Wakasek: ........................</span>
-              </div>
-            </div>
+            <div className="mt-3 flex flex-wrap justify-between text-[10px] text-neutral-500 gap-2"><div>Total baris: {filteredAgenda.length} dari {agenda.length}</div><div className="flex gap-4"><span>Paraf Guru: ........................</span><span>Paraf Kepsek: ........................</span></div></div>
           </div>
         )}
       </div>
-
-      <div className="no-print max-w-6xl mx-auto px-4 pb-8 text-center text-[10px] text-neutral-400">
-        Aplikasi Buku Agenda Guru • SMPN 13 Bandar Lampung • Data tersimpan otomatis di browser (localStorage)
-      </div>
+      <div className="no-print max-w-6xl mx-auto px-4 pb-8 text-center text-[10px] text-neutral-400">Aplikasi Buku Agenda Guru • SMPN 13 Bandar Lampung • Data tersimpan otomatis • FIX Landscape + Absensi Multiline</div>
     </div>
   );
 }
-
 ReactDOM.createRoot(document.getElementById('root')).render(<AgendaGuruApp />);
 </script>
 <script>
-  // Transform manual (bukan auto-transform bawaan Babel) supaya dipaksa
-  // pakai runtime "classic" -- ini mencegah error
-  // "Cannot use import statement outside a module" yang muncul di sebagian
-  // versi Babel Standalone terbaru saat memakai mode "automatic runtime".
   (function () {
     var src = document.getElementById('app-source').textContent;
-    var result = Babel.transform(src, {
-      presets: [['react', { runtime: 'classic' }], 'env'],
-    });
-    var script = document.createElement('script');
-    script.text = result.code;
-    document.body.appendChild(script);
+    var result = Babel.transform(src, { presets: [['react', { runtime: 'classic' }], 'env'], });
+    var script = document.createElement('script'); script.text = result.code; document.body.appendChild(script);
   })();
 </script>
 </body>
