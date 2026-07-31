@@ -33,11 +33,12 @@
     table { font-size: 9px !important; }
   }
   .pdf-mode .no-print { display: none !important; }
-  .pdf-mode .print-wrap { flex-wrap: wrap !important; overflow: visible !important; }
+  .pdf-mode .print-wrap { display: flex !important; flex-wrap: wrap !important; overflow: visible !important; }
   .pdf-mode .day-card { min-width: 175px !important; }
   .pdf-mode table { font-size: 8px !important; }
   .pdf-mode table th, .pdf-mode table td { padding: 1px 2px !important; }
   .pdf-mode .font-judul.text-xl { font-size: 15px !important; }
+  .pdf-mode tr { break-inside: avoid; }
 </style>
 </head>
 <body>
@@ -291,32 +292,31 @@ function AgendaGuruApp() {
     document.head.appendChild(script);
   }, []);
 
-  const downloadPdf = (elementId, filename) => {
+  const downloadPdf = async (elementId, filename) => {
     const el = document.getElementById(elementId);
     if (!el) return;
     if (!window.html2pdf) {
       alert('PDF sedang disiapkan, coba klik lagi dalam beberapa detik...');
       return;
     }
-    window
-      .html2pdf()
-      .set({
-        margin: 6,
-        filename,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          onclone: (doc) => {
-            doc.body.classList.add('pdf-mode');
-            doc.querySelectorAll('.no-print').forEach((n) => (n.style.display = 'none'));
-          },
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
-        pagebreak: { mode: ['css', 'legacy'], avoid: '.print-avoid-break' },
-      })
-      .from(el)
-      .save();
+    document.body.classList.add('pdf-mode');
+    await new Promise((r) => setTimeout(r, 60));
+    try {
+      await window
+        .html2pdf()
+        .set({
+          margin: 6,
+          filename,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+          pagebreak: { mode: ['avoid-all', 'css'] },
+        })
+        .from(el)
+        .save();
+    } finally {
+      document.body.classList.remove('pdf-mode');
+    }
   };
 
   useEffect(() => {
