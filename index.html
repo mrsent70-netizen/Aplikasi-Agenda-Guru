@@ -24,7 +24,14 @@
   body { font-family: 'Inter', system-ui, sans-serif; }
   .font-judul { font-family: 'EB Garamond', Georgia, serif; }
   .font-tubuh { font-family: 'Inter', system-ui, sans-serif; }
-  @media print { .no-print { display: none !important; } body { background: white !important; } @page { size: landscape; margin: 12mm; } }
+  @media print {
+    .no-print { display: none !important; }
+    body { background: white !important; }
+    @page { size: A4 landscape; margin: 10mm; }
+    .print-wrap { flex-wrap: wrap !important; overflow: visible !important; }
+    .print-avoid-break { break-inside: avoid; page-break-inside: avoid; }
+    table { font-size: 9px !important; }
+  }
 </style>
 </head>
 <body>
@@ -460,6 +467,9 @@ function AgendaGuruApp() {
                 <button onClick={exportJson} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-green-300 text-xs font-medium">
                   <Download size={14} /> Ekspor JSON
                 </button>
+                <button onClick={() => window.print()} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-green-300 text-xs font-medium">
+                  🖨️ Cetak
+                </button>
               </div>
               <div className="mt-6 text-center text-[10px] tracking-widest uppercase text-neutral-400 font-tubuh">Dokumen resmi guru • Diisi setiap hari mengajar</div>
             </div>
@@ -468,12 +478,17 @@ function AgendaGuruApp() {
 
         {tab === 'jadwal' && (
           <div className="space-y-8">
-            <div className="bg-white border border-green-200 rounded-2xl p-4 md:p-6 text-xs md:text-sm leading-relaxed text-neutral-600 font-tubuh">
-              Jadwal setiap hari kini <b>independen</b>: jumlah jam, jam masuk-pulang, dan kegiatan (Upacara, IMTAQ, Istirahat, MBG + Sholat, dst) bisa berbeda-beda per hari. Baris kegiatan non-mengajar cukup ditandai dengan mengisi kolom <b>No</b> dengan tanda "-".
+            <div className="bg-white border border-green-200 rounded-2xl p-4 md:p-6 text-xs md:text-sm leading-relaxed text-neutral-600 font-tubuh no-print flex flex-wrap items-center justify-between gap-3">
+              <span>
+                Jadwal setiap hari kini <b>independen</b>: jumlah jam, jam masuk-pulang, dan kegiatan (Upacara, IMTAQ, Istirahat, MBG + Sholat, dst) bisa berbeda-beda per hari. Baris kegiatan non-mengajar cukup ditandai dengan mengisi kolom <b>No</b> dengan tanda "-".
+              </span>
+              <button onClick={() => window.print()} className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-green-300 text-xs font-medium">
+                🖨️ Cetak
+              </button>
             </div>
 
             {['ganjil', 'genap'].map((sem) => (
-              <div key={sem} className="bg-green-100 border border-green-200 rounded-2xl p-4 md:p-6">
+              <div key={sem} className="bg-green-100 border border-green-200 rounded-2xl p-4 md:p-6 print-avoid-break">
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
                   <h3 className="font-judul text-xl md:text-2xl font-bold text-neutral-900">JADWAL MENGAJAR SEMESTER {sem.toUpperCase()}</h3>
                   <div className="flex items-center gap-2 text-xs">
@@ -482,7 +497,7 @@ function AgendaGuruApp() {
                   </div>
                 </div>
 
-                <div className="flex gap-3 overflow-x-auto pb-2">
+                <div className="flex gap-3 overflow-x-auto pb-2 print-wrap">
                   {DAYS.map((day) => {
                     const rows = jadwal[sem].days[day];
                     return (
@@ -531,10 +546,10 @@ function AgendaGuruApp() {
                   })}
                 </div>
 
-                <div className="px-1 pt-3 text-[10px] text-neutral-500 flex justify-between flex-wrap gap-2">
-                  <span>Tanda tangan Kepala Sekolah</span>
-                  <span>Tanda tangan Guru Ybs: {cover.namaGuru || '..........................'}</span>
+                <div className="px-1 pt-3 text-[10px] text-neutral-500">
+                  Semester {sem === 'ganjil' ? 'Ganjil' : 'Genap'} • Tahun Pelajaran {jadwal[sem].tp}
                 </div>
+                <TandaTangan cover={cover} />
               </div>
             ))}
           </div>
@@ -611,7 +626,7 @@ function AgendaGuruApp() {
               </div>
             </div>
 
-            <div className="mt-5 overflow-x-auto rounded-xl border border-green-700 bg-white">
+            <div className="mt-5 overflow-x-auto rounded-xl border border-green-700 bg-white print-wrap">
               <table className="w-full text-[11px] border-collapse" style={{ minWidth: 1150 }}>
                 <thead>
                   <tr className="bg-green-700 text-white text-[10px] tracking-wide">
