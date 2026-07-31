@@ -228,7 +228,80 @@ function AgendaGuruApp() {
     a.click();
     URL.revokeObjectURL(url);
   };
+
   const statusLabel = status === 'saving' ? 'Menyimpan…' : status === 'saved' ? 'Tersimpan ✓' : status === 'error' ? 'Gagal menyimpan' : 'Siap';
+
+  const cetakCover = () => { window.print(); };
+
+  const cetakJadwal = () => {
+    const w = window.open('', '_blank');
+    let html = `<html><head><title>Jadwal Mengajar - ${cover.namaGuru}</title><style>
+      @page{size:A4 landscape;margin:10mm} body{font-family:Inter,sans-serif;font-size:10px}
+      .no-break{page-break-inside:avoid;break-inside:avoid}
+      table{border-collapse:collapse;width:100%} th,td{border:1px solid #000;padding:4px;text-align:center}
+      .header{background:#166534;color:white}
+    </style></head><body>`;
+    html += `<h2 style="text-align:center">JADWAL MENGAJAR SEMESTER GANJIL TP ${jadwal.ganjil.tp}</h2>`;
+    html += `<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">`;
+    DAYS.forEach(day=>{
+      const rows = jadwal.ganjil.days[day];
+      html += `<div style="border:2px solid #166534;border-radius:8px;overflow:hidden;min-width:200px"><div style="background:#166534;color:white;padding:6px;text-align:center;font-weight:bold">${day.toUpperCase()}</div><table><tr style="background:#dcfce7"><th>No</th><th>Pukul</th><th>Kelas</th></tr>`;
+      rows.forEach(r=>{
+        const bg = r.no==='-' ? '#fef9c3' : 'white';
+        html += `<tr style="background:${bg}"><td>${r.no}</td><td>${r.pukul}</td><td>${r.kegiatan}</td></tr>`;
+      });
+      html += `</table></div>`;
+    });
+    html += `</div>`;
+    html += `<div class="no-break" style="display:flex;justify-content:space-between;margin-top:30px;font-size:11px"><div style="text-align:center">Mengetahui,<br/>Kepala SMP Negeri 13 Bandar Lampung<br/><br/><br/><br/><b>Hj. AMAROH, S.Pd.MM</b><br/>NIP. 196711211990032009</div><div style="text-align:center">Bandar Lampung, Juli 2026<br/>Guru Mata Pelajaran<br/><br/><br/><br/><b>${cover.namaGuru || '.........................'}</b><br/>NIP. ${cover.nip || '.........................'}</div></div>`;
+    html += `</body></html>`;
+    w.document.write(html); w.document.close(); setTimeout(()=>w.print(),500);
+  };
+
+  const cetakAgenda = () => {
+    const w = window.open('', '_blank');
+    let html = `<html><head><title>Agenda Harian - ${cover.namaGuru}</title><style>
+      @page{size:A4 landscape;margin:8mm} body{font-family:Inter,sans-serif;font-size:8px}
+      .no-break{page-break-inside:avoid;break-inside:avoid} table{border-collapse:collapse;width:100%} th,td{border:1px solid #000;padding:3px}
+      th{background:#166534;color:white}
+    </style></head><body>`;
+    html += `<h2 style="text-align:center">AGENDA HARIAN MENGAJAR - ${cover.namaGuru} - TP ${jadwal.ganjil.tp}</h2>`;
+    html += `<table><tr><th>Tanggal</th><th>Jam Ke</th><th>Kelas</th><th>KD/RPP</th><th>Kompetensi</th><th>X</th><th>Y</th><th>Selesai</th><th>Absensi Siswa</th><th>Ket</th></tr>`;
+    filteredAgenda.forEach(r=>{
+      const abs = (r.absensi||'').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br/>');
+      html += `<tr><td>${r.tanggal}</td><td style="text-align:center">${r.jamKe}</td><td style="text-align:center">${r.kelas}</td><td style="text-align:center">${r.kdRpp}</td><td>${r.kompetensi}</td><td style="text-align:center">${r.x}</td><td style="text-align:center">${r.y}</td><td>${r.selesai}</td><td style="white-space:pre-wrap">${r.absensi||''}</td><td>${r.keterangan}</td></tr>`;
+    });
+    html += `</table>`;
+    html += `<div class="no-break" style="display:flex;justify-content:space-between;margin-top:30px;font-size:11px"><div style="text-align:center">Mengetahui,<br/>Kepala SMP Negeri 13 Bandar Lampung<br/><br/><br/><br/><b>Hj. AMAROH, S.Pd.MM</b><br/>NIP. 196711211990032009</div><div style="text-align:center">Bandar Lampung, Juli 2026<br/>Guru Mata Pelajaran<br/><br/><br/><br/><b>${cover.namaGuru || '.........................'}</b><br/>NIP. ${cover.nip || '.........................'}</div></div>`;
+    html += `</body></html>`;
+    w.document.write(html); w.document.close(); setTimeout(()=>w.print(),500);
+  };
+
+  const cetakSemua = () => {
+    const w = window.open('', '_blank');
+    let html = `<html><head><title>Laporan Lengkap - ${cover.namaGuru}</title><style>
+      @page{size:A4 landscape;margin:10mm} body{font-family:Inter,sans-serif}
+      .page{page-break-after:always} .page:last-child{page-break-after:avoid} .no-break{page-break-inside:avoid;break-inside:avoid}
+    </style></head><body>`;
+    // Page 1 Cover
+    html += `<div class="page" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:90vh;text-align:center"><img src="https://i.ibb.co.com/Zz9dbRD/logosmp13.png" style="width:120px;height:120px"/><h1 style="font-size:42px;font-weight:bold;margin-top:20px">AGENDA GURU</h1><h2 style="letter-spacing:6px;color:#166534">TUGAS MENGAJAR</h2><div style="border:3px solid #166534;padding:24px;border-radius:12px;margin-top:24px;text-align:left"><p>Nama Guru: <b>${cover.namaGuru}</b></p><p>NIP: ${cover.nip}</p><p>Mapel: ${cover.mapel}</p><p>Sekolah: ${cover.sekolah}</p><p>Alamat: ${cover.alamat}</p><p>TP: ${jadwal.ganjil.tp}</p></div><div class="no-break" style="display:flex;justify-content:space-between;width:100%;max-width:700px;margin-top:40px"><div style="text-align:center">Mengetahui,<br/>Kepala Sekolah<br/><br/><br/><br/><b>Hj. AMAROH, S.Pd.MM</b><br/>NIP. 196711211990032009</div><div style="text-align:center">Bandar Lampung, Juli 2026<br/>Guru Ybs<br/><br/><br/><br/><b>${cover.namaGuru}</b><br/>NIP. ${cover.nip}</div></div></div>`;
+    // Page 2 Jadwal
+    html += `<div class="page"><h2 style="text-align:center">JADWAL MENGAJAR SEMESTER GANJIL TP ${jadwal.ganjil.tp}</h2><div style="display:flex;gap:8px;flex-wrap:wrap">`;
+    DAYS.forEach(day=>{
+      const rows = jadwal.ganjil.days[day];
+      html += `<div style="border:1px solid #166534;border-radius:8px;overflow:hidden;flex:1;min-width:180px"><div style="background:#166534;color:white;text-align:center;padding:4px;font-weight:bold;font-size:10px">${day.toUpperCase()}</div><table style="width:100%;border-collapse:collapse;font-size:8px"><tr style="background:#dcfce7"><th style="border:1px solid #ccc">No</th><th style="border:1px solid #ccc">Pukul</th><th style="border:1px solid #ccc">Kelas</th></tr>`;
+      rows.forEach(r=>{ html += `<tr><td style="border:1px solid #ccc;text-align:center">${r.no}</td><td style="border:1px solid #ccc;text-align:center">${r.pukul}</td><td style="border:1px solid #ccc;text-align:center">${r.kegiatan}</td></tr>`; });
+      html += `</table></div>`;
+    });
+    html += `</div><div class="no-break" style="display:flex;justify-content:space-between;margin-top:20px"><div style="text-align:center">Mengetahui,<br/>Kepsek<br/><br/><br/><b>Hj. AMAROH, S.Pd.MM</b></div><div style="text-align:center">Guru Ybs<br/><br/><br/><b>${cover.namaGuru}</b></div></div></div>`;
+    // Page 3 Agenda
+    html += `<div class="page"><h2 style="text-align:center">AGENDA HARIAN MENGAJAR</h2><table style="width:100%;border-collapse:collapse;font-size:8px"><tr style="background:#166534;color:white"><th style="border:1px solid #000">Tgl</th><th style="border:1px solid #000">Jam</th><th style="border:1px solid #000">Kelas</th><th style="border:1px solid #000">KD</th><th style="border:1px solid #000">Kompetensi</th><th style="border:1px solid #000">X</th><th style="border:1px solid #000">Y</th><th style="border:1px solid #000">Selesai</th><th style="border:1px solid #000">Absensi (ENTER)</th><th style="border:1px solid #000">Ket</th></tr>`;
+    filteredAgenda.forEach(r=>{ html += `<tr><td style="border:1px solid #000">${r.tanggal}</td><td style="border:1px solid #000">${r.jamKe}</td><td style="border:1px solid #000">${r.kelas}</td><td style="border:1px solid #000">${r.kdRpp}</td><td style="border:1px solid #000">${r.kompetensi}</td><td style="border:1px solid #000">${r.x}</td><td style="border:1px solid #000">${r.y}</td><td style="border:1px solid #000">${r.selesai}</td><td style="border:1px solid #000;white-space:pre-wrap">${r.absensi||''}</td><td style="border:1px solid #000">${r.keterangan}</td></tr>`; });
+    html += `</table><div class="no-break" style="display:flex;justify-content:space-between;margin-top:20px"><div style="text-align:center">Kepsek<br/><br/><br/><b>Hj. AMAROH, S.Pd.MM</b><br/>NIP. 196711211990032009</div><div style="text-align:center">Guru Ybs<br/><br/><br/><b>${cover.namaGuru}</b><br/>NIP. ${cover.nip}</div></div></div>`;
+    html += `</body></html>`;
+    w.document.write(html); w.document.close(); setTimeout(()=>w.print(),600);
+  };
+
   return (
     <div className="min-h-screen bg-green-50 text-neutral-900">
       <div className="no-print sticky top-0 z-30 bg-green-50/95 border-b border-green-200 backdrop-blur">
@@ -295,6 +368,8 @@ function AgendaGuruApp() {
               <div className="mt-6 flex flex-wrap gap-2 no-print">
                 <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-green-700 text-white text-xs font-semibold"><Save size={14} /> {statusLabel}</span>
                 <button onClick={exportJson} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-green-300 text-xs font-medium"><Download size={14} /> Ekspor JSON</button>
+                <button onClick={cetakCover} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-green-800 text-white text-xs font-bold">🖨️ Cetak Cover (Landscape)</button>
+                <button onClick={cetakSemua} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-green-900 text-white text-xs font-bold">📄 Cetak Semua 3 Halaman PDF</button>
               </div>
               <div className="mt-6 text-center text-[10px] tracking-widest uppercase text-neutral-400 font-tubuh">Dokumen resmi guru • Diisi setiap hari mengajar</div>
             </div>
@@ -322,7 +397,11 @@ function AgendaGuruApp() {
                     );
                   })}
                 </div>
-                <div className="px-1 pt-3 text-[10px] text-neutral-500 flex justify-between flex-wrap gap-2"><span>Tanda tangan Kepala Sekolah</span><span>Tanda tangan Guru Ybs: {cover.namaGuru || '..........................'}</span></div>
+                <div className="no-break px-1 pt-6 text-[11px] flex justify-between flex-wrap gap-2" style={{pageBreakInside:'avoid'}}><div style={{textAlign:'center'}}>Mengetahui,<br/>Kepala SMP Negeri 13 Bandar Lampung<br/><br/><br/><br/><b>Hj. AMAROH, S.Pd.MM</b><br/>NIP. 196711211990032009</div><div style={{textAlign:'center'}}>Bandar Lampung, Juli 2026<br/>Guru Mata Pelajaran<br/><br/><br/><br/><b>{cover.namaGuru || '..........................'}</b><br/>NIP. {cover.nip || '..........................'}</div></div>
+                <div className="mt-4 flex flex-wrap gap-2 no-print">
+                  <button onClick={cetakJadwal} className="px-4 py-2 rounded-full bg-green-800 text-white text-xs font-bold">🖨️ Cetak Jadwal Landscape (1 Halaman, TTD Tidak Nyebrang)</button>
+                  <button onClick={cetakSemua} className="px-4 py-2 rounded-full bg-green-900 text-white text-xs font-bold">📄 Cetak Semua PDF</button>
+                </div>
               </div>
             ))}
           </div>
@@ -337,6 +416,8 @@ function AgendaGuruApp() {
                 {filterTgl && (<button onClick={() => setFilterTgl('')} className="text-[11px] underline">Reset</button>)}
                 <button onClick={addAgenda} className="px-3 py-1.5 rounded-full bg-green-700 text-white text-xs font-semibold inline-flex items-center gap-1"><Plus size={14} /> Tambah Baris</button>
                 <button onClick={exportJson} className="px-3 py-1.5 rounded-full bg-white border border-green-300 text-xs font-medium inline-flex items-center gap-1"><Download size={12} /> Ekspor</button>
+                <button onClick={cetakAgenda} className="px-3 py-1.5 rounded-full bg-green-800 text-white text-xs font-bold">🖨️ Cetak Agenda Landscape</button>
+                <button onClick={cetakSemua} className="px-3 py-1.5 rounded-full bg-green-900 text-white text-xs font-bold">📄 Cetak Semua 3 Halaman PDF</button>
               </div>
             </div>
             <div className="mt-4 grid md:grid-cols-3 gap-2 text-[11px] font-tubuh">
@@ -368,7 +449,8 @@ function AgendaGuruApp() {
                 </tbody>
               </table>
             </div>
-            <div className="mt-3 flex flex-wrap justify-between text-[10px] text-neutral-500 gap-2"><div>Total baris: {filteredAgenda.length} dari {agenda.length}</div><div className="flex gap-4"><span>Paraf Guru: ........................</span><span>Paraf Kepsek / Wakasek: ........................</span></div></div>
+            <div className="no-break mt-6 flex flex-wrap justify-between text-[11px] gap-2" style={{pageBreakInside:'avoid'}}><div style={{textAlign:'center'}}>Mengetahui,<br/>Kepala SMP Negeri 13 Bandar Lampung<br/><br/><br/><br/><b>Hj. AMAROH, S.Pd.MM</b><br/>NIP. 196711211990032009</div><div style={{textAlign:'center'}}>Bandar Lampung, Juli 2026<br/>Guru Mata Pelajaran<br/><br/><br/><br/><b>{cover.namaGuru || '..........................'}</b><br/>NIP. {cover.nip || '..........................'}</div></div>
+            <div className="mt-3 flex flex-wrap justify-between text-[10px] text-neutral-500 gap-2"><div>Total baris: {filteredAgenda.length} dari {agenda.length}</div></div>
           </div>
         )}
       </div>
