@@ -25,20 +25,21 @@
   .font-judul { font-family: 'EB Garamond', Georgia, serif; }
   .font-tubuh { font-family: 'Inter', system-ui, sans-serif; }
   @media print {
-    .no-print { display: none !important; }
+    .no-print, .preview-toolbar { display: none !important; }
     body { background: white !important; }
     @page { size: A4 landscape; margin: 10mm; }
     .print-wrap { flex-wrap: wrap !important; overflow: visible !important; }
     .print-avoid-break { break-inside: avoid; page-break-inside: avoid; }
     table { font-size: 9px !important; }
+    .day-card { min-width: 160px !important; }
   }
-  .pdf-mode .no-print { display: none !important; }
-  .pdf-mode .print-wrap { display: flex !important; flex-wrap: wrap !important; overflow: visible !important; }
-  .pdf-mode .day-card { min-width: 175px !important; }
-  .pdf-mode table { font-size: 8px !important; }
-  .pdf-mode table th, .pdf-mode table td { padding: 1px 2px !important; }
-  .pdf-mode .font-judul.text-xl { font-size: 15px !important; }
-  .pdf-mode tr { break-inside: avoid; }
+  .preview-mode .no-print { display: none !important; }
+  .preview-mode .print-wrap { display: flex !important; flex-wrap: wrap !important; overflow: visible !important; }
+  .preview-mode .day-card { min-width: 175px !important; }
+  .preview-mode table { font-size: 11px !important; }
+  .preview-mode table th, .preview-mode table td { padding: 2px 4px !important; }
+  .preview-toolbar { position: fixed; top: 0; left: 0; right: 0; z-index: 60; background: #14532d; color: #fff; padding: 10px 16px; display: flex; justify-content: center; gap: 10px; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,.2); }
+  .preview-mode .preview-body { padding-top: 56px; }
 </style>
 </head>
 <body>
@@ -278,46 +279,7 @@ function AgendaGuruApp() {
   const [status, setStatus] = useState('idle');
   const [loaded, setLoaded] = useState(false);
   const saveTimer = useRef(null);
-  const [pdfReady, setPdfReady] = useState(false);
-
-  useEffect(() => {
-    if (window.html2pdf) {
-      setPdfReady(true);
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.2/dist/html2pdf.bundle.min.js';
-    script.async = true;
-    script.onload = () => setPdfReady(true);
-    document.head.appendChild(script);
-  }, []);
-
-  const downloadPdf = async (elementId, filename) => {
-    const el = document.getElementById(elementId);
-    if (!el) return;
-    if (!window.html2pdf) {
-      alert('PDF sedang disiapkan, coba klik lagi dalam beberapa detik...');
-      return;
-    }
-    document.body.classList.add('pdf-mode');
-    await new Promise((r) => setTimeout(r, 60));
-    try {
-      await window
-        .html2pdf()
-        .set({
-          margin: 6,
-          filename,
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
-          pagebreak: { mode: ['avoid-all', 'css'] },
-        })
-        .from(el)
-        .save();
-    } finally {
-      document.body.classList.remove('pdf-mode');
-    }
-  };
+  const [previewMode, setPreviewMode] = useState(false);
 
   useEffect(() => {
     try {
@@ -441,7 +403,19 @@ function AgendaGuruApp() {
   const rowOpen = agenda.find((r) => r.id === openAbsenId);
 
   return (
-    <div className="min-h-screen bg-green-50 text-neutral-900">
+    <div className={`min-h-screen bg-green-50 text-neutral-900 ${previewMode ? 'preview-mode' : ''}`}>
+      {previewMode && (
+        <div className="preview-toolbar">
+          <span className="text-xs font-semibold">👁️ Mode Pratinjau — begini tampilan hasil cetak/PDF-nya</span>
+          <button onClick={() => window.print()} className="px-3 py-1.5 rounded-full bg-white text-green-800 text-xs font-semibold">
+            🖨️ Cetak / Simpan PDF
+          </button>
+          <button onClick={() => setPreviewMode(false)} className="px-3 py-1.5 rounded-full bg-green-700 border border-white/40 text-white text-xs font-semibold">
+            ✏️ Kembali Edit
+          </button>
+        </div>
+      )}
+
       <div className="no-print sticky top-0 z-30 bg-green-50/95 border-b border-green-200 backdrop-blur">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3 flex-wrap">
           <div className="flex items-center gap-3">
@@ -473,7 +447,7 @@ function AgendaGuruApp() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
+      <div className="preview-body max-w-6xl mx-auto px-4 py-6 md:py-8">
         {tab === 'cover' && (
           <div id="cover-content" className="max-w-2xl mx-auto bg-green-100 border-2 border-green-700 rounded-2xl shadow-lg overflow-hidden">
             <div className="px-6 md:px-10 pt-8 pb-10">
@@ -517,8 +491,8 @@ function AgendaGuruApp() {
                 <button onClick={() => window.print()} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-green-300 text-xs font-medium">
                   🖨️ Cetak
                 </button>
-                <button onClick={() => downloadPdf('cover-content', `cover-agenda-guru-${(cover.namaGuru || 'guru').replace(/\s+/g, '-').toLowerCase()}.pdf`)} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-green-700 text-white text-xs font-medium">
-                  ⬇️ Download PDF
+                <button onClick={() => setPreviewMode(true)} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-green-700 text-white text-xs font-medium">
+                  👁️ Pratinjau
                 </button>
               </div>
               <div className="mt-6 text-center text-[10px] tracking-widest uppercase text-neutral-400 font-tubuh">Dokumen resmi guru • Diisi setiap hari mengajar</div>
@@ -536,8 +510,8 @@ function AgendaGuruApp() {
                 <button onClick={() => window.print()} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-green-300 text-xs font-medium">
                   🖨️ Cetak
                 </button>
-                <button onClick={() => downloadPdf('jadwal-content', 'jadwal-mengajar.pdf')} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-green-700 text-white text-xs font-medium">
-                  ⬇️ Download PDF
+                <button onClick={() => setPreviewMode(true)} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-green-700 text-white text-xs font-medium">
+                  👁️ Pratinjau
                 </button>
               </div>
             </div>
@@ -666,8 +640,8 @@ function AgendaGuruApp() {
                 <button onClick={() => window.print()} className="px-3 py-1.5 rounded-full bg-white border border-green-300 text-xs font-medium">
                   🖨️ Cetak
                 </button>
-                <button onClick={() => downloadPdf('agenda-content', 'agenda-harian.pdf')} className="px-3 py-1.5 rounded-full bg-green-700 text-white text-xs font-semibold">
-                  ⬇️ Download PDF
+                <button onClick={() => setPreviewMode(true)} className="px-3 py-1.5 rounded-full bg-green-700 text-white text-xs font-semibold">
+                  👁️ Pratinjau
                 </button>
               </div>
             </div>
