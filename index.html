@@ -120,6 +120,9 @@ const CheckIcon = (p) => <IconBase {...p} paths={[['path', { d: 'M20 6 9 17l-5-5
 /* Data & util                                                         */
 /* ------------------------------------------------------------------ */
 const STORAGE_KEY = 'agenda-guru-smpn13-data';
+// Tempel URL Web App Google Apps Script Bapak di sini (lihat panduan di file AppsScript-Backend.gs).
+// Kalau dikosongkan, aplikasi tetap jalan seperti biasa tapi TIDAK sinkron antar perangkat.
+const API_URL = 'https://script.google.com/macros/s/AKfycbxbr-E1Ib58X6j4cjeoVbeHMq-6Yvt8_GY3ARDmMPDsJ3tNDWxvmzYMd9shIZwKTcrS/exec';
 const DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
 const STATUS_LIST = ['H', 'S', 'I', 'A'];
 const STATUS_LABEL = { H: 'Hadir', S: 'Sakit', I: 'Izin', A: 'Alpa' };
@@ -300,6 +303,9 @@ function AgendaGuruApp() {
   const saveTimer = useRef(null);
   const [previewMode, setPreviewMode] = useState(false);
   const [isPrinting, setIsPrinting] = useState(false);
+  const [syncStatus, setSyncStatus] = useState(API_URL ? 'connecting' : 'off');
+  const lastUpdatedRef = useRef(0);
+  const skipNextSaveRef = useRef(false);
 
   useEffect(() => {
     const before = () => setIsPrinting(true);
@@ -318,6 +324,36 @@ function AgendaGuruApp() {
     return `${d}-${m}-${y}`;
   };
 
+  const applyRemoteData = (dataStr) => {
+    try {
+      const data = JSON.parse(dataStr);
+      skipNextSaveRef.current = true;
+      if (data.cover) setCover(data.cover);
+      if (data.jadwal) setJadwal(data.jadwal);
+      if (data.agenda) setAgenda(data.agenda);
+      if (data.siswa) setSiswa(data.siswa);
+    } catch (e) {
+      // data rusak/kosong, abaikan
+    }
+  };
+
+  const fetchRemote = async (isInitial) => {
+    if (!API_URL) return;
+    try {
+      setSyncStatus((s) => (isInitial ? 'connecting' : s));
+      const res = await fetch(API_URL, { method: 'GET' });
+      const json = await res.json();
+      if (json.ok && json.data && json.updatedAt > lastUpdatedRef.current) {
+        lastUpdatedRef.current = json.updatedAt;
+        applyRemoteData(json.data);
+      }
+      setSyncStatus('online');
+    } catch (e) {
+      setSyncStatus('error');
+    }
+  };
+
+  // Muat dari localStorage dulu (biar langsung kelihatan / offline-ready), lalu tarik dari server
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -331,20 +367,64 @@ function AgendaGuruApp() {
     } catch (e) {
       // abaikan, pakai default
     } finally {
-      setLoaded(true);
+      (async () => {
+        await fetchRemote(true);
+        setLoaded(true);
+      })();
     }
+  }, []);
+
+  // Polling berkala + saat tab/aplikasi dibuka lagi (aktif), supaya HP ikut update
+  useEffect(() => {
+    if (!API_URL) return;
+    const interval = setInterval(() => fetchRemote(false), 15000);
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') fetchRemote(false);
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('focus', onVisible);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('focus', onVisible);
+    };
   }, []);
 
   useEffect(() => {
     if (!loaded) return;
+    if (skipNextSaveRef.current) {
+      skipNextSaveRef.current = false;
+      return;
+    }
     setStatus('saving');
     if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => {
+    saveTimer.current = setTimeout(async () => {
+      const payload = { cover, jadwal, agenda, siswa };
+      const payloadStr = JSON.stringify(payload);
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ cover, jadwal, agenda, siswa }));
+        localStorage.setItem(STORAGE_KEY, payloadStr);
         setStatus('saved');
       } catch (e) {
         setStatus('error');
+      }
+      if (API_URL) {
+        try {
+          setSyncStatus('syncing');
+          const res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ data: payloadStr }),
+          });
+          const json = await res.json();
+          if (json.ok) {
+            lastUpdatedRef.current = json.updatedAt;
+            setSyncStatus('online');
+          } else {
+            setSyncStatus('error');
+          }
+        } catch (e) {
+          setSyncStatus('error');
+        }
       }
     }, 500);
     return () => clearTimeout(saveTimer.current);
@@ -437,6 +517,7 @@ function AgendaGuruApp() {
   };
 
   const statusLabel = status === 'saving' ? 'Menyimpan…' : status === 'saved' ? 'Tersimpan ✓' : status === 'error' ? 'Gagal menyimpan' : 'Siap';
+  const syncLabel = { off: '', connecting: '🔄 Menghubungkan…', syncing: '☁️ Sinkron…', online: '☁️ Tersambung ✓', error: '⚠️ Sinkron gagal' }[syncStatus];
   const rowOpen = agenda.find((r) => r.id === openAbsenId);
 
   const doPrint = () => {
@@ -486,6 +567,9 @@ function AgendaGuruApp() {
               })}
             </div>
             <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-green-200 text-xs font-medium text-neutral-500">{statusLabel}</span>
+            {syncLabel && (
+              <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-green-200 text-xs font-medium text-neutral-500">{syncLabel}</span>
+            )}
           </div>
         </div>
       </div>
