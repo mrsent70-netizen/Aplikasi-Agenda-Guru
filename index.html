@@ -27,7 +27,6 @@
   @media print {
     .no-print, .preview-toolbar { display: none !important; }
     body { background: white !important; }
-    @page { size: A4 landscape; margin: 8mm; }
     .print-wrap { flex-wrap: wrap !important; overflow: visible !important; gap: 6px !important; }
     .print-avoid-break { break-inside: avoid; page-break-inside: avoid; padding: 8px !important; }
     table { font-size: 8px !important; }
@@ -57,6 +56,7 @@
   .preview-toolbar { position: fixed; top: 0; left: 0; right: 0; z-index: 60; background: #14532d; color: #fff; padding: 10px 16px; display: flex; justify-content: center; gap: 10px; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,.2); }
   .preview-mode .preview-body { padding-top: 56px; }
 </style>
+<style id="page-size-style">@page { size: A4 landscape; margin: 8mm; }</style>
 </head>
 <body>
 <div id="root"></div>
@@ -418,12 +418,19 @@ function AgendaGuruApp() {
   const statusLabel = status === 'saving' ? 'Menyimpan…' : status === 'saved' ? 'Tersimpan ✓' : status === 'error' ? 'Gagal menyimpan' : 'Siap';
   const rowOpen = agenda.find((r) => r.id === openAbsenId);
 
+  const doPrint = () => {
+    const el = document.getElementById('page-size-style');
+    const orientation = tab === 'cover' ? 'portrait' : 'landscape';
+    if (el) el.textContent = `@page { size: A4 ${orientation}; margin: 8mm; }`;
+    setTimeout(() => window.print(), 30);
+  };
+
   return (
     <div className={`min-h-screen bg-green-50 text-neutral-900 ${previewMode ? 'preview-mode' : ''}`}>
       {previewMode && (
         <div className="preview-toolbar">
           <span className="text-xs font-semibold">👁️ Mode Pratinjau — begini tampilan hasil cetak/PDF-nya</span>
-          <button onClick={() => window.print()} className="px-3 py-1.5 rounded-full bg-white text-green-800 text-xs font-semibold">
+          <button onClick={doPrint} className="px-3 py-1.5 rounded-full bg-white text-green-800 text-xs font-semibold">
             🖨️ Cetak / Simpan PDF
           </button>
           <button onClick={() => setPreviewMode(false)} className="px-3 py-1.5 rounded-full bg-green-700 border border-white/40 text-white text-xs font-semibold">
@@ -504,7 +511,7 @@ function AgendaGuruApp() {
                 <button onClick={exportJson} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-green-300 text-xs font-medium">
                   <Download size={14} /> Ekspor JSON
                 </button>
-                <button onClick={() => window.print()} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-green-300 text-xs font-medium">
+                <button onClick={doPrint} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-green-300 text-xs font-medium">
                   🖨️ Cetak
                 </button>
                 <button onClick={() => setPreviewMode(true)} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-green-700 text-white text-xs font-medium">
@@ -523,7 +530,7 @@ function AgendaGuruApp() {
                 Jadwal setiap hari kini <b>independen</b>: jumlah jam, jam masuk-pulang, dan kegiatan (Upacara, IMTAQ, Istirahat, MBG + Sholat, dst) bisa berbeda-beda per hari. Baris kegiatan non-mengajar cukup ditandai dengan mengisi kolom <b>No</b> dengan tanda "-".
               </span>
               <div className="shrink-0 flex gap-2">
-                <button onClick={() => window.print()} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-green-300 text-xs font-medium">
+                <button onClick={doPrint} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-green-300 text-xs font-medium">
                   🖨️ Cetak
                 </button>
                 <button onClick={() => setPreviewMode(true)} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-green-700 text-white text-xs font-medium">
@@ -653,7 +660,7 @@ function AgendaGuruApp() {
                 <button onClick={exportJson} className="px-3 py-1.5 rounded-full bg-white border border-green-300 text-xs font-medium inline-flex items-center gap-1">
                   <Download size={12} /> Ekspor
                 </button>
-                <button onClick={() => window.print()} className="px-3 py-1.5 rounded-full bg-white border border-green-300 text-xs font-medium">
+                <button onClick={doPrint} className="px-3 py-1.5 rounded-full bg-white border border-green-300 text-xs font-medium">
                   🖨️ Cetak
                 </button>
                 <button onClick={() => setPreviewMode(true)} className="px-3 py-1.5 rounded-full bg-green-700 text-white text-xs font-semibold">
