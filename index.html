@@ -265,14 +265,14 @@ function TandaTangan({ cover }) {
         <p>Mengetahui,</p>
         <p className="font-semibold">Kepala Sekolah</p>
         <div className="h-6 ttd-gap" />
-        <p className="font-semibold border-b border-neutral-400 pb-0.5">Hj. AMAROH,S.Pd.MM</p>
+        <p className="font-semibold border-b border-neutral-400 pb-0.5">Hj.AMAROH,S.Pd.MM</p>
         <p className="mt-1">NIP. 19671121 199003 2 009</p>
       </div>
       <div className="text-center min-w-[220px]">
         <p>Bandar Lampung, {today}</p>
         <p className="font-semibold">Guru Mata Pelajaran</p>
         <div className="h-6 ttd-gap" />
-  <p className="font-semibold border-b border-neutral-400 pb-0.5">{cover.namaGuru || 'SENTOT HARDIONO,S.Pd'}</p>
+      <p className="font-semibold border-b border-neutral-400 pb-0.5">{cover.namaGuru || 'SENTOT HARDIONO,S.Pd'}</p>
         <p className="mt-1">NIP. {cover.nip || '19701215 200012 1 001'}</p>
       </div>
     </div>
@@ -296,6 +296,24 @@ function AgendaGuruApp() {
   const [loaded, setLoaded] = useState(false);
   const saveTimer = useRef(null);
   const [previewMode, setPreviewMode] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
+
+  useEffect(() => {
+    const before = () => setIsPrinting(true);
+    const after = () => setIsPrinting(false);
+    window.addEventListener('beforeprint', before);
+    window.addEventListener('afterprint', after);
+    return () => {
+      window.removeEventListener('beforeprint', before);
+      window.removeEventListener('afterprint', after);
+    };
+  }, []);
+
+  const formatTgl = (iso) => {
+    if (!iso) return '-';
+    const [y, m, d] = iso.split('-');
+    return `${d}-${m}-${y}`;
+  };
 
   useEffect(() => {
     try {
@@ -690,7 +708,11 @@ function AgendaGuruApp() {
                   {filteredAgenda.map((row, i) => (
                     <tr key={row.id} className={i % 2 === 0 ? 'bg-white' : 'bg-green-50'}>
                       <td className="border border-green-100 p-0">
-                        <input type="date" value={row.tanggal} onChange={(e) => updateAgenda(row.id, 'tanggal', e.target.value)} className="w-full px-1 py-2 bg-transparent outline-none text-[11px]" />
+                        {isPrinting || previewMode ? (
+                          <div className="px-1 py-2 text-[11px]">{formatTgl(row.tanggal)}</div>
+                        ) : (
+                          <input type="date" value={row.tanggal} onChange={(e) => updateAgenda(row.id, 'tanggal', e.target.value)} className="w-full px-1 py-2 bg-transparent outline-none text-[11px]" />
+                        )}
                       </td>
                       <td className="border border-green-100 p-0">
                         <input value={row.jamKe} onChange={(e) => updateAgenda(row.id, 'jamKe', e.target.value)} placeholder="1-2" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
