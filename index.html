@@ -524,7 +524,7 @@ function AgendaGuruApp() {
 
   const doPrint = () => {
     const el = document.getElementById('page-size-style');
-    if (el) el.textContent = `@page { size: A4 landscape; margin: 10mm 10mm 10mm 26mm; }`;
+    if (el) el.textContent = `@page { size: A4 landscape; margin: 8mm 6mm 8mm 34mm; }`;
     setTimeout(() => window.print(), 30);
   };
 
@@ -579,7 +579,7 @@ function AgendaGuruApp() {
       <div className="preview-body max-w-6xl mx-auto px-4 py-6 md:py-8">
         {tab === 'cover' && (
           <div className="cover-page-wrap">
-          <div id="cover-content" className="mx-auto bg-green-100 border-2 border-green-700 rounded-2xl shadow-lg overflow-hidden cover-card print-avoid-break" style={{ maxWidth: 970, width: '100%' }}>
+          <div id="cover-content" className="mx-auto bg-green-100 border-2 border-green-700 rounded-2xl shadow-lg overflow-hidden cover-card print-avoid-break" style={{ maxWidth: 1020, width: '100%' }}>
             <div className="px-6 md:px-10 py-8 flex flex-row items-center gap-6 md:gap-8 cover-grid">
               <div className="flex-shrink-0 text-center cover-left" style={{ flex: '0 0 230px' }}>
                 <img src="https://i.ibb.co.com/Zz9dbRD/logosmp13.png" alt="Logo SMPN 13 Bandar Lampung" className="w-20 h-20 md:w-24 md:h-24 object-contain mx-auto" />
