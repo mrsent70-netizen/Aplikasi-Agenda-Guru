@@ -5,218 +5,184 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Buku Agenda Guru - SMPN 13 Bandar Lampung</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script crossorigin src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
-<script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7/babel.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Inter:wght@400;500;600&display=swap');
   body { font-family: 'Inter', system-ui, sans-serif; }
   .font-judul { font-family: 'EB Garamond', Georgia, serif; }
-  .font-tubuh { font-family: 'Inter', system-ui, sans-serif; }
   @page { size: A4 landscape; margin: 10mm; }
   @media print {
-    .no-print, .preview-toolbar { display: none !important; }
+    .no-print { display: none !important; }
     body { background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .print-avoid-break { break-inside: avoid; page-break-inside: avoid; }
-    .cover-page-wrap { display: flex !important; align-items: center !important; justify-content: center !important; min-height: 95vh !important; width: 100% !important; }
-    .cover-card { max-width: 100% !important; width: 98% !important; margin: 0 auto !important; border-width: 3px !important; }
-    .cover-grid { display: flex !important; flex-direction: row !important; align-items: center !important; gap: 20px !important; width: 100% !important; }
-    .cover-left { flex: 0 0 260px !important; min-width: 260px !important; }
-    .cover-right { flex: 1 !important; min-width: 0 !important; }
-    .day-card { min-width: 165px !important; }
+    .print-avoid { break-inside: avoid; page-break-inside: avoid; }
+    .cover-wrap { display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: center !important; gap: 24px !important; width: 100% !important; min-height: 85vh !important; }
+    .cover-left { flex: 0 0 300px !important; text-align: center !important; }
+    .cover-right { flex: 1 !important; }
   }
-  .preview-mode .no-print { display: none !important; }
-  .preview-toolbar { position: fixed; top: 0; left: 0; right: 0; z-index: 60; background: #14532d; color: #fff; padding: 10px 16px; display: flex; justify-content: center; gap: 10px; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,.2); }
-  .preview-mode .preview-body { padding-top: 56px; }
 </style>
 </head>
-<body>
-<div id="root"></div>
-<script type="text/plain" id="app-source">
-const { useState, useEffect, useRef, useMemo } = React;
-function IconBase({ paths, size = 16, className = '', ...rest }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...rest}>
-      {paths.map(([tag, props], i) => React.createElement(tag, { key: i, ...props }))}
-    </svg>
-  );
-}
-const BookOpen = (p) => <IconBase {...p} paths={[['path', { d: 'M12 7v14' }],['path', { d: 'M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z' }],]} />;
-const CalendarDays = (p) => <IconBase {...p} paths={[['path', { d: 'M8 2v4' }],['path', { d: 'M16 2v4' }],['rect', { width: 18, height: 18, x: 3, y: 4, rx: 2 }],['path', { d: 'M3 10h18' }],['path', { d: 'M8 14h.01' }],['path', { d: 'M12 14h.01' }],['path', { d: 'M16 14h.01' }],['path', { d: 'M8 18h.01' }],['path', { d: 'M12 18h.01' }],['path', { d: 'M16 18h.01' }],]} />;
-const Clock3 = (p) => <IconBase {...p} paths={[['circle', { cx: 12, cy: 12, r: 10 }],['polyline', { points: '12 6 12 12 16.5 12' }]]} />;
-const Download = (p) => <IconBase {...p} paths={[['path', { d: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' }],['polyline', { points: '7 10 12 15 17 10' }],['line', { x1: 12, x2: 12, y1: 15, y2: 3 }],]} />;
-const Plus = (p) => <IconBase {...p} paths={[['path', { d: 'M5 12h14' }],['path', { d: 'M12 5v14' }]]} />;
-const Save = (p) => <IconBase {...p} paths={[['path', { d: 'M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z' }],['path', { d: 'M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7' }],['path', { d: 'M7 3v4a1 1 0 0 0 1 1h7' }],]} />;
-const SearchIcon = (p) => <IconBase {...p} paths={[['circle', { cx: 11, cy: 11, r: 8 }],['path', { d: 'm21 21-4.3-4.3' }]]} />;
-const Trash2 = (p) => <IconBase {...p} paths={[['path', { d: 'M3 6h18' }],['path', { d: 'M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6' }],['path', { d: 'M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2' }],['line', { x1: 10, x2: 10, y1: 11, y2: 17 }],['line', { x1: 14, x2: 14, y1: 11, y2: 17 }],]} />;
-const Users = (p) => <IconBase {...p} paths={[['path', { d: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2' }],['circle', { cx: 9, cy: 7, r: 4 }],['path', { d: 'M22 21v-2a4 4 0 0 0-3-3.87' }],['path', { d: 'M16 3.13a4 4 0 0 1 0 7.75' }],]} />;
-const XIcon = (p) => <IconBase {...p} paths={[['path', { d: 'M18 6 6 18' }],['path', { d: 'm6 6 12 12' }]]} />;
-const CheckIcon = (p) => <IconBase {...p} paths={[['path', { d: 'M20 6 9 17l-5-5' }]]} />;
-const STORAGE_KEY = 'agenda-guru-smpn13-data';
-const API_URL = 'https://script.google.com/macros/s/AKfycbxbr-E1Ib58X6j4cjeoVbeHMq-6Yvt8_GY3ARDmMPDsJ3tNDWxvmzYMd9shIZwKTcrS/exec';
-const DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
-const STATUS_LIST = ['H', 'S', 'I', 'A'];
-const STATUS_LABEL = { H: 'Hadir', S: 'Sakit', I: 'Izin', A: 'Alpa' };
-let uidCounter = 1;
-const uid = (prefix) => `${prefix}-${Date.now().toString(36)}-${uidCounter++}`;
-function buildDefaultDays() {
-  return {
-    Senin: [{ id: uid('sn'), no: '0', pukul: '07:00-08:15', kegiatan: 'Upacara + IMTAQ' },{ id: uid('sn'), no: '1', pukul: '08:15-08:55', kegiatan: '' },{ id: uid('sn'), no: '2', pukul: '08:55-09:35', kegiatan: '' },{ id: uid('sn'), no: '-', pukul: '09:35-10:05', kegiatan: 'Istirahat' },{ id: uid('sn'), no: '3', pukul: '10:05-10:45', kegiatan: '' },{ id: uid('sn'), no: '4', pukul: '10:45-11:25', kegiatan: '' },{ id: uid('sn'), no: '-', pukul: '11:25-12:25', kegiatan: 'MBG + Sholat' },{ id: uid('sn'), no: '5', pukul: '12:25-13:05', kegiatan: '' },{ id: uid('sn'), no: '6', pukul: '13:05-13:45', kegiatan: '' },{ id: uid('sn'), no: '7', pukul: '13:45-14:25', kegiatan: '' },{ id: uid('sn'), no: '8', pukul: '14:25-15:00', kegiatan: '' },],
-    Selasa: [{ id: uid('sl'), no: '0', pukul: '07:00-07:40', kegiatan: 'IMTAQ' },{ id: uid('sl'), no: '1', pukul: '07:40-08:20', kegiatan: '' },{ id: uid('sl'), no: '2', pukul: '08:20-09:00', kegiatan: '' },{ id: uid('sl'), no: '3', pukul: '09:00-09:40', kegiatan: '' },{ id: uid('sl'), no: '-', pukul: '09:40-10:10', kegiatan: 'Istirahat' },{ id: uid('sl'), no: '4', pukul: '10:10-10:50', kegiatan: '' },{ id: uid('sl'), no: '5', pukul: '10:50-11:30', kegiatan: '' },{ id: uid('sl'), no: '-', pukul: '11:30-12:30', kegiatan: 'MBG + Sholat' },{ id: uid('sl'), no: '6', pukul: '12:30-13:10', kegiatan: '' },{ id: uid('sl'), no: '7', pukul: '13:10-13:50', kegiatan: '' },{ id: uid('sl'), no: '8', pukul: '13:50-14:25', kegiatan: '' },{ id: uid('sl'), no: '9', pukul: '14:25-15:00', kegiatan: '' },],
-    Rabu: [{ id: uid('rb'), no: '0', pukul: '07:00-08:15', kegiatan: 'Senam + IMTAQ' },{ id: uid('rb'), no: '1', pukul: '08:15-08:55', kegiatan: '' },{ id: uid('rb'), no: '2', pukul: '08:55-09:35', kegiatan: '' },{ id: uid('rb'), no: '-', pukul: '09:35-10:10', kegiatan: 'Istirahat' },{ id: uid('rb'), no: '3', pukul: '10:10-10:50', kegiatan: '' },{ id: uid('rb'), no: '4', pukul: '10:50-11:30', kegiatan: '' },{ id: uid('rb'), no: '-', pukul: '11:30-12:30', kegiatan: 'MBG + Sholat' },{ id: uid('rb'), no: '5', pukul: '12:30-13:10', kegiatan: '' },{ id: uid('rb'), no: '6', pukul: '13:10-13:50', kegiatan: '' },{ id: uid('rb'), no: '7', pukul: '13:50-14:30', kegiatan: '' },],
-    Kamis: [{ id: uid('km'), no: '0', pukul: '07:00-07:40', kegiatan: 'IMTAQ' },{ id: uid('km'), no: '1', pukul: '07:40-08:20', kegiatan: '' },{ id: uid('km'), no: '2', pukul: '08:20-09:00', kegiatan: '' },{ id: uid('km'), no: '3', pukul: '09:00-09:40', kegiatan: '' },{ id: uid('km'), no: '-', pukul: '09:40-10:10', kegiatan: 'Istirahat' },{ id: uid('km'), no: '4', pukul: '10:10-10:50', kegiatan: '' },{ id: uid('km'), no: '5', pukul: '10:50-11:30', kegiatan: '' },{ id: uid('km'), no: '-', pukul: '11:30-12:30', kegiatan: 'MBG + Sholat' },{ id: uid('km'), no: '6', pukul: '12:30-13:10', kegiatan: '' },{ id: uid('km'), no: '7', pukul: '13:10-13:50', kegiatan: '' },{ id: uid('km'), no: '8', pukul: '13:50-14:30', kegiatan: '' },],
-    Jumat: [{ id: uid('jm'), no: '0', pukul: '07:00-08:00', kegiatan: 'Senam + IMTAQ' },{ id: uid('jm'), no: '1', pukul: '08:00-08:30', kegiatan: '' },{ id: uid('jm'), no: '2', pukul: '08:30-09:00', kegiatan: '' },{ id: uid('jm'), no: '-', pukul: '09:00-09:30', kegiatan: 'Istirahat' },{ id: uid('jm'), no: '3', pukul: '09:30-10:00', kegiatan: '' },{ id: uid('jm'), no: '4', pukul: '10:00-10:30', kegiatan: '' },{ id: uid('jm'), no: '-', pukul: '10:30-11:30', kegiatan: 'MBG + Pulang' },],
-  };
-}
-function buildDefaultAgenda() { return [{ id: uid('ag'), tanggal: new Date().toISOString().slice(0, 10), jamKe: '', kelas: '', kdRpp: '', kompetensi: '', x: '', y: '', selesai: '', absensi: '', absensiDetail: {}, keterangan: '' },]; }
-const defaultCover = { namaGuru: '', nip: '', mapel: '', sekolah: 'SMP Negeri 13 Bandar Lampung', alamat: '' };
-function PanelAbsensi({ row, roster, onUpdateStatus, onApply, onClose, onGoToSiswa }) {
-  const detail = row.absensiDetail || {};
-  return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[85vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
-        <div className="px-4 py-3 bg-green-700 text-white rounded-t-2xl flex items-center justify-between">
-          <div><div className="font-bold text-sm">Absensi Siswa</div><div className="text-[11px] opacity-90">{row.kelas || '(kelas belum diisi)'} • {row.tanggal}</div></div>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-white/20"><XIcon size={16} /></button>
-        </div>
-        {roster.length === 0 ? (
-          <div className="p-5 text-sm text-neutral-600 space-y-3"><p>Daftar siswa untuk kelas <b>{row.kelas || '-'}</b> belum ada.</p><button onClick={onGoToSiswa} className="px-3 py-2 rounded-full bg-green-700 text-white text-xs font-semibold">Tambah daftar siswa kelas ini</button></div>
-        ) : (
-          <div className="overflow-y-auto p-3 space-y-1">
-            {roster.map((nama, idx) => { const st = detail[nama] || 'H'; return (<div key={nama + idx} className="flex items-center justify-between gap-2 px-2 py-1.5 rounded-lg hover:bg-green-50"><span className="text-sm">{idx + 1}. {nama}</span><div className="flex gap-1">{STATUS_LIST.map((s) => (<button key={s} onClick={() => onUpdateStatus(nama, s)} title={STATUS_LABEL[s]} className={`w-7 h-7 rounded-full text-[11px] font-bold border ${st === s ? 'bg-green-700 text-white border-green-700' : 'bg-white text-neutral-500 border-green-200 hover:bg-green-100'}`}>{s}</button>))}</div></div>); })}
-          </div>
-        )}
-        {roster.length > 0 && (<div className="p-3 border-t border-green-100 flex justify-end gap-2"><button onClick={onClose} className="px-3 py-2 rounded-full text-xs font-medium text-neutral-500">Batal</button><button onClick={onApply} className="px-4 py-2 rounded-full bg-green-700 text-white text-xs font-semibold inline-flex items-center gap-1"><CheckIcon size={14} /> Terapkan</button></div>)}
+<body class="bg-green-50">
+<div id="app" class="min-h-screen p-4 max-w-6xl mx-auto">
+  <div class="no-print flex flex-wrap justify-between items-center gap-3 bg-white p-3 rounded-full border border-green-200 shadow-sm mb-6">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 bg-green-800 text-white rounded-full grid place-items-center font-bold">A</div>
+      <div><div class="font-bold text-sm">BUKU AGENDA GURU</div><div class="text-[10px] text-gray-500">SMPN 13 Bandar Lampung</div></div>
+    </div>
+    <div class="flex gap-2">
+      <button onclick="showTab('cover')" id="btn-cover" class="px-3 py-1.5 rounded-full bg-green-700 text-white text-xs font-bold">COVER</button>
+      <button onclick="showTab('jadwal')" id="btn-jadwal" class="px-3 py-1.5 rounded-full bg-white border text-xs">JADWAL</button>
+      <button onclick="showTab('agenda')" id="btn-agenda" class="px-3 py-1.5 rounded-full bg-white border text-xs">AGENDA HARIAN</button>
+      <button onclick="window.print()" class="px-3 py-1.5 rounded-full bg-green-800 text-white text-xs font-bold">🖨 Cetak / PDF Landscape</button>
+    </div>
+  </div>
+
+  <!-- COVER -->
+  <div id="tab-cover">
+    <div class="cover-wrap mx-auto bg-green-100 border-2 border-green-700 rounded-2xl shadow-lg p-6 md:p-8 flex flex-col md:flex-row items-center gap-6" style="max-width:1100px">
+      <div class="cover-left text-center" style="flex:0 0 320px">
+        <img src="https://i.ibb.co.com/Zz9dbRD/logosmp13.png" alt="Logo" class="w-28 h-28 object-contain mx-auto">
+        <h1 class="font-judul text-4xl font-bold mt-3">AGENDA GURU</h1>
+        <h2 class="tracking-[0.2em] text-green-800 font-semibold mt-1">TUGAS MENGAJAR</h2>
+        <div class="w-20 h-1 bg-green-800 mx-auto rounded-full mt-3"></div>
+        <p class="mt-3 text-[12px] font-bold tracking-wide">SMP NEGERI 13 BANDAR LAMPUNG</p>
+        <p class="text-[10px] text-gray-500 mt-2">Dokumen resmi guru • Diisi setiap hari mengajar</p>
+      </div>
+      <div class="cover-right bg-white/90 border-2 border-green-700 rounded-xl p-6 space-y-4 w-full">
+        <div class="flex gap-3 items-end"><span class="w-36 text-[11px] font-bold uppercase text-gray-500">Nama Guru</span><input id="namaGuru" class="flex-1 border-b-2 border-dashed border-green-700/60 outline-none bg-transparent font-medium" placeholder="Nama lengkap gelar"></div>
+        <div class="flex gap-3 items-end"><span class="w-36 text-[11px] font-bold uppercase text-gray-500">NIP / NUPTK</span><input id="nip" class="flex-1 border-b-2 border-dashed border-green-700/60 outline-none bg-transparent font-medium" placeholder="Nomor induk"></div>
+        <div class="flex gap-3 items-end"><span class="w-36 text-[11px] font-bold uppercase text-gray-500">Mata Pelajaran</span><input id="mapel" class="flex-1 border-b-2 border-dashed border-green-700/60 outline-none bg-transparent font-medium" placeholder="Contoh: IPA"></div>
+        <div class="flex gap-3 items-end"><span class="w-36 text-[11px] font-bold uppercase text-gray-500">Nama Sekolah</span><input id="sekolah" value="SMP Negeri 13 Bandar Lampung" class="flex-1 border-b-2 border-dashed border-green-700/60 outline-none bg-transparent font-medium"></div>
+        <div class="flex gap-3 items-end"><span class="w-36 text-[11px] font-bold uppercase text-gray-500">Alamat Sekolah</span><textarea id="alamat" rows="2" class="flex-1 border-b-2 border-dashed border-green-700/60 outline-none bg-transparent resize-none" placeholder="Alamat lengkap"></textarea></div>
+        <div class="flex gap-3 items-end"><span class="w-36 text-[11px] font-bold uppercase text-gray-500">TP</span><input id="tp" value="2025/2026" class="flex-1 border-b-2 border-dashed border-green-700/60 outline-none bg-transparent font-medium"></div>
+        <div class="pt-2 text-[11px] text-gray-600">Data tersimpan otomatis di browser. Cover ini <b>tanpa TTD</b> sesuai permintaan.</div>
       </div>
     </div>
-  );
-}
-function TandaTangan({ cover }) {
-  const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-  return (
-    <div className="mt-2 pt-2 border-t border-dashed border-green-300 flex flex-wrap justify-between gap-8 text-xs font-tubuh ttd-block print-avoid-break" style={{breakInside:'avoid'}}>
-      <div className="text-center min-w-[220px]"><p>Mengetahui,</p><p className="font-semibold">Kepala SMP Negeri 13 Bandar Lampung</p><div className="h-6" /><p className="font-semibold">Hj. AMAROH, S.Pd.MM</p><p className="mt-1">NIP. 196711211990032009</p></div>
-      <div className="text-center min-w-[220px]"><p>Bandar Lampung, {today}</p><p className="font-semibold">Guru Mata Pelajaran</p><div className="h-6" /><p className="font-semibold">{cover.namaGuru || '.........................................'}</p><p className="mt-1">NIP. {cover.nip || '.........................................'}</p></div>
+  </div>
+
+  <!-- JADWAL -->
+  <div id="tab-jadwal" class="hidden space-y-4">
+    <div class="bg-white border border-green-200 rounded-xl p-3 text-xs">Jadwal per hari beda waktu (Senin Upacara 07:00-08:15, Selasa IMTAQ 07:00-07:40, Jumat MBG+Pulang) - bisa edit langsung di tabel</div>
+    <div id="jadwal-container" class="flex gap-3 overflow-x-auto pb-2"></div>
+    <div class="print-avoid bg-green-100 border border-green-200 rounded-xl p-3 flex justify-between text-[11px] mt-2" style="break-inside:avoid">
+      <div style="text-align:center; width:240px">Mengetahui,<br/>Kepala SMP Negeri 13 Bandar Lampung<br/><br/><br/><b>Hj. AMAROH, S.Pd.MM</b><br/>NIP. 196711211990032009</div>
+      <div style="text-align:center; width:240px">Bandar Lampung, <span id="tgl-ttd"></span><br/>Guru Mata Pelajaran<br/><br/><br/><b id="ttd-nama">..........................</b><br/>NIP. <span id="ttd-nip">..........................</span></div>
     </div>
-  );
-}
-function AgendaGuruApp() {
-  const [tab, setTab] = useState('cover');
-  const [cover, setCover] = useState(defaultCover);
-  const [jadwal, setJadwal] = useState({ ganjil: { tp: '2025/2026', days: buildDefaultDays() }, genap: { tp: '2025/2026', days: buildDefaultDays() }, });
-  const [agenda, setAgenda] = useState(buildDefaultAgenda());
-  const [siswa, setSiswa] = useState({});
-  const [kelasBaru, setKelasBaru] = useState('');
-  const [openAbsenId, setOpenAbsenId] = useState(null);
-  const [filterTgl, setFilterTgl] = useState(''); const [filterTeks, setFilterTeks] = useState('');
-  const [status, setStatus] = useState('idle'); const [loaded, setLoaded] = useState(false);
-  const saveTimer = useRef(null); const [previewMode, setPreviewMode] = useState(false); const [isPrinting, setIsPrinting] = useState(false);
-  const [syncStatus, setSyncStatus] = useState(API_URL ? 'connecting' : 'off');
-  const lastUpdatedRef = useRef(0); const skipNextSaveRef = useRef(false);
-  useEffect(() => { const before = () => setIsPrinting(true); const after = () => setIsPrinting(false); window.addEventListener('beforeprint', before); window.addEventListener('afterprint', after); return () => { window.removeEventListener('beforeprint', before); window.removeEventListener('afterprint', after); }; }, []);
-  const formatTgl = (iso) => { if (!iso) return '-'; const [y, m, d] = iso.split('-'); return `${d}-${m}-${y}`; };
-  const applyRemoteData = (dataStr) => { try { const data = JSON.parse(dataStr); skipNextSaveRef.current = true; if (data.cover) setCover(data.cover); if (data.jadwal) setJadwal(data.jadwal); if (data.agenda) setAgenda(data.agenda); if (data.siswa) setSiswa(data.siswa); } catch (e) {} };
-  const fetchRemote = async (isInitial) => { if (!API_URL) return; try { setSyncStatus((s) => (isInitial ? 'connecting' : s)); const res = await fetch(API_URL, { method: 'GET' }); const json = await res.json(); if (json.ok && json.data && json.updatedAt > lastUpdatedRef.current) { lastUpdatedRef.current = json.updatedAt; applyRemoteData(json.data); } setSyncStatus('online'); } catch (e) { setSyncStatus('error'); } };
-  useEffect(() => { try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) { const data = JSON.parse(raw); if (data.cover) setCover(data.cover); if (data.jadwal) setJadwal(data.jadwal); if (data.agenda) setAgenda(data.agenda); if (data.siswa) setSiswa(data.siswa); } } catch (e) {} finally { (async () => { await fetchRemote(true); setLoaded(true); })(); } }, []);
-  useEffect(() => { if (!API_URL) return; const interval = setInterval(() => fetchRemote(false), 15000); const onVisible = () => { if (document.visibilityState === 'visible') fetchRemote(false); }; document.addEventListener('visibilitychange', onVisible); window.addEventListener('focus', onVisible); return () => { clearInterval(interval); document.removeEventListener('visibilitychange', onVisible); window.removeEventListener('focus', onVisible); }; }, []);
-  useEffect(() => { if (!loaded) return; if (skipNextSaveRef.current) { skipNextSaveRef.current = false; return; } setStatus('saving'); if (saveTimer.current) clearTimeout(saveTimer.current); saveTimer.current = setTimeout(async () => { const payload = { cover, jadwal, agenda, siswa }; const payloadStr = JSON.stringify(payload); try { localStorage.setItem(STORAGE_KEY, payloadStr); setStatus('saved'); } catch (e) { setStatus('error'); } if (API_URL) { try { setSyncStatus('syncing'); const res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ data: payloadStr }), }); const json = await res.json(); if (json.ok) { lastUpdatedRef.current = json.updatedAt; setSyncStatus('online'); } else { setSyncStatus('error'); } } catch (e) { setSyncStatus('error'); } } }, 500); return () => clearTimeout(saveTimer.current); }, [cover, jadwal, agenda, siswa, loaded]);
-  const updateRow = (sem, day, id, field, value) => { setJadwal((prev) => ({ ...prev, [sem]: { ...prev[sem], days: { ...prev[sem].days, [day]: prev[sem].days[day].map((r) => (r.id === id ? { ...r, [field]: value } : r)) } })); };
-  const addRow = (sem, day) => { setJadwal((prev) => { const rows = prev[sem].days[day]; const newRow = { id: uid(day.slice(0, 2).toLowerCase()), no: String(rows.length), pukul: '', kegiatan: '' }; return { ...prev, [sem]: { ...prev[sem], days: { ...prev[sem].days, [day]: [...rows, newRow] } } }; }); };
-  const removeRow = (sem, day, id) => { setJadwal((prev) => { const rows = prev[sem].days[day]; if (rows.length <= 1) return prev; return { ...prev, [sem]: { ...prev[sem], days: { ...prev[sem].days, [day]: rows.filter((r) => r.id !== id) } } }; }); };
-  const setTp = (sem, value) => setJadwal((prev) => ({ ...prev, [sem]: { ...prev[sem], tp: value } }));
-  const addKelas = () => { const nama = kelasBaru.trim(); if (!nama || siswa[nama]) return; setSiswa((prev) => ({ ...prev, [nama]: [] })); setKelasBaru(''); };
-  const removeKelas = (nama) => { setSiswa((prev) => { const next = { ...prev }; delete next[nama]; return next; }); };
-  const setRosterText = (nama, text) => { const names = text.split('\n').map((s) => s.trim()).filter(Boolean); setSiswa((prev) => ({ ...prev, [nama]: names })); };
-  const updateAgenda = (id, field, value) => setAgenda((prev) => prev.map((r) => (r.id === id ? { ...r, [field]: value } : r)));
-  const addAgenda = () => { setAgenda((prev) => [{ id: uid('ag'), tanggal: new Date().toISOString().slice(0, 10), jamKe: '', kelas: '', kdRpp: '', kompetensi: '', x: '', y: '', selesai: '', absensi: '', absensiDetail: {}, keterangan: '' }, ...prev,]); };
-  const removeAgenda = (id) => setAgenda((prev) => (prev.length <= 1 ? prev : prev.filter((r) => r.id !== id)));
-  const updateAbsenStatus = (rowId, nama, st) => { setAgenda((prev) => prev.map((r) => (r.id === rowId ? { ...r, absensiDetail: { ...(r.absensiDetail || {}), [nama]: st } } : r))); };
-  const applyAbsen = (rowId) => { const row = agenda.find((r) => r.id === rowId); if (!row) return; const roster = siswa[row.kelas] || []; const detail = row.absensiDetail || {}; const tidakHadir = roster.map((nama, i) => ({ no: i + 1, nama, st: detail[nama] || 'H' })).filter((s) => s.st !== 'H'); const totalHadir = roster.length - tidakHadir.length; const lines = tidakHadir.map((s) => `${s.no}. ${s.nama} (${s.st})`); const ringkasan = [...lines, `Hadir: ${totalHadir}/${roster.length}`].join('\n'); updateAgenda(rowId, 'absensi', ringkasan); setOpenAbsenId(null); };
-  const filteredAgenda = useMemo(() => { return agenda.filter((r) => { const okTgl = filterTgl ? r.tanggal === filterTgl : true; const okTeks = filterTeks ? (r.kelas + ' ' + r.kompetensi).toLowerCase().includes(filterTeks.toLowerCase()) : true; return okTgl && okTeks; }); }, [agenda, filterTgl, filterTeks]);
-  const totalSlot = useMemo(() => DAYS.reduce((sum, d) => sum + jadwal.ganjil.days[d].filter((r) => r.no !== '-').length, 0), [jadwal]);
-  const exportJson = () => { const blob = new Blob([JSON.stringify({ cover, jadwal, agenda, siswa }, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `agenda-guru-${(cover.namaGuru || 'guru').replace(/\s+/g, '-').toLowerCase()}.json`; a.click(); URL.revokeObjectURL(url); };
-  const statusLabel = status === 'saving' ? 'Menyimpan…' : status === 'saved' ? 'Tersimpan ✓' : status === 'error' ? 'Gagal menyimpan' : 'Siap';
-  const syncLabel = { off: '', connecting: '🔄 Menghubungkan…', syncing: '☁ Sinkron…', online: '☁ Tersambung ✓', error: '⚠ Sinkron gagal' }[syncStatus];
-  const rowOpen = agenda.find((r) => r.id === openAbsenId);
-  const doPrint = () => { setTimeout(() => window.print(), 30); };
-  return (
-    <div className={`min-h-screen bg-green-50 text-neutral-900 ${previewMode ? 'preview-mode' : ''}`}>
-      {previewMode && (<div className="preview-toolbar"><span className="text-xs font-semibold">👁 Pratinjau Cetak Landscape</span><button onClick={doPrint} className="px-3 py-1.5 rounded-full bg-white text-green-800 text-xs font-semibold">🖨 Cetak / Simpan PDF</button><button onClick={() => setPreviewMode(false)} className="px-3 py-1.5 rounded-full bg-green-700 border border-white/40 text-white text-xs font-semibold">✏ Kembali Edit</button></div>)}
-      <div className="no-print sticky top-0 z-30 bg-green-50/95 border-b border-green-200 backdrop-blur">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3 flex-wrap">
-          <div className="flex items-center gap-3"><div className="w-9 h-9 rounded-full bg-green-800 text-white grid place-items-center font-judul font-bold text-lg">A</div><div className="leading-tight"><div className="font-semibold text-sm tracking-wide">BUKU AGENDA GURU</div><div className="text-[11px] text-neutral-500">SMPN 13 Bandar Lampung • Kurikulum Merdeka</div></div></div>
-          <div className="flex items-center gap-2">
-            <div className="flex flex-wrap p-1 bg-white rounded-full border border-green-200 shadow-sm">
-              {[{ k: 'cover', label: 'COVER', icon: BookOpen },{ k: 'jadwal', label: 'JADWAL', icon: Clock3 },{ k: 'siswa', label: 'SISWA', icon: Users },{ k: 'agenda', label: 'AGENDA HARIAN', icon: CalendarDays },].map((m) => { const Icon = m.icon; const active = tab === m.k; return (<button key={m.k} onClick={() => setTab(m.k)} className={`px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide flex items-center gap-1.5 transition ${active ? 'bg-green-700 text-white shadow' : 'text-neutral-600 hover:bg-green-100'}`}><Icon size={14} /> {m.label}</button>); })}
-            </div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-green-200 text-xs font-medium text-neutral-500">{statusLabel}</span>
-            {syncLabel && (<span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-green-200 text-xs font-medium text-neutral-500">{syncLabel}</span>)}
-          </div>
-        </div>
+  </div>
+
+  <!-- AGENDA -->
+  <div id="tab-agenda" class="hidden">
+    <div class="bg-green-100 border border-green-200 rounded-2xl p-4">
+      <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+        <h3 class="font-bold text-lg">Agenda Harian Mengajar - Absensi bisa ENTER</h3>
+        <div class="flex gap-2 no-print"><button onclick="tambahAgenda()" class="px-3 py-1.5 rounded-full bg-green-700 text-white text-xs">+ Tambah Baris</button><button onclick="window.print()" class="px-3 py-1.5 rounded-full bg-green-800 text-white text-xs">🖨 Cetak Landscape</button></div>
       </div>
-      <div className="preview-body max-w-6xl mx-auto px-4 py-6 md:py-8">
-        {tab === 'cover' && (
-          <div className="cover-page-wrap">
-          <div id="cover-content" className="mx-auto bg-green-100 border-2 border-green-700 rounded-2xl shadow-lg overflow-hidden cover-card print-avoid-break" style={{maxWidth: 1050, width: '100%'}}>
-            <div className="px-6 md:px-10 py-8 flex flex-row items-center gap-6 md:gap-8 cover-grid">
-              <div className="flex-shrink-0 text-center cover-left" style={{flex:'0 0 280px'}}>
-                <img src="https://i.ibb.co.com/Zz9dbRD/logosmp13.png" alt="Logo SMPN 13 Bandar Lampung" className="w-24 h-24 md:w-28 md:h-28 object-contain mx-auto" />
-                <div className="mt-4 font-judul">
-                  <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 leading-tight">AGENDA GURU</h1>
-                  <h2 className="mt-1 text-sm md:text-base tracking-[0.2em] font-semibold text-green-800">TUGAS MENGAJAR</h2>
-                  <div className="mt-3 w-20 h-1 bg-green-800 mx-auto rounded-full" />
-                  <p className="mt-3 text-[11px] font-bold text-neutral-700 tracking-wide">SMP NEGERI 13 BANDAR LAMPUNG</p>
-                </div>
-                <div className="mt-3 text-[10px] tracking-widest uppercase text-neutral-500 font-tubuh">Dokumen resmi guru<br/>Diisi setiap hari mengajar</div>
-              </div>
-              <div className="flex-1 w-full bg-white/90 border-2 border-green-700 rounded-xl p-5 md:p-6 space-y-3 cover-right">
-                {[{ label: 'Nama Guru', key: 'namaGuru', placeholder: 'Nama lengkap dengan gelar' },{ label: 'NIP / NUPTK', key: 'nip', placeholder: 'Nomor induk pegawai' },{ label: 'Mata Pelajaran', key: 'mapel', placeholder: 'Contoh: Matematika' },{ label: 'Nama Sekolah', key: 'sekolah', placeholder: 'SMP Negeri 13 Bandar Lampung' },{ label: 'Alamat Sekolah', key: 'alamat', placeholder: 'Alamat lengkap sekolah', multiline: true },].map((f) => (
-                  <div key={f.key} className="flex flex-col md:flex-row md:items-end gap-2">
-                    <div className="md:w-36 shrink-0 text-[11px] font-bold tracking-widest uppercase text-neutral-500">{f.label}</div>
-                    <div className="flex-1 border-b-2 border-dashed border-green-700/60 pb-1">
-                      {f.multiline ? (<textarea value={cover[f.key]} onChange={(e) => setCover({ ...cover, [f.key]: e.target.value })} placeholder={f.placeholder} rows={3} className="w-full bg-transparent outline-none resize-none text-sm font-medium" />) : (<input value={cover[f.key]} onChange={(e) => setCover({ ...cover, [f.key]: e.target.value })} placeholder={f.placeholder} className="w-full bg-transparent outline-none text-sm font-medium" />)}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="pb-6 flex flex-wrap justify-center gap-2 no-print">
-              <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-green-700 text-white text-xs font-semibold"><Save size={14} /> {statusLabel}</span>
-              <button onClick={exportJson} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-green-300 text-xs font-medium"><Download size={14} /> Ekspor JSON</button>
-              <button onClick={doPrint} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-green-300 text-xs font-medium">🖨 Cetak Landscape</button>
-              <button onClick={() => setPreviewMode(true)} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-green-700 text-white text-xs font-medium">👁 Pratinjau</button>
-            </div>
-          </div>
-          </div>
-        )}
-        {tab === 'jadwal' && (
-          <div id="jadwal-content" className="space-y-6">
-            <div className="bg-white border border-green-200 rounded-2xl p-4 text-xs leading-relaxed text-neutral-600 no-print flex flex-wrap items-center justify-between gap-3"><span>Jadwal independen per hari - bisa beda jam masuk/pulang</span><div className="flex gap-2"><button onClick={doPrint} className="px-4 py-2 rounded-full bg-white border border-green-300 text-xs">🖨 Cetak</button><button onClick={() => setPreviewMode(true)} className="px-4 py-2 rounded-full bg-green-700 text-white text-xs">👁 Pratinjau</button></div></div>
-            {['ganjil','genap'].map((sem) => (<div key={sem} className="bg-green-100 border border-green-200 rounded-2xl p-4 print-avoid-break"><div className="flex flex-wrap items-center justify-between gap-3 mb-3"><h3 className="font-judul text-lg font-bold">JADWAL MENGAJAR SEMESTER {sem.toUpperCase()}</h3><div className="flex items-center gap-2 text-xs"><span>TP:</span><input value={jadwal[sem].tp} onChange={(e) => setTp(sem, e.target.value)} className="w-28 px-2 py-1 rounded-full border border-green-300 bg-white text-xs font-semibold"/></div></div><div className="flex gap-2 overflow-x-auto pb-2">{DAYS.map((day) => { const rows = jadwal[sem].days[day]; return (<div key={day} className="bg-white rounded-xl border border-green-300 overflow-hidden flex-shrink-0 day-card" style={{minWidth:210}}><div className="px-2 py-1.5 bg-green-700 text-white flex items-center justify-between"><span className="font-bold text-[10px] tracking-widest">{day.toUpperCase()}</span><button onClick={() => addRow(sem, day)} className="p-1 rounded-full hover:bg-white/20 no-print"><Plus size={11} /></button></div><table className="w-full text-[10px] border-collapse"><thead><tr className="bg-green-50"><th className="p-1 border border-green-100">No</th><th className="p-1 border border-green-100">Pukul</th><th className="p-1 border border-green-100">Kelas</th><th className="p-1 border border-green-100 w-4 no-print"></th></tr></thead><tbody>{rows.map((row) => { const isBreak = row.no.trim() === '-'; return (<tr key={row.id} className={isBreak ? 'bg-yellow-50' : ''}><td className="border border-green-100 p-0"><input value={row.no} onChange={(e) => updateRow(sem, day, row.id, 'no', e.target.value)} className="w-full text-center py-1 bg-transparent outline-none font-semibold"/></td><td className="border border-green-100 p-0"><input value={row.pukul} onChange={(e) => updateRow(sem, day, row.id, 'pukul', e.target.value)} className="w-full py-1 px-1 bg-transparent outline-none"/></td><td className="border border-green-100 p-0"><input value={row.kegiatan} onChange={(e) => updateRow(sem, day, row.id, 'kegiatan', e.target.value)} className={`w-full py-1 px-1 bg-transparent outline-none ${isBreak ? 'italic text-green-700' : ''}`}/></td><td className="border border-green-100 p-0 text-center no-print"><button onClick={() => removeRow(sem, day, row.id)} className="text-red-500"><Trash2 size={10} /></button></td></tr>);})}</tbody></table></div>);})}</div><TandaTangan cover={cover} /></div>))}
-          </div>
-        )}
-        {tab === 'siswa' && (
-          <div className="space-y-4"><div className="bg-white border border-green-200 rounded-2xl p-4 text-xs">Daftar nama siswa per kelas - dipakai untuk absensi H/S/I/A</div><div className="bg-green-100 border border-green-200 rounded-2xl p-4"><div className="flex flex-wrap gap-2 items-center mb-4"><input value={kelasBaru} onChange={(e) => setKelasBaru(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addKelas()} placeholder="Nama kelas baru, contoh: IX A" className="px-3 py-2 rounded-full border border-green-300 bg-white text-sm flex-1 min-w-[180px]"/><button onClick={addKelas} className="px-4 py-2 rounded-full bg-green-700 text-white text-xs font-semibold"><Plus size={14} /> Tambah Kelas</button></div><div className="grid md:grid-cols-2 gap-4">{Object.entries(siswa).map(([namaKelas, daftar]) => (<div key={namaKelas} className="bg-white rounded-xl border border-green-300 overflow-hidden"><div className="px-3 py-2 bg-green-700 text-white flex items-center justify-between"><span className="font-bold text-xs">{namaKelas.toUpperCase()} • {daftar.length} siswa</span><button onClick={() => removeKelas(namaKelas)} className="p-1 rounded-full hover:bg-white/20"><Trash2 size={13} /></button></div><textarea defaultValue={daftar.join('\n')} onBlur={(e) => setRosterText(namaKelas, e.target.value)} placeholder={'Satu nama per baris'} rows={8} className="w-full p-3 text-sm outline-none resize-none" /></div>))}</div></div></div>
-        )}
-        {tab === 'agenda' && (
-          <div id="agenda-content" className="bg-green-100 border border-green-200 rounded-2xl p-4">
-            <div className="flex flex-wrap items-center justify-between gap-3"><div><h3 className="font-judul text-xl font-bold">Agenda Harian Mengajar</h3><p className="text-[11px] text-neutral-500 no-print">Absensi bisa ENTER beberapa siswa</p></div><div className="no-print flex flex-wrap items-center gap-2"><div className="flex items-center gap-1.5 bg-white border border-green-300 rounded-full px-2 py-1"><SearchIcon size={13} /><input value={filterTeks} onChange={(e) => setFilterTeks(e.target.value)} placeholder="Cari kelas" className="w-32 outline-none text-xs bg-transparent"/></div><input type="date" value={filterTgl} onChange={(e) => setFilterTgl(e.target.value)} className="px-2 py-1.5 rounded-full border border-green-300 bg-white text-xs"/>{filterTgl && (<button onClick={() => setFilterTgl('')} className="text-[11px] underline">Reset</button>)}<button onClick={addAgenda} className="px-3 py-1.5 rounded-full bg-green-700 text-white text-xs"><Plus size={14} /> Tambah</button><button onClick={exportJson} className="px-3 py-1.5 rounded-full bg-white border border-green-300 text-xs">Ekspor</button><button onClick={doPrint} className="px-3 py-1.5 rounded-full bg-white border border-green-300 text-xs">🖨 Cetak</button><button onClick={() => setPreviewMode(true)} className="px-3 py-1.5 rounded-full bg-green-700 text-white text-xs">👁 Pratinjau</button></div></div>
-            <div className="mt-4 overflow-x-auto rounded-xl border border-green-700 bg-white"><table className="w-full text-[11px] border-collapse"><thead><tr className="bg-green-700 text-white text-[10px]"><th className="p-2 border border-green-800 w-28">Tanggal</th><th className="p-2 border border-green-800 w-16">Jam Ke</th><th className="p-2 border border-green-800 w-20">Kelas</th><th className="p-2 border border-green-800 w-16">KD/RPP</th><th className="p-2 border border-green-800" style={{minWidth:180}}>Kompetensi</th><th className="p-2 border border-green-800 w-7">X</th><th className="p-2 border border-green-800 w-7">Y</th><th className="p-2 border border-green-800 w-24">Selesai</th><th className="p-2 border border-green-800" style={{minWidth:200}}>Absensi Siswa (ENTER)</th><th className="p-1 border border-green-800 w-8 no-print"></th></tr></thead><tbody>{filteredAgenda.map((row, i) => (<tr key={row.id} className={i % 2 === 0 ? 'bg-white' : 'bg-green-50'}><td className="border border-green-100 p-0"><input type="date" value={row.tanggal} onChange={(e) => updateAgenda(row.id, 'tanggal', e.target.value)} className="w-full px-1 py-2 bg-transparent outline-none text-[11px]"/></td><td className="border border-green-100 p-0"><input value={row.jamKe} onChange={(e) => updateAgenda(row.id, 'jamKe', e.target.value)} className="w-full px-1 py-2 bg-transparent outline-none text-center"/></td><td className="border border-green-100 p-0"><input list="daftar-kelas" value={row.kelas} onChange={(e) => updateAgenda(row.id, 'kelas', e.target.value)} className="w-full px-1 py-2 bg-transparent outline-none"/></td><td className="border border-green-100 p-0"><input value={row.kdRpp} onChange={(e) => updateAgenda(row.id, 'kdRpp', e.target.value)} className="w-full px-1 py-2 bg-transparent outline-none text-center"/></td><td className="border border-green-100 p-0"><input value={row.kompetensi} onChange={(e) => updateAgenda(row.id, 'kompetensi', e.target.value)} className="w-full px-2 py-2 bg-transparent outline-none"/></td><td className="border border-green-100 p-0"><input value={row.x} onChange={(e) => updateAgenda(row.id, 'x', e.target.value)} className="w-full text-center py-2 bg-transparent outline-none"/></td><td className="border border-green-100 p-0"><input value={row.y} onChange={(e) => updateAgenda(row.id, 'y', e.target.value)} className="w-full text-center py-2 bg-transparent outline-none"/></td><td className="border border-green-100 p-0"><input value={row.selesai} onChange={(e) => updateAgenda(row.id, 'selesai', e.target.value)} className="w-full px-1 py-2 bg-transparent outline-none"/></td><td className="border border-green-100 p-0"><div className="flex items-start gap-1"><textarea value={row.absensi} onChange={(e) => updateAgenda(row.id, 'absensi', e.target.value)} placeholder="Hadir, atau klik ikon" rows={Math.max(2, (row.absensi.match(/\n/g) || []).length + 1)} className="w-full px-1 py-2 bg-transparent outline-none text-[11px] resize-none"></textarea><button onClick={() => setOpenAbsenId(row.id)} className="no-print shrink-0 mt-1 p-1 rounded hover:bg-green-100 text-green-700"><Users size={13} /></button></div></td><td className="border border-green-100 p-0 text-center no-print"><button onClick={() => removeAgenda(row.id)} className="p-1.5 hover:bg-red-50 rounded text-red-500"><Trash2 size={12} /></button></td></tr>))}</tbody></table><datalist id="daftar-kelas">{Object.keys(siswa).map((k) => (<option key={k} value={k} />))}</datalist></div><TandaTangan cover={cover} /></div>
-        )}
+      <div class="overflow-x-auto bg-white rounded-xl border border-green-700">
+        <table class="w-full text-[11px] border-collapse" style="min-width:1100px">
+          <thead><tr class="bg-green-700 text-white"><th class="p-2 border">Tanggal</th><th class="p-2 border">Jam Ke</th><th class="p-2 border">Kelas</th><th class="p-2 border">KD/RPP</th><th class="p-2 border" style="min-width:200px">Kompetensi</th><th class="p-2 border">X</th><th class="p-2 border">Y</th><th class="p-2 border">Selesai</th><th class="p-2 border" style="min-width:200px">Absensi Siswa (ENTER)</th><th class="p-2 border no-print">Hapus</th></tr></thead>
+          <tbody id="agenda-body"></tbody>
+        </table>
       </div>
-      {rowOpen && (<PanelAbsensi row={rowOpen} roster={siswa[rowOpen.kelas] || []} onUpdateStatus={(nama, st) => updateAbsenStatus(rowOpen.id, nama, st)} onApply={() => applyAbsen(rowOpen.id)} onClose={() => setOpenAbsenId(null)} onGoToSiswa={() => { setKelasBaru(rowOpen.kelas || ''); setOpenAbsenId(null); setTab('siswa'); }} />)}
-      <div className="no-print max-w-6xl mx-auto px-4 pb-8 text-center text-[10px] text-neutral-400">Aplikasi Buku Agenda Guru • SMPN 13 Bandar Lampung • Data tersimpan otomatis</div>
+      <div class="print-avoid mt-3 flex justify-between text-[11px] p-3 bg-white rounded-xl border" style="break-inside:avoid">
+        <div style="text-align:center; width:240px">Mengetahui,<br/>Kepala SMP Negeri 13 Bandar Lampung<br/><br/><br/><b>Hj. AMAROH, S.Pd.MM</b><br/>NIP. 196711211990032009</div>
+        <div style="text-align:center; width:240px">Bandar Lampung, <span class="tgl-ttd2"></span><br/>Guru Mata Pelajaran<br/><br/><br/><b class="ttd-nama2">..........................</b><br/>NIP. <span class="ttd-nip2">..........................</span></div>
+      </div>
     </div>
-  );
-}
-ReactDOM.createRoot(document.getElementById('root')).render(<AgendaGuruApp />);
-</script>
+  </div>
+</div>
+
 <script>
-  (function () {
-    var src = document.getElementById('app-source').textContent;
-    var result = Babel.transform(src, { presets: [['react', { runtime: 'classic' }], 'env'] });
-    var script = document.createElement('script'); script.text = result.code; document.body.appendChild(script);
-  })();
+const DAYS = ['Senin','Selasa','Rabu','Kamis','Jumat'];
+const defaultJadwal = {
+  Senin: [{no:'0',pukul:'07:00-08:15',kegiatan:'Upacara + IMTAQ'},{no:'1',pukul:'08:15-08:55',kegiatan:''},{no:'2',pukul:'08:55-09:35',kegiatan:''},{no:'-',pukul:'09:35-10:05',kegiatan:'Istirahat'},{no:'3',pukul:'10:05-10:45',kegiatan:''},{no:'4',pukul:'10:45-11:25',kegiatan:''},{no:'-',pukul:'11:25-12:25',kegiatan:'MBG + Sholat'},{no:'5',pukul:'12:25-13:05',kegiatan:''},{no:'6',pukul:'13:05-13:45',kegiatan:''},{no:'7',pukul:'13:45-14:25',kegiatan:''},{no:'8',pukul:'14:25-15:00',kegiatan:''}],
+  Selasa: [{no:'0',pukul:'07:00-07:40',kegiatan:'IMTAQ'},{no:'1',pukul:'07:40-08:20',kegiatan:''},{no:'2',pukul:'08:20-09:00',kegiatan:''},{no:'3',pukul:'09:00-09:40',kegiatan:''},{no:'-',pukul:'09:40-10:10',kegiatan:'Istirahat'},{no:'4',pukul:'10:10-10:50',kegiatan:''},{no:'5',pukul:'10:50-11:30',kegiatan:''},{no:'-',pukul:'11:30-12:30',kegiatan:'MBG + Sholat'},{no:'6',pukul:'12:30-13:10',kegiatan:''},{no:'7',pukul:'13:10-13:50',kegiatan:''},{no:'8',pukul:'13:50-14:25',kegiatan:''},{no:'9',pukul:'14:25-15:00',kegiatan:''}],
+  Rabu: [{no:'0',pukul:'07:00-08:15',kegiatan:'Senam + IMTAQ'},{no:'1',pukul:'08:15-08:55',kegiatan:''},{no:'2',pukul:'08:55-09:35',kegiatan:''},{no:'-',pukul:'09:35-10:10',kegiatan:'Istirahat'},{no:'3',pukul:'10:10-10:50',kegiatan:''},{no:'4',pukul:'10:50-11:30',kegiatan:''},{no:'-',pukul:'11:30-12:30',kegiatan:'MBG + Sholat'},{no:'5',pukul:'12:30-13:10',kegiatan:''},{no:'6',pukul:'13:10-13:50',kegiatan:''},{no:'7',pukul:'13:50-14:30',kegiatan:''}],
+  Kamis: [{no:'0',pukul:'07:00-07:40',kegiatan:'IMTAQ'},{no:'1',pukul:'07:40-08:20',kegiatan:''},{no:'2',pukul:'08:20-09:00',kegiatan:''},{no:'3',pukul:'09:00-09:40',kegiatan:''},{no:'-',pukul:'09:40-10:10',kegiatan:'Istirahat'},{no:'4',pukul:'10:10-10:50',kegiatan:''},{no:'5',pukul:'10:50-11:30',kegiatan:''},{no:'-',pukul:'11:30-12:30',kegiatan:'MBG + Sholat'},{no:'6',pukul:'12:30-13:10',kegiatan:''},{no:'7',pukul:'13:10-13:50',kegiatan:''},{no:'8',pukul:'13:50-14:30',kegiatan:''}],
+  Jumat: [{no:'0',pukul:'07:00-08:00',kegiatan:'Senam + IMTAQ'},{no:'1',pukul:'08:00-08:30',kegiatan:''},{no:'2',pukul:'08:30-09:00',kegiatan:''},{no:'-',pukul:'09:00-09:30',kegiatan:'Istirahat'},{no:'3',pukul:'09:30-10:00',kegiatan:''},{no:'4',pukul:'10:00-10:30',kegiatan:''},{no:'-',pukul:'10:30-11:30',kegiatan:'MBG + Pulang'}],
+};
+let jadwalData = JSON.parse(localStorage.getItem('jadwal-simple') || JSON.stringify(defaultJadwal));
+let agendaData = JSON.parse(localStorage.getItem('agenda-simple') || '[{"id":1,"tanggal":"'+new Date().toISOString().slice(0,10)+'","jamKe":"","kelas":"","kdRpp":"","kompetensi":"","x":"","y":"","selesai":"","absensi":"","keterangan":""}]');
+
+function saveAll(){
+  localStorage.setItem('jadwal-simple', JSON.stringify(jadwalData));
+  localStorage.setItem('agenda-simple', JSON.stringify(agendaData));
+  localStorage.setItem('cover-simple', JSON.stringify({nama:document.getElementById('namaGuru').value, nip:document.getElementById('nip').value, mapel:document.getElementById('mapel').value, sekolah:document.getElementById('sekolah').value, alamat:document.getElementById('alamat').value, tp:document.getElementById('tp').value}));
+  updateTTD();
+}
+function loadCover(){
+  try{
+    const c = JSON.parse(localStorage.getItem('cover-simple')||'{}');
+    if(c.nama) document.getElementById('namaGuru').value=c.nama;
+    if(c.nip) document.getElementById('nip').value=c.nip;
+    if(c.mapel) document.getElementById('mapel').value=c.mapel;
+    if(c.sekolah) document.getElementById('sekolah').value=c.sekolah;
+    if(c.alamat) document.getElementById('alamat').value=c.alamat;
+    if(c.tp) document.getElementById('tp').value=c.tp;
+  }catch(e){}
+}
+function updateTTD(){
+  const nama = document.getElementById('namaGuru').value || '..........................';
+  const nip = document.getElementById('nip').value || '..........................';
+  document.getElementById('ttd-nama').textContent=nama;
+  document.getElementById('ttd-nip').textContent=nip;
+  document.querySelectorAll('.ttd-nama2').forEach(el=>el.textContent=nama);
+  document.querySelectorAll('.ttd-nip2').forEach(el=>el.textContent=nip);
+  const tgl = new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('tgl-ttd').textContent=tgl;
+  document.querySelectorAll('.tgl-ttd2').forEach(el=>el.textContent=tgl);
+}
+function showTab(t){
+  document.getElementById('tab-cover').classList.add('hidden');
+  document.getElementById('tab-jadwal').classList.add('hidden');
+  document.getElementById('tab-agenda').classList.add('hidden');
+  document.getElementById('tab-'+t).classList.remove('hidden');
+  document.querySelectorAll('[id^="btn-"]').forEach(b=>{b.classList.remove('bg-green-700','text-white'); b.classList.add('bg-white','border')});
+  document.getElementById('btn-'+t).classList.add('bg-green-700','text-white'); document.getElementById('btn-'+t).classList.remove('bg-white','border');
+}
+function renderJadwal(){
+  const cont = document.getElementById('jadwal-container');
+  cont.innerHTML='';
+  DAYS.forEach(day=>{
+    const rows = jadwalData[day];
+    const card = document.createElement('div');
+    card.className='bg-white rounded-xl border border-green-300 overflow-hidden flex-shrink-0';
+    card.style.minWidth='210px';
+    let html=`<div class="px-2 py-1.5 bg-green-700 text-white font-bold text-[10px] text-center">${day.toUpperCase()} - ${rows.length} SESI</div><table class="w-full text-[10px] border-collapse"><tr class="bg-green-50"><th class="border p-1">No</th><th class="border p-1">Pukul</th><th class="border p-1">Kelas</th></tr>`;
+    rows.forEach((r,i)=>{
+      const bg = r.no==='-' ? 'bg-yellow-50' : '';
+      html+=`<tr class="${bg}"><td class="border p-0"><input value="${r.no}" onchange="jadwalData['${day}'][${i}].no=this.value; saveAll()" class="w-full text-center py-1 bg-transparent outline-none font-bold"></td><td class="border p-0"><input value="${r.pukul}" onchange="jadwalData['${day}'][${i}].pukul=this.value; saveAll()" class="w-full py-1 px-1 bg-transparent outline-none"></td><td class="border p-0"><input value="${r.kegiatan}" onchange="jadwalData['${day}'][${i}].kegiatan=this.value; saveAll()" class="w-full py-1 px-1 bg-transparent outline-none"></td></tr>`;
+    });
+    html+=`</table>`;
+    card.innerHTML=html;
+    cont.appendChild(card);
+  });
+}
+function renderAgenda(){
+  const body = document.getElementById('agenda-body');
+  body.innerHTML='';
+  agendaData.forEach((row, idx)=>{
+    const tr = document.createElement('tr');
+    tr.className = idx%2===0?'bg-white':'bg-green-50';
+    tr.innerHTML=`
+      <td class="border p-0"><input type="date" value="${row.tanggal}" onchange="agendaData[${idx}].tanggal=this.value; saveAll()" class="w-full px-1 py-2 bg-transparent outline-none text-[11px]"></td>
+      <td class="border p-0"><input value="${row.jamKe}" onchange="agendaData[${idx}].jamKe=this.value; saveAll()" class="w-full text-center py-2 bg-transparent outline-none"></td>
+      <td class="border p-0"><input value="${row.kelas}" onchange="agendaData[${idx}].kelas=this.value; saveAll()" placeholder="IX A" class="w-full px-1 py-2 bg-transparent outline-none"></td>
+      <td class="border p-0"><input value="${row.kdRpp}" onchange="agendaData[${idx}].kdRpp=this.value; saveAll()" class="w-full text-center py-2 bg-transparent outline-none"></td>
+      <td class="border p-0"><input value="${row.kompetensi}" onchange="agendaData[${idx}].kompetensi=this.value; saveAll()" placeholder="KD" class="w-full px-1 py-2 bg-transparent outline-none"></td>
+      <td class="border p-0"><input value="${row.x}" onchange="agendaData[${idx}].x=this.value; saveAll()" class="w-full text-center py-2 bg-transparent outline-none"></td>
+      <td class="border p-0"><input value="${row.y}" onchange="agendaData[${idx}].y=this.value; saveAll()" class="w-full text-center py-2 bg-transparent outline-none"></td>
+      <td class="border p-0"><input value="${row.selesai}" onchange="agendaData[${idx}].selesai=this.value; saveAll()" class="w-full px-1 py-2 bg-transparent outline-none"></td>
+      <td class="border p-0"><textarea onchange="agendaData[${idx}].absensi=this.value; saveAll()" rows="3" placeholder="Hadir 32, ENTER untuk baris baru - contoh: 1. Andre (A)" class="w-full px-1 py-2 bg-transparent outline-none resize-y text-[11px]" style="min-height:60px">${row.absensi||''}</textarea></td>
+      <td class="border p-0 text-center no-print"><button onclick="agendaData.splice(${idx},1); if(agendaData.length===0) agendaData.push({id:Date.now(),tanggal:'${new Date().toISOString().slice(0,10)}',jamKe:'',kelas:'',kdRpp:'',kompetensi:'',x:'',y:'',selesai:'',absensi:'',keterangan:''}); saveAll(); renderAgenda()" class="text-red-500 p-1">🗑</button></td>
+    `;
+    body.appendChild(tr);
+  });
+}
+function tambahAgenda(){
+  agendaData.unshift({id:Date.now(),tanggal:new Date().toISOString().slice(0,10),jamKe:'',kelas:'',kdRpp:'',kompetensi:'',x:'',y:'',selesai:'',absensi:'',keterangan:''});
+  saveAll(); renderAgenda();
+}
+document.querySelectorAll('#namaGuru,#nip,#mapel,#sekolah,#alamat,#tp').forEach(el=>el.addEventListener('input', saveAll));
+loadCover(); renderJadwal(); renderAgenda(); updateTTD();
+showTab('cover');
 </script>
 </body>
 </html>
