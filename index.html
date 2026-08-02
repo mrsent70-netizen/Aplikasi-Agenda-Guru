@@ -271,15 +271,15 @@ function TandaTangan({ cover }) {
         <p>Mengetahui,</p>
         <p className="font-semibold">Kepala Sekolah</p>
         <div className="h-6 ttd-gap" />
-        <p className="font-semibold border-b border-neutral-400 pb-0.5">Hj.AMAROH,S.Pd.MM</p>
-        <p className="mt-1">NIP. 19671121 199003 2 009</p>
+        <p className="font-semibold border-b border-neutral-400 pb-0.5">.........................................</p>
+        <p className="mt-1">NIP. .........................................</p>
       </div>
       <div className="text-center min-w-[220px]">
         <p>Bandar Lampung, {today}</p>
         <p className="font-semibold">Guru Mata Pelajaran</p>
         <div className="h-6 ttd-gap" />
-        <p className="font-semibold border-b border-neutral-400 pb-0.5">{cover.namaGuru || 'SENTOT HARDIONO,S.Pd'}</p>
-        <p className="mt-1">NIP. {cover.nip || '19701215 200012 1 001'}</p>
+        <p className="font-semibold border-b border-neutral-400 pb-0.5">{cover.namaGuru || '.........................................'}</p>
+        <p className="mt-1">NIP. {cover.nip || '.........................................'}</p>
       </div>
     </div>
   );
@@ -785,8 +785,7 @@ function AgendaGuruApp() {
                     <th className="p-2 border border-green-800 w-9">X</th>
                     <th className="p-2 border border-green-800 w-9">Y</th>
                     <th className="p-2 border border-green-800 w-32">Selesai / Belum + Alasan</th>
-                    <th className="p-2 border border-green-800 w-40">Absensi Siswa</th>
-                    <th className="p-2 border border-green-800 w-24">Keterangan</th>
+                    <th className="p-2 border border-green-800" style={{ minWidth: 260 }}>Absensi Siswa</th>
                     <th className="p-1 border border-green-800 w-8 no-print" />
                   </tr>
                 </thead>
@@ -828,9 +827,6 @@ function AgendaGuruApp() {
                             <Users size={13} />
                           </button>
                         </div>
-                      </td>
-                      <td className="border border-green-100 p-0">
-                        <input value={row.keterangan} onChange={(e) => updateAgenda(row.id, 'keterangan', e.target.value)} className="w-full px-1 py-2 bg-transparent outline-none" />
                       </td>
                       <td className="border border-green-100 p-0 text-center no-print">
                         <button onClick={() => removeAgenda(row.id)} className="p-1.5 hover:bg-red-50 rounded text-red-500">
