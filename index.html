@@ -141,8 +141,8 @@ function buildDefaultDays() {
       { id: uid('sn'), no: '-', pukul: '09:35-10:05', kegiatan: 'Istirahat' },
       { id: uid('sn'), no: '3', pukul: '10:05-10:45', kegiatan: '' },
       { id: uid('sn'), no: '4', pukul: '10:45-11:25', kegiatan: '' },
-      { id: uid('sn'), no: '-', pukul: '11:25-12:25', kegiatan: 'MBG + Sholat' },
-      { id: uid('sn'), no: '5', pukul: '12:25-13:05', kegiatan: '' },
+      { id: uid('sn'), no: '5', pukul: '11:25-12:05', kegiatan: '' },
+      { id: uid('sn'), no: '-', pukul: '12:05-13:05', kegiatan: 'MBG + Sholat' },
       { id: uid('sn'), no: '6', pukul: '13:05-13:45', kegiatan: '' },
       { id: uid('sn'), no: '7', pukul: '13:45-14:25', kegiatan: '' },
       { id: uid('sn'), no: '8', pukul: '14:25-15:00', kegiatan: '' },
@@ -155,8 +155,8 @@ function buildDefaultDays() {
       { id: uid('sl'), no: '-', pukul: '09:40-10:10', kegiatan: 'Istirahat' },
       { id: uid('sl'), no: '4', pukul: '10:10-10:50', kegiatan: '' },
       { id: uid('sl'), no: '5', pukul: '10:50-11:30', kegiatan: '' },
-      { id: uid('sl'), no: '-', pukul: '11:30-12:30', kegiatan: 'MBG + Sholat' },
-      { id: uid('sl'), no: '6', pukul: '12:30-13:10', kegiatan: '' },
+      { id: uid('sl'), no: '6', pukul: '11:30-12:10', kegiatan: '' },
+      { id: uid('sl'), no: '-', pukul: '12:10-13:10', kegiatan: 'MBG + Sholat' },
       { id: uid('sl'), no: '7', pukul: '13:10-13:50', kegiatan: '' },
       { id: uid('sl'), no: '8', pukul: '13:50-14:25', kegiatan: '' },
       { id: uid('sl'), no: '9', pukul: '14:25-15:00', kegiatan: '' },
@@ -168,8 +168,8 @@ function buildDefaultDays() {
       { id: uid('rb'), no: '-', pukul: '09:35-10:10', kegiatan: 'Istirahat' },
       { id: uid('rb'), no: '3', pukul: '10:10-10:50', kegiatan: '' },
       { id: uid('rb'), no: '4', pukul: '10:50-11:30', kegiatan: '' },
-      { id: uid('rb'), no: '-', pukul: '11:30-12:30', kegiatan: 'MBG + Sholat' },
-      { id: uid('rb'), no: '5', pukul: '12:30-13:10', kegiatan: '' },
+      { id: uid('rb'), no: '5', pukul: '11:30-12:10', kegiatan: '' },
+      { id: uid('rb'), no: '-', pukul: '12:10-13:10', kegiatan: 'MBG + Sholat' },
       { id: uid('rb'), no: '6', pukul: '13:10-13:50', kegiatan: '' },
       { id: uid('rb'), no: '7', pukul: '13:50-14:30', kegiatan: '' },
     ],
@@ -181,8 +181,8 @@ function buildDefaultDays() {
       { id: uid('km'), no: '-', pukul: '09:40-10:10', kegiatan: 'Istirahat' },
       { id: uid('km'), no: '4', pukul: '10:10-10:50', kegiatan: '' },
       { id: uid('km'), no: '5', pukul: '10:50-11:30', kegiatan: '' },
-      { id: uid('km'), no: '-', pukul: '11:30-12:30', kegiatan: 'MBG + Sholat' },
-      { id: uid('km'), no: '6', pukul: '12:30-13:10', kegiatan: '' },
+      { id: uid('km'), no: '6', pukul: '11:30-12:10', kegiatan: '' },
+      { id: uid('km'), no: '-', pukul: '12:10-13:10', kegiatan: 'MBG + Sholat' },
       { id: uid('km'), no: '7', pukul: '13:10-13:50', kegiatan: '' },
       { id: uid('km'), no: '8', pukul: '13:50-14:30', kegiatan: '' },
     ],
@@ -193,7 +193,8 @@ function buildDefaultDays() {
       { id: uid('jm'), no: '-', pukul: '09:00-09:30', kegiatan: 'Istirahat' },
       { id: uid('jm'), no: '3', pukul: '09:30-10:00', kegiatan: '' },
       { id: uid('jm'), no: '4', pukul: '10:00-10:30', kegiatan: '' },
-      { id: uid('jm'), no: '-', pukul: '10:30-11:30', kegiatan: 'MBG + Pulang' },
+      { id: uid('jm'), no: '5', pukul: '10:30-11:00', kegiatan: '' },
+      { id: uid('jm'), no: '-', pukul: '11:00-11:30', kegiatan: 'MBG + Pulang' },
     ],
   };
 }
@@ -524,7 +525,7 @@ function AgendaGuruApp() {
 
   const doPrint = () => {
     const el = document.getElementById('page-size-style');
-    if (el) el.textContent = `@page { size: A4 landscape; margin: 8mm 6mm 8mm 45mm; }`;
+    if (el) el.textContent = `@page { size: A4 landscape; margin: 6mm 6mm 6mm 45mm; }`;
     setTimeout(() => window.print(), 30);
   };
 
