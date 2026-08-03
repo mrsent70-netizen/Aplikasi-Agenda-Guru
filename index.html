@@ -194,14 +194,16 @@
       <p data-template-id="app-kicker" class="canva-text text-xs font-bold uppercase tracking-[.2em]"></p>
       <h1 data-template-id="app-title" class="canva-text mt-1 font-judul text-3xl font-bold leading-none"></h1>
      </div>
-     <div class="flex flex-wrap gap-2"><button id="preview-button" type="button" data-template-id="preview-button" class="canva-button rounded-full border px-4 py-2 text-sm font-semibold transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2"></button> <button id="print-button" type="button" data-template-id="print-button" class="canva-button rounded-full px-4 py-2 text-sm font-semibold shadow-sm transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-green-800 focus:ring-offset-2"></button>
+     <div class="flex flex-wrap gap-2">
+      <button id="preview-button" type="button" data-template-id="preview-button" class="canva-button rounded-full border px-4 py-2 text-sm font-semibold transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2"></button> <button id="print-button" type="button" data-template-id="print-button" class="canva-button rounded-full px-4 py-2 text-sm font-semibold shadow-sm transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-green-800 focus:ring-offset-2"></button>
      </div>
     </div>
    </header>
    <main class="print-stage mx-auto w-full max-w-7xl px-4 py-7 sm:px-6">
     <section aria-label="Cover Buku Agenda Guru" class="flex w-full justify-center">
      <article class="a4-sheet">
-      <div class="binding-guide no-print" aria-hidden="true"><span>Ruang Jilid · 28 mm</span>
+      <div class="binding-guide no-print" aria-hidden="true">
+       <span>Ruang Jilid · 28 mm</span>
       </div>
       <div class="cover-border" aria-hidden="true"></div>
       <div class="cover-inner">
@@ -233,24 +235,34 @@
         <section data-template-id="identity-panel" class="canva-panel rounded-xl border p-4 sm:p-5">
          <h3 data-template-id="identity-heading" class="canva-text mb-4 text-[clamp(10px,1.2vw,14px)] font-bold uppercase tracking-[.15em]"></h3>
          <div class="grid gap-x-7 gap-y-3 md:grid-cols-2">
-          <div class="grid grid-cols-[clamp(88px,13vw,145px)_1fr] items-end gap-3"><label data-template-id="label-teacher" class="canva-text text-[clamp(9px,1vw,12px)] font-bold uppercase tracking-wider" for="teacher-name"></label>
-           <div class="identity-line"><input id="teacher-name" class="identity-input" type="text" placeholder="Nama lengkap dengan gelar">
+          <div class="grid grid-cols-[clamp(88px,13vw,145px)_1fr] items-end gap-3">
+           <label data-template-id="label-teacher" class="canva-text text-[clamp(9px,1vw,12px)] font-bold uppercase tracking-wider" for="teacher-name"></label>
+           <div class="identity-line">
+            <input id="teacher-name" class="identity-input" type="text" placeholder="Nama lengkap dengan gelar">
            </div>
           </div>
-          <div class="grid grid-cols-[clamp(88px,13vw,145px)_1fr] items-end gap-3"><label data-template-id="label-nip" class="canva-text text-[clamp(9px,1vw,12px)] font-bold uppercase tracking-wider" for="teacher-nip"></label>
-           <div class="identity-line"><input id="teacher-nip" class="identity-input" type="text" placeholder="Nomor induk pegawai">
+          <div class="grid grid-cols-[clamp(88px,13vw,145px)_1fr] items-end gap-3">
+           <label data-template-id="label-nip" class="canva-text text-[clamp(9px,1vw,12px)] font-bold uppercase tracking-wider" for="teacher-nip"></label>
+           <div class="identity-line">
+            <input id="teacher-nip" class="identity-input" type="text" placeholder="Nomor induk pegawai">
            </div>
           </div>
-          <div class="grid grid-cols-[clamp(88px,13vw,145px)_1fr] items-end gap-3"><label data-template-id="label-subject" class="canva-text text-[clamp(9px,1vw,12px)] font-bold uppercase tracking-wider" for="subject"></label>
-           <div class="identity-line"><input id="subject" class="identity-input" type="text" placeholder="Contoh: Matematika">
+          <div class="grid grid-cols-[clamp(88px,13vw,145px)_1fr] items-end gap-3">
+           <label data-template-id="label-subject" class="canva-text text-[clamp(9px,1vw,12px)] font-bold uppercase tracking-wider" for="subject"></label>
+           <div class="identity-line">
+            <input id="subject" class="identity-input" type="text" placeholder="Contoh: Matematika">
            </div>
           </div>
-          <div class="grid grid-cols-[clamp(88px,13vw,145px)_1fr] items-end gap-3"><label data-template-id="label-school" class="canva-text text-[clamp(9px,1vw,12px)] font-bold uppercase tracking-wider" for="school"></label>
-           <div class="identity-line"><input id="school" class="identity-input" type="text" placeholder="Nama satuan pendidikan">
+          <div class="grid grid-cols-[clamp(88px,13vw,145px)_1fr] items-end gap-3">
+           <label data-template-id="label-school" class="canva-text text-[clamp(9px,1vw,12px)] font-bold uppercase tracking-wider" for="school"></label>
+           <div class="identity-line">
+            <input id="school" class="identity-input" type="text" placeholder="Nama satuan pendidikan">
            </div>
           </div>
-          <div class="grid grid-cols-[clamp(88px,13vw,145px)_1fr] items-end gap-3 md:col-span-2"><label data-template-id="label-address" class="canva-text self-start pt-1 text-[clamp(9px,1vw,12px)] font-bold uppercase tracking-wider" for="school-address"></label>
-           <div class="identity-line"><textarea id="school-address" class="identity-input identity-textarea" placeholder="Alamat lengkap sekolah"></textarea>
+          <div class="grid grid-cols-[clamp(88px,13vw,145px)_1fr] items-end gap-3 md:col-span-2">
+           <label data-template-id="label-address" class="canva-text self-start pt-1 text-[clamp(9px,1vw,12px)] font-bold uppercase tracking-wider" for="school-address"></label>
+           <div class="identity-line">
+            <textarea id="school-address" class="identity-input identity-textarea" placeholder="Alamat lengkap sekolah"></textarea>
            </div>
           </div>
          </div>
