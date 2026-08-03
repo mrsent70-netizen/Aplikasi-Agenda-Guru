@@ -524,7 +524,7 @@ function AgendaGuruApp() {
 
   const doPrint = () => {
     const el = document.getElementById('page-size-style');
-    if (el) el.textContent = `@page { size: A4 landscape; margin: 8mm 6mm 8mm 45mm; }`;
+    if (el) el.textContent = `@page { size: A4 landscape; margin: 6mm 6mm 6mm 45mm; }`;
     setTimeout(() => window.print(), 30);
   };
 
