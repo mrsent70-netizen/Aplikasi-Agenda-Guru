@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <title>Buku Agenda Guru - SMPN 13 Bandar Lampung</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script crossorigin src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
@@ -141,8 +144,8 @@ function buildDefaultDays() {
       { id: uid('sn'), no: '-', pukul: '09:35-10:05', kegiatan: 'Istirahat' },
       { id: uid('sn'), no: '3', pukul: '10:05-10:45', kegiatan: '' },
       { id: uid('sn'), no: '4', pukul: '10:45-11:25', kegiatan: '' },
-      { id: uid('sn'), no: '5', pukul: '11:25-12:05', kegiatan: '' },
-      { id: uid('sn'), no: '-', pukul: '12:05-13:05', kegiatan: 'MBG + Sholat' },
+      { id: uid('sn'), no: '-', pukul: '11:25-12:25', kegiatan: 'MBG + Sholat' },
+      { id: uid('sn'), no: '5', pukul: '12:25-13:05', kegiatan: '' },
       { id: uid('sn'), no: '6', pukul: '13:05-13:45', kegiatan: '' },
       { id: uid('sn'), no: '7', pukul: '13:45-14:25', kegiatan: '' },
       { id: uid('sn'), no: '8', pukul: '14:25-15:00', kegiatan: '' },
@@ -155,8 +158,8 @@ function buildDefaultDays() {
       { id: uid('sl'), no: '-', pukul: '09:40-10:10', kegiatan: 'Istirahat' },
       { id: uid('sl'), no: '4', pukul: '10:10-10:50', kegiatan: '' },
       { id: uid('sl'), no: '5', pukul: '10:50-11:30', kegiatan: '' },
-      { id: uid('sl'), no: '6', pukul: '11:30-12:10', kegiatan: '' },
-      { id: uid('sl'), no: '-', pukul: '12:10-13:10', kegiatan: 'MBG + Sholat' },
+      { id: uid('sl'), no: '-', pukul: '11:30-12:30', kegiatan: 'MBG + Sholat' },
+      { id: uid('sl'), no: '6', pukul: '12:30-13:10', kegiatan: '' },
       { id: uid('sl'), no: '7', pukul: '13:10-13:50', kegiatan: '' },
       { id: uid('sl'), no: '8', pukul: '13:50-14:25', kegiatan: '' },
       { id: uid('sl'), no: '9', pukul: '14:25-15:00', kegiatan: '' },
@@ -168,8 +171,8 @@ function buildDefaultDays() {
       { id: uid('rb'), no: '-', pukul: '09:35-10:10', kegiatan: 'Istirahat' },
       { id: uid('rb'), no: '3', pukul: '10:10-10:50', kegiatan: '' },
       { id: uid('rb'), no: '4', pukul: '10:50-11:30', kegiatan: '' },
-      { id: uid('rb'), no: '5', pukul: '11:30-12:10', kegiatan: '' },
-      { id: uid('rb'), no: '-', pukul: '12:10-13:10', kegiatan: 'MBG + Sholat' },
+      { id: uid('rb'), no: '-', pukul: '11:30-12:30', kegiatan: 'MBG + Sholat' },
+      { id: uid('rb'), no: '5', pukul: '12:30-13:10', kegiatan: '' },
       { id: uid('rb'), no: '6', pukul: '13:10-13:50', kegiatan: '' },
       { id: uid('rb'), no: '7', pukul: '13:50-14:30', kegiatan: '' },
     ],
@@ -181,8 +184,8 @@ function buildDefaultDays() {
       { id: uid('km'), no: '-', pukul: '09:40-10:10', kegiatan: 'Istirahat' },
       { id: uid('km'), no: '4', pukul: '10:10-10:50', kegiatan: '' },
       { id: uid('km'), no: '5', pukul: '10:50-11:30', kegiatan: '' },
-      { id: uid('km'), no: '6', pukul: '11:30-12:10', kegiatan: '' },
-      { id: uid('km'), no: '-', pukul: '12:10-13:10', kegiatan: 'MBG + Sholat' },
+      { id: uid('km'), no: '-', pukul: '11:30-12:30', kegiatan: 'MBG + Sholat' },
+      { id: uid('km'), no: '6', pukul: '12:30-13:10', kegiatan: '' },
       { id: uid('km'), no: '7', pukul: '13:10-13:50', kegiatan: '' },
       { id: uid('km'), no: '8', pukul: '13:50-14:30', kegiatan: '' },
     ],
@@ -193,8 +196,7 @@ function buildDefaultDays() {
       { id: uid('jm'), no: '-', pukul: '09:00-09:30', kegiatan: 'Istirahat' },
       { id: uid('jm'), no: '3', pukul: '09:30-10:00', kegiatan: '' },
       { id: uid('jm'), no: '4', pukul: '10:00-10:30', kegiatan: '' },
-      { id: uid('jm'), no: '5', pukul: '10:30-11:00', kegiatan: '' },
-      { id: uid('jm'), no: '-', pukul: '11:00-11:30', kegiatan: 'MBG + Pulang' },
+      { id: uid('jm'), no: '-', pukul: '10:30-11:30', kegiatan: 'MBG + Pulang' },
     ],
   };
 }
@@ -274,15 +276,15 @@ function TandaTangan({ cover }) {
         <p>Mengetahui,</p>
         <p className="font-semibold">Kepala Sekolah</p>
         <div className="h-6 ttd-gap" />
-        <p className="font-semibold border-b border-neutral-400 pb-0.5">Hj.AMAROH,S.Pd.MM</p>
-        <p className="mt-1">NIP. 19671121 199003 2 009</p>
+        <p className="font-semibold border-b border-neutral-400 pb-0.5">.........................................</p>
+        <p className="mt-1">NIP. .........................................</p>
       </div>
       <div className="text-center min-w-[220px]">
         <p>Bandar Lampung, {today}</p>
         <p className="font-semibold">Guru Mata Pelajaran</p>
         <div className="h-6 ttd-gap" />
-        <p className="font-semibold border-b border-neutral-400 pb-0.5">{cover.namaGuru || 'SENTOT HARDIONO,S.Pd'}</p>
-        <p className="mt-1">NIP. {cover.nip || '19701215 200012 1 001'}</p>
+        <p className="font-semibold border-b border-neutral-400 pb-0.5">{cover.namaGuru || '.........................................'}</p>
+        <p className="mt-1">NIP. {cover.nip || '.........................................'}</p>
       </div>
     </div>
   );
@@ -650,9 +652,9 @@ function AgendaGuruApp() {
 
             {['ganjil', 'genap'].map((sem) => (
               <div key={sem} className="bg-green-100 border border-green-200 rounded-2xl p-4 md:p-6 print-avoid-break">
-                <div className="flex flex-wrap items-center justify-between gap-3 mb-4 semester-header">
-                  <h3 className="font-judul text-xl md:text-2xl font-bold text-neutral-900">JADWAL MENGAJAR SEMESTER {sem.toUpperCase()}</h3>
-                  <div className="flex items-center gap-2 text-xs">
+                <div className="mb-4 semester-header">
+                  <h3 className="font-judul text-xl md:text-2xl font-bold text-neutral-900 text-center">JADWAL MENGAJAR SEMESTER {sem.toUpperCase()}</h3>
+                  <div className="flex items-center justify-center gap-2 text-xs mt-1">
                     <span className="text-neutral-500">Tahun Pelajaran:</span>
                     <input value={jadwal[sem].tp} onChange={(e) => setTp(sem, e.target.value)} className="w-28 px-2 py-1 rounded-full border border-green-300 bg-white outline-none text-xs font-semibold" />
                   </div>
