@@ -657,53 +657,103 @@ function AgendaGuruApp() {
                   </div>
                 </div>
 
-                <div className="flex gap-3 overflow-x-auto pb-2 print-wrap">
-                  {DAYS.map((day) => {
-                    const rows = jadwal[sem].days[day];
-                    return (
-                      <div key={day} className="bg-white rounded-xl border border-green-300 overflow-hidden flex-shrink-0 day-card" style={{ minWidth: 230 }}>
-                        <div className="px-3 py-2 bg-green-700 text-white flex items-center justify-between card-header">
-                          <span className="font-bold text-xs tracking-widest">{day.toUpperCase()}</span>
-                          <button onClick={() => addRow(sem, day)} className="p-1 rounded-full hover:bg-white/20 no-print" title="Tambah baris">
-                            <Plus size={13} />
-                          </button>
+                <div className="flex flex-col gap-3">
+                  <div className="flex gap-3 overflow-x-auto pb-2 print-wrap justify-center">
+                    {DAYS.slice(0, 3).map((day) => {
+                      const rows = jadwal[sem].days[day];
+                      return (
+                        <div key={day} className="bg-white rounded-xl border border-green-300 overflow-hidden flex-shrink-0 day-card" style={{ minWidth: 230 }}>
+                          <div className="px-3 py-2 bg-green-700 text-white flex items-center justify-between card-header">
+                            <span className="font-bold text-xs tracking-widest">{day.toUpperCase()}</span>
+                            <button onClick={() => addRow(sem, day)} className="p-1 rounded-full hover:bg-white/20 no-print" title="Tambah baris">
+                              <Plus size={13} />
+                            </button>
+                          </div>
+                          <table className="w-full text-[11px] border-collapse">
+                            <thead>
+                              <tr className="bg-green-50 text-neutral-500">
+                                <th className="p-1 border border-green-100 w-7">No</th>
+                                <th className="p-1 border border-green-100 w-20">Pukul</th>
+                                <th className="p-1 border border-green-100">Kegiatan / Kelas</th>
+                                <th className="p-1 border border-green-100 w-5 no-print" />
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {rows.map((row) => {
+                                const isBreak = row.no.trim() === '-';
+                                return (
+                                  <tr key={row.id} className={isBreak ? 'bg-yellow-50' : ''}>
+                                    <td className="border border-green-100 p-0">
+                                      <input value={row.no} onChange={(e) => updateRow(sem, day, row.id, 'no', e.target.value)} className="w-full text-center py-1 bg-transparent outline-none font-semibold" />
+                                    </td>
+                                    <td className="border border-green-100 p-0">
+                                      <input value={row.pukul} onChange={(e) => updateRow(sem, day, row.id, 'pukul', e.target.value)} placeholder="00:00-00:00" className="w-full py-1 px-1 bg-transparent outline-none" />
+                                    </td>
+                                    <td className="border border-green-100 p-0">
+                                      <input value={row.kegiatan} onChange={(e) => updateRow(sem, day, row.id, 'kegiatan', e.target.value)} placeholder={isBreak ? '' : 'Kelas'} className={`w-full py-1 px-1 bg-transparent outline-none ${isBreak ? 'italic font-medium text-green-700' : ''}`} />
+                                    </td>
+                                    <td className="border border-green-100 p-0 text-center no-print">
+                                      <button onClick={() => removeRow(sem, day, row.id)} className="text-red-500 hover:bg-red-50 rounded p-1" title="Hapus baris">
+                                        <Trash2 size={11} />
+                                      </button>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
                         </div>
-                        <table className="w-full text-[11px] border-collapse">
-                          <thead>
-                            <tr className="bg-green-50 text-neutral-500">
-                              <th className="p-1 border border-green-100 w-7">No</th>
-                              <th className="p-1 border border-green-100 w-20">Pukul</th>
-                              <th className="p-1 border border-green-100">Kegiatan / Kelas</th>
-                              <th className="p-1 border border-green-100 w-5 no-print" />
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {rows.map((row) => {
-                              const isBreak = row.no.trim() === '-';
-                              return (
-                                <tr key={row.id} className={isBreak ? 'bg-yellow-50' : ''}>
-                                  <td className="border border-green-100 p-0">
-                                    <input value={row.no} onChange={(e) => updateRow(sem, day, row.id, 'no', e.target.value)} className="w-full text-center py-1 bg-transparent outline-none font-semibold" />
-                                  </td>
-                                  <td className="border border-green-100 p-0">
-                                    <input value={row.pukul} onChange={(e) => updateRow(sem, day, row.id, 'pukul', e.target.value)} placeholder="00:00-00:00" className="w-full py-1 px-1 bg-transparent outline-none" />
-                                  </td>
-                                  <td className="border border-green-100 p-0">
-                                    <input value={row.kegiatan} onChange={(e) => updateRow(sem, day, row.id, 'kegiatan', e.target.value)} placeholder={isBreak ? '' : 'Kelas'} className={`w-full py-1 px-1 bg-transparent outline-none ${isBreak ? 'italic font-medium text-green-700' : ''}`} />
-                                  </td>
-                                  <td className="border border-green-100 p-0 text-center no-print">
-                                    <button onClick={() => removeRow(sem, day, row.id)} className="text-red-500 hover:bg-red-50 rounded p-1" title="Hapus baris">
-                                      <Trash2 size={11} />
-                                    </button>
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
+                  <div className="flex gap-3 overflow-x-auto pb-2 print-wrap justify-center">
+                    {DAYS.slice(3, 5).map((day) => {
+                      const rows = jadwal[sem].days[day];
+                      return (
+                        <div key={day} className="bg-white rounded-xl border border-green-300 overflow-hidden flex-shrink-0 day-card" style={{ minWidth: 230 }}>
+                          <div className="px-3 py-2 bg-green-700 text-white flex items-center justify-between card-header">
+                            <span className="font-bold text-xs tracking-widest">{day.toUpperCase()}</span>
+                            <button onClick={() => addRow(sem, day)} className="p-1 rounded-full hover:bg-white/20 no-print" title="Tambah baris">
+                              <Plus size={13} />
+                            </button>
+                          </div>
+                          <table className="w-full text-[11px] border-collapse">
+                            <thead>
+                              <tr className="bg-green-50 text-neutral-500">
+                                <th className="p-1 border border-green-100 w-7">No</th>
+                                <th className="p-1 border border-green-100 w-20">Pukul</th>
+                                <th className="p-1 border border-green-100">Kegiatan / Kelas</th>
+                                <th className="p-1 border border-green-100 w-5 no-print" />
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {rows.map((row) => {
+                                const isBreak = row.no.trim() === '-';
+                                return (
+                                  <tr key={row.id} className={isBreak ? 'bg-yellow-50' : ''}>
+                                    <td className="border border-green-100 p-0">
+                                      <input value={row.no} onChange={(e) => updateRow(sem, day, row.id, 'no', e.target.value)} className="w-full text-center py-1 bg-transparent outline-none font-semibold" />
+                                    </td>
+                                    <td className="border border-green-100 p-0">
+                                      <input value={row.pukul} onChange={(e) => updateRow(sem, day, row.id, 'pukul', e.target.value)} placeholder="00:00-00:00" className="w-full py-1 px-1 bg-transparent outline-none" />
+                                    </td>
+                                    <td className="border border-green-100 p-0">
+                                      <input value={row.kegiatan} onChange={(e) => updateRow(sem, day, row.id, 'kegiatan', e.target.value)} placeholder={isBreak ? '' : 'Kelas'} className={`w-full py-1 px-1 bg-transparent outline-none ${isBreak ? 'italic font-medium text-green-700' : ''}`} />
+                                    </td>
+                                    <td className="border border-green-100 p-0 text-center no-print">
+                                      <button onClick={() => removeRow(sem, day, row.id)} className="text-red-500 hover:bg-red-50 rounded p-1" title="Hapus baris">
+                                        <Trash2 size={11} />
+                                      </button>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 <div className="px-1 pt-3 text-[10px] text-neutral-500">
