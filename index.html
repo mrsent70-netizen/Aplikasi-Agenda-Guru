@@ -50,6 +50,7 @@
     .cover-card { padding-bottom: 4px !important; }
     .cover-page-wrap { display: flex !important; align-items: center !important; justify-content: center !important; min-height: 180mm !important; }
     .print-only-title { display: block !important; margin-bottom: 8px; padding-top: 4px; }
+    .page-top-gap { padding-top: 14mm !important; }
   }
   .preview-mode .no-print { display: none !important; }
   .preview-mode .print-wrap { display: flex !important; flex-wrap: wrap !important; overflow: visible !important; gap: 6px !important; }
@@ -70,6 +71,7 @@
   .preview-mode .cover-grid { display: flex !important; flex-direction: row !important; align-items: flex-start !important; }
   .preview-mode .cover-page-wrap { display: flex !important; align-items: center !important; justify-content: center !important; min-height: 70vh !important; }
   .preview-mode .print-only-title { display: block !important; margin-bottom: 8px; padding-top: 4px; }
+  .preview-mode .page-top-gap { padding-top: 14mm !important; }
   .preview-toolbar { position: fixed; top: 0; left: 0; right: 0; z-index: 60; background: #14532d; color: #fff; padding: 10px 16px; display: flex; justify-content: center; gap: 10px; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,.2); }
   .preview-mode .preview-body { padding-top: 56px; }
 </style>
@@ -852,7 +854,7 @@ function AgendaGuruApp() {
             </div>
 
             {agendaPages.map((pageRows, pageIdx) => (
-              <div key={pageIdx} className={`agenda-page-block ${pageIdx < agendaPages.length - 1 ? 'print-page-break' : ''}`}>
+              <div key={pageIdx} className={`agenda-page-block ${pageIdx > 0 ? 'page-top-gap' : ''} ${pageIdx < agendaPages.length - 1 ? 'print-page-break' : ''}`}>
                 <div className="hidden print-only-title">
                   <h3 className="font-judul text-xl font-bold">Agenda Harian Mengajar</h3>
                   <p className="text-[11px] text-neutral-500">SMP Negeri 13 Bandar Lampung • Halaman {pageIdx + 1} dari {agendaPages.length}</p>
