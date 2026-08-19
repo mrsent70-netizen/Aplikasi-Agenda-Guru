@@ -39,16 +39,6 @@
     .agenda-table input, .agenda-table textarea { font-size: 10px !important; padding: 2px 3px !important; }
     .agenda-table th, .agenda-table td { padding: 3px 4px !important; }
     .print-page-break { page-break-after: always; break-after: page; }
-    .agenda-print-title {
-      display: block !important;
-      text-align: center;
-      font-family: 'EB Garamond', Georgia, serif;
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      margin: 0 0 6px 0;
-      color: #111827;
-    }
     .day-card { min-width: 150px !important; }
     .day-card .card-header { padding: 2px 6px !important; }
     .semester-header { margin-bottom: 6px !important; }
@@ -79,17 +69,6 @@
   .preview-mode .cover-grid { display: flex !important; flex-direction: row !important; align-items: flex-start !important; }
   .preview-mode .cover-page-wrap { display: flex !important; align-items: center !important; justify-content: center !important; min-height: 70vh !important; }
   .preview-toolbar { position: fixed; top: 0; left: 0; right: 0; z-index: 60; background: #14532d; color: #fff; padding: 10px 16px; display: flex; justify-content: center; gap: 10px; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,.2); }
-  .agenda-print-title { display: none; }
-  .preview-mode .agenda-print-title {
-    display: block !important;
-    text-align: center;
-    font-family: 'EB Garamond', Georgia, serif;
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    margin: 0 0 6px 0;
-    color: #111827;
-  }
   .preview-mode .preview-body { padding-top: 56px; }
 </style>
 <style id="page-size-style">@page { size: A4 landscape; margin: 8mm; }</style>
@@ -872,7 +851,6 @@ function AgendaGuruApp() {
 
             {agendaPages.map((pageRows, pageIdx) => (
               <div key={pageIdx} className={`agenda-page-block print-avoid-break ${pageIdx < agendaPages.length - 1 ? 'print-page-break' : ''}`}>
-                <div className="agenda-print-title">AGENDA MENGAJAR</div>
                 <div className="mt-5 overflow-x-auto rounded-xl border border-green-700 bg-white print-wrap">
                   <table className="w-full text-[12px] border-collapse agenda-table">
                     <thead>
@@ -903,7 +881,7 @@ function AgendaGuruApp() {
                             <input value={row.jamKe} onChange={(e) => updateAgenda(row.id, 'jamKe', e.target.value)} placeholder="1-2" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
                           </td>
                           <td className="border border-green-100 p-0">
-                            <input list={isPrinting || previewMode ? undefined : "daftar-kelas"} value={row.kelas} onChange={(e) => updateAgenda(row.id, 'kelas', e.target.value)} placeholder="IX A" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
+                            <input list="daftar-kelas" value={row.kelas} onChange={(e) => updateAgenda(row.id, 'kelas', e.target.value)} placeholder="IX A" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
                           </td>
                           <td className="border border-green-100 p-0">
                             <input value={row.kdRpp} onChange={(e) => updateAgenda(row.id, 'kdRpp', e.target.value)} placeholder="3.1" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
