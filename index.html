@@ -49,6 +49,7 @@
     .cover-grid { display: flex !important; flex-direction: row !important; align-items: flex-start !important; gap: 16px !important; }
     .cover-card { padding-bottom: 4px !important; }
     .cover-page-wrap { display: flex !important; align-items: center !important; justify-content: center !important; min-height: 180mm !important; }
+    .print-only-title { display: block !important; margin-bottom: 8px; padding-top: 4px; }
   }
   .preview-mode .no-print { display: none !important; }
   .preview-mode .print-wrap { display: flex !important; flex-wrap: wrap !important; overflow: visible !important; gap: 6px !important; }
@@ -68,6 +69,7 @@
   .preview-mode table { min-width: 0 !important; width: 100% !important; }
   .preview-mode .cover-grid { display: flex !important; flex-direction: row !important; align-items: flex-start !important; }
   .preview-mode .cover-page-wrap { display: flex !important; align-items: center !important; justify-content: center !important; min-height: 70vh !important; }
+  .preview-mode .print-only-title { display: block !important; margin-bottom: 8px; padding-top: 4px; }
   .preview-toolbar { position: fixed; top: 0; left: 0; right: 0; z-index: 60; background: #14532d; color: #fff; padding: 10px 16px; display: flex; justify-content: center; gap: 10px; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,.2); }
   .preview-mode .preview-body { padding-top: 56px; }
 </style>
@@ -518,7 +520,7 @@ function AgendaGuruApp() {
     });
   }, [agenda, filterTgl, filterTeks]);
 
-  const ROWS_PER_PAGE = 6;
+  const ROWS_PER_PAGE = 10;
   const agendaPages = useMemo(() => {
     const pages = [];
     for (let i = 0; i < filteredAgenda.length; i += ROWS_PER_PAGE) {
@@ -823,9 +825,9 @@ function AgendaGuruApp() {
         {tab === 'agenda' && (
           <div id="agenda-content" className="bg-green-100 border border-green-200 rounded-2xl p-4 md:p-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
+              <div className="no-print">
                 <h3 className="font-judul text-xl md:text-2xl font-bold">Agenda Harian Mengajar</h3>
-                <p className="text-[11px] text-neutral-500 mt-1 no-print">Diisi setiap hari mengajar, sesuai jam pada jadwal</p>
+                <p className="text-[11px] text-neutral-500 mt-1">Diisi setiap hari mengajar, sesuai jam pada jadwal</p>
               </div>
               <div className="no-print flex flex-wrap items-center gap-2">
                 <div className="flex items-center gap-1.5 bg-white border border-green-300 rounded-full px-2 py-1">
@@ -851,6 +853,10 @@ function AgendaGuruApp() {
 
             {agendaPages.map((pageRows, pageIdx) => (
               <div key={pageIdx} className={`agenda-page-block print-avoid-break ${pageIdx < agendaPages.length - 1 ? 'print-page-break' : ''}`}>
+                <div className="hidden print-only-title">
+                  <h3 className="font-judul text-xl font-bold">Agenda Harian Mengajar</h3>
+                  <p className="text-[11px] text-neutral-500">SMP Negeri 13 Bandar Lampung • Halaman {pageIdx + 1} dari {agendaPages.length}</p>
+                </div>
                 <div className="mt-5 overflow-x-auto rounded-xl border border-green-700 bg-white print-wrap">
                   <table className="w-full text-[12px] border-collapse agenda-table">
                     <thead>
