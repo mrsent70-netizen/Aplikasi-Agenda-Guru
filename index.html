@@ -520,7 +520,7 @@ function AgendaGuruApp() {
     });
   }, [agenda, filterTgl, filterTeks]);
 
-  const ROWS_PER_PAGE = 10;
+  const ROWS_PER_PAGE = 8;
   const agendaPages = useMemo(() => {
     const pages = [];
     for (let i = 0; i < filteredAgenda.length; i += ROWS_PER_PAGE) {
@@ -852,7 +852,7 @@ function AgendaGuruApp() {
             </div>
 
             {agendaPages.map((pageRows, pageIdx) => (
-              <div key={pageIdx} className={`agenda-page-block print-avoid-break ${pageIdx < agendaPages.length - 1 ? 'print-page-break' : ''}`}>
+              <div key={pageIdx} className={`agenda-page-block ${pageIdx < agendaPages.length - 1 ? 'print-page-break' : ''}`}>
                 <div className="hidden print-only-title">
                   <h3 className="font-judul text-xl font-bold">Agenda Harian Mengajar</h3>
                   <p className="text-[11px] text-neutral-500">SMP Negeri 13 Bandar Lampung • Halaman {pageIdx + 1} dari {agendaPages.length}</p>
