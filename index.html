@@ -342,6 +342,12 @@ function AgendaGuruApp() {
     return `${parseInt(d, 10)} ${bulan} ${y}`;
   };
 
+  // Memperkirakan jumlah baris textarea, memperhitungkan teks yang melipat sendiri (word-wrap)
+  const estimateRows = (text, charsPerLine = 24) => {
+    if (!text) return 1;
+    return text.split('\n').reduce((sum, line) => sum + Math.max(1, Math.ceil(line.length / charsPerLine)), 0);
+  };
+
   const applyRemoteData = (dataStr) => {
     try {
       const data = JSON.parse(dataStr);
@@ -895,7 +901,7 @@ function AgendaGuruApp() {
                             <input value={row.kdRpp} onChange={(e) => updateAgenda(row.id, 'kdRpp', e.target.value)} placeholder="3.1" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
                           </td>
                           <td className="border border-green-100 p-0">
-                            <textarea value={row.kompetensi} onChange={(e) => updateAgenda(row.id, 'kompetensi', e.target.value)} placeholder="KD / indikator" rows={Math.max(1, (row.kompetensi.match(/\n/g) || []).length + 1)} className="w-full px-2 py-2 bg-transparent outline-none resize-none" />
+                            <textarea value={row.kompetensi} onChange={(e) => updateAgenda(row.id, 'kompetensi', e.target.value)} placeholder="KD / indikator" rows={estimateRows(row.kompetensi, 24)} className="w-full px-2 py-2 bg-transparent outline-none resize-none" />
                           </td>
                           <td className="border border-green-100 p-0">
                             <input value={row.x} onChange={(e) => updateAgenda(row.id, 'x', e.target.value)} className="w-full text-center py-2 bg-transparent outline-none" />
@@ -908,7 +914,7 @@ function AgendaGuruApp() {
                           </td>
                           <td className="border border-green-100 p-0">
                             <div className="flex items-start gap-1">
-                              <textarea value={row.absensi} onChange={(e) => updateAgenda(row.id, 'absensi', e.target.value)} placeholder="Hadir 32, atau klik ikon di samping" rows={Math.max(2, (row.absensi.match(/\n/g) || []).length + 1)} className="w-full px-1 py-2 bg-transparent outline-none text-[12px] resize-none" />
+                              <textarea value={row.absensi} onChange={(e) => updateAgenda(row.id, 'absensi', e.target.value)} placeholder="Hadir 32, atau klik ikon di samping" rows={Math.max(2, estimateRows(row.absensi, 28))} className="w-full px-1 py-2 bg-transparent outline-none text-[12px] resize-none" />
                               <button onClick={() => setOpenAbsenId(row.id)} className="no-print shrink-0 mt-1 p-1 rounded hover:bg-green-100 text-green-700" title="Isi absensi per siswa">
                                 <Users size={13} />
                               </button>
