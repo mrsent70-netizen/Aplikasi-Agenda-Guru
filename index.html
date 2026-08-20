@@ -51,6 +51,8 @@
     .cover-page-wrap { display: flex !important; align-items: center !important; justify-content: center !important; min-height: 180mm !important; }
     .print-only-title { display: block !important; margin-bottom: 8px; padding-top: 4px; }
     .page-top-gap { padding-top: 14mm !important; }
+    .mobile-card-view { display: none !important; }
+    .desktop-table-view { display: block !important; }
   }
   .preview-mode .no-print { display: none !important; }
   .preview-mode .print-wrap { display: flex !important; flex-wrap: wrap !important; overflow: visible !important; gap: 6px !important; }
@@ -72,6 +74,8 @@
   .preview-mode .cover-page-wrap { display: flex !important; align-items: center !important; justify-content: center !important; min-height: 70vh !important; }
   .preview-mode .print-only-title { display: block !important; margin-bottom: 8px; padding-top: 4px; }
   .preview-mode .page-top-gap { padding-top: 14mm !important; }
+  .preview-mode .mobile-card-view { display: none !important; }
+  .preview-mode .desktop-table-view { display: block !important; }
   .preview-toolbar { position: fixed; top: 0; left: 0; right: 0; z-index: 60; background: #14532d; color: #fff; padding: 10px 16px; display: flex; justify-content: center; gap: 10px; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,.2); }
   .preview-mode .preview-body { padding-top: 56px; }
 </style>
@@ -287,15 +291,15 @@ function TandaTangan({ cover }) {
         <p>Mengetahui,</p>
         <p className="font-semibold">Kepala Sekolah</p>
         <div className="h-6 ttd-gap" />
-        <p className="font-semibold border-b border-neutral-400 pb-0.5">Hj.AMAROH,S.Pd.MM</p>
-        <p className="mt-1">NIP. 19671121 199003 2 009</p>
+        <p className="font-semibold border-b border-neutral-400 pb-0.5">.........................................</p>
+        <p className="mt-1">NIP. .........................................</p>
       </div>
       <div className="text-center min-w-[220px]">
         <p>Bandar Lampung, {today}</p>
         <p className="font-semibold">Guru Mata Pelajaran</p>
         <div className="h-6 ttd-gap" />
-        <p className="font-semibold border-b border-neutral-400 pb-0.5">{cover.namaGuru || 'SENTOT HARDIONO, S.Pd'}</p>
-        <p className="mt-1">NIP. {cover.nip || '19701215 200012 1 001'}</p>
+        <p className="font-semibold border-b border-neutral-400 pb-0.5">{cover.namaGuru || '.........................................'}</p>
+        <p className="mt-1">NIP. {cover.nip || '.........................................'}</p>
       </div>
     </div>
   );
@@ -859,6 +863,72 @@ function AgendaGuruApp() {
               </div>
             </div>
 
+            {/* ===== Tampilan kartu khusus HP (layar sempit) ===== */}
+            <div className="mobile-card-view md:hidden space-y-3 mt-4">
+              {filteredAgenda.length === 0 && (
+                <div className="text-center text-sm text-neutral-500 py-6">Belum ada entri. Tekan tombol di bawah untuk menambah.</div>
+              )}
+              {filteredAgenda.map((row) => (
+                <div key={row.id} className="bg-white rounded-2xl border border-green-300 p-4 space-y-3 shadow-sm">
+                  <div className="flex items-center gap-2">
+                    <input type="date" value={row.tanggal} onChange={(e) => updateAgenda(row.id, 'tanggal', e.target.value)} className="flex-1 text-sm font-semibold border border-green-200 rounded-lg px-3 py-2.5" />
+                    <button onClick={() => removeAgenda(row.id)} className="p-2.5 rounded-lg bg-red-50 text-red-500">
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="text-[10px] font-bold uppercase text-neutral-400">Jam Ke</label>
+                      <input value={row.jamKe} onChange={(e) => updateAgenda(row.id, 'jamKe', e.target.value)} placeholder="1-2" className="w-full text-sm border border-green-200 rounded-lg px-3 py-2.5 text-center mt-1" />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold uppercase text-neutral-400">Kelas</label>
+                      <input list="daftar-kelas" value={row.kelas} onChange={(e) => updateAgenda(row.id, 'kelas', e.target.value)} placeholder="IX A" className="w-full text-sm font-semibold border border-green-200 rounded-lg px-3 py-2.5 text-center mt-1" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold uppercase text-neutral-400">Kompetensi Dasar / Indikator</label>
+                    <textarea value={row.kompetensi} onChange={(e) => updateAgenda(row.id, 'kompetensi', e.target.value)} placeholder="KD / indikator" rows={estimateRows(row.kompetensi, 34)} className="w-full text-sm border border-green-200 rounded-lg px-3 py-2.5 mt-1" />
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <label className="text-[10px] font-bold uppercase text-neutral-400">No KD/RPP</label>
+                      <input value={row.kdRpp} onChange={(e) => updateAgenda(row.id, 'kdRpp', e.target.value)} placeholder="3.1" className="w-full text-sm border border-green-200 rounded-lg px-2 py-2.5 text-center mt-1" />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold uppercase text-neutral-400">X</label>
+                      <input value={row.x} onChange={(e) => updateAgenda(row.id, 'x', e.target.value)} className="w-full text-sm border border-green-200 rounded-lg px-2 py-2.5 text-center mt-1" />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold uppercase text-neutral-400">Y</label>
+                      <input value={row.y} onChange={(e) => updateAgenda(row.id, 'y', e.target.value)} className="w-full text-sm border border-green-200 rounded-lg px-2 py-2.5 text-center mt-1" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold uppercase text-neutral-400">Selesai / Belum + Alasan</label>
+                    <input value={row.selesai} onChange={(e) => updateAgenda(row.id, 'selesai', e.target.value)} placeholder="Selesai / Belum" className="w-full text-sm border border-green-200 rounded-lg px-3 py-2.5 mt-1" />
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold uppercase text-neutral-400">Absensi Siswa</label>
+                    <button onClick={() => setOpenAbsenId(row.id)} className="w-full mt-1 flex items-center justify-center gap-2 bg-green-700 text-white rounded-lg py-3 text-sm font-semibold active:bg-green-800">
+                      <Users size={17} /> Isi Absensi Siswa
+                    </button>
+                    {row.absensi && <p className="text-xs text-neutral-500 whitespace-pre-line mt-2 bg-green-50 rounded-lg p-2">{row.absensi}</p>}
+                  </div>
+                </div>
+              ))}
+              <button onClick={addAgenda} className="w-full flex items-center justify-center gap-2 bg-white border-2 border-dashed border-green-400 text-green-700 rounded-2xl py-4 text-sm font-bold active:bg-green-50">
+                <Plus size={18} /> Tambah Entri Baru
+              </button>
+            </div>
+
+            {/* ===== Tampilan tabel untuk layar lebar / cetak ===== */}
+            <div className="desktop-table-view hidden md:block">
             {agendaPages.map((pageRows, pageIdx) => (
               <div key={pageIdx} className={`agenda-page-block ${pageIdx > 0 ? 'page-top-gap' : ''} ${pageIdx < agendaPages.length - 1 ? 'print-page-break' : ''}`}>
                 <div className="hidden print-only-title">
@@ -940,6 +1010,7 @@ function AgendaGuruApp() {
                 <TandaTangan cover={cover} />
               </div>
             ))}
+            </div>
 
             <div className="mt-4 grid md:grid-cols-3 gap-2 text-[11px] font-tubuh no-print">
               <div className="bg-white/80 rounded-lg border border-green-200 p-2">
