@@ -264,7 +264,7 @@
     vertical-align: middle;
   }
   
-  /* Input dan textarea dengan ukuran tetap - TIDAK auto-resize */
+  /* Input dengan ukuran tetap */
   .agenda-table td input {
     width: 100%;
     border: none;
@@ -279,7 +279,7 @@
     height: 32px;
   }
   
-  /* Textarea dengan ukuran tetap tapi bisa di-scroll */
+  /* Textarea dengan auto-resize dan scroll */
   .agenda-table td textarea {
     width: 100%;
     border: none;
@@ -291,10 +291,17 @@
     font-family: inherit;
     box-sizing: border-box;
     min-height: 32px;
-    height: 36px;
+    height: 32px;
     resize: none;
     overflow-y: auto;
     scrollbar-width: thin;
+    transition: height 0.1s ease;
+  }
+  
+  /* Auto-resize textarea - akan menyesuaikan tinggi saat konten bertambah */
+  .agenda-table td textarea.grow {
+    height: auto;
+    overflow-y: hidden;
   }
   
   .agenda-table td input:focus,
@@ -622,11 +629,35 @@ function TandaTangan({ cover }) {
   );
 }
 
+// ============ TEXTAREA AUTO-RESIZE ============
+function AutoResizeTextarea({ value, onChange, placeholder, className, rows = 1 }) {
+  const textareaRef = useRef(null);
+
+  const handleChange = (e) => {
+    onChange(e);
+    // Auto-resize: reset height ke auto dulu, lalu set ke scrollHeight
+    const el = e.target;
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+  };
+
+  return (
+    <textarea
+      ref={textareaRef}
+      value={value}
+      onChange={handleChange}
+      placeholder={placeholder}
+      className={className}
+      rows={rows}
+      style={{ overflow: 'hidden' }}
+    />
+  );
+}
+
 // ============ KOMPONEN ROW YANG DIOPTIMASI ============
 const AgendaRow = memo(({ row, index, updateAgenda, removeAgenda, setOpenAbsenId, isPrinting, previewMode, formatTgl }) => {
   const rowClass = index % 2 === 0 ? 'agenda-row-even' : 'agenda-row-odd';
   
-  // Handler dengan useCallback
   const handleTanggalChange = useCallback((e) => {
     updateAgenda(row.id, 'tanggal', e.target.value);
   }, [row.id, updateAgenda]);
@@ -684,18 +715,18 @@ const AgendaRow = memo(({ row, index, updateAgenda, removeAgenda, setOpenAbsenId
         <input value={row.jamKe} onChange={handleJamKeChange} placeholder="1-2" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
       </td>
       <td className="border border-green-700 p-0 col-kelas">
-        <input list="daftar-kelas" value={row.kelas} onChange={handleKelasChange} placeholder="IX A" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
+        <input value={row.kelas} onChange={handleKelasChange} placeholder="IX A" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
       </td>
       <td className="border border-green-700 p-0 col-kd">
         <input value={row.kdRpp} onChange={handleKdRppChange} placeholder="3.1" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
       </td>
       <td className="border border-green-700 p-0 col-kompetensi">
-        <textarea 
-          value={row.kompetensi} 
-          onChange={handleKompetensiChange} 
-          placeholder="KD / indikator" 
+        <AutoResizeTextarea
+          value={row.kompetensi}
+          onChange={handleKompetensiChange}
+          placeholder="KD / indikator"
           className="w-full px-2 py-1 bg-transparent outline-none text-[11px] resize-none"
-          rows={2}
+          rows={1}
         />
       </td>
       <td className="border border-green-700 p-0 col-x">
@@ -709,12 +740,12 @@ const AgendaRow = memo(({ row, index, updateAgenda, removeAgenda, setOpenAbsenId
       </td>
       <td className="border border-green-700 p-0 col-absensi">
         <div className="flex items-center gap-0.5">
-          <textarea 
-            value={row.absensi} 
-            onChange={handleAbsensiChange} 
-            placeholder="Hadir 32, atau klik ikon" 
+          <AutoResizeTextarea
+            value={row.absensi}
+            onChange={handleAbsensiChange}
+            placeholder="Hadir 32, atau klik ikon"
             className="w-full px-1 py-1 bg-transparent outline-none text-[11px] resize-none"
-            rows={2}
+            rows={1}
           />
           <button onClick={handleOpenAbsen} className="no-print shrink-0 p-1 rounded hover:bg-green-100 text-green-700" title="Isi absensi per siswa">
             <Users size={13} />
@@ -1364,13 +1395,6 @@ function AgendaGuruApp() {
                       )}
                     </tbody>
                   </table>
-                  {pageIdx === 0 && (
-                    <datalist id="daftar-kelas">
-                      {Object.keys(siswa).map((k) => (
-                        <option key={k} value={k} />
-                      ))}
-                    </datalist>
-                  )}
                 </div>
                 <TandaTangan cover={cover} />
               </div>
