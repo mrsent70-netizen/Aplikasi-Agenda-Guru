@@ -112,16 +112,19 @@
       break-inside: avoid;
     }
     
+    /* Tanda Tangan - tetap di setiap halaman */
     .ttd-container {
-      margin-top: 6px;
+      margin-top: 8px;
       padding-top: 6px;
       border-top: 1px dashed #86efac;
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 8px;
       page-break-inside: avoid;
       break-inside: avoid;
+      page-break-after: avoid;
+      break-after: avoid;
     }
     .ttd-item {
       text-align: center;
@@ -298,12 +301,6 @@
     transition: height 0.1s ease;
   }
   
-  /* Auto-resize textarea - akan menyesuaikan tinggi saat konten bertambah */
-  .agenda-table td textarea.grow {
-    height: auto;
-    overflow-y: hidden;
-  }
-  
   .agenda-table td input:focus,
   .agenda-table td textarea:focus {
     outline: 2px solid #22c55e;
@@ -334,6 +331,7 @@
     text-align: center;
   }
   
+  /* Tanda Tangan - tampilan layar */
   .ttd-container {
     margin-top: 12px;
     padding-top: 10px;
@@ -635,7 +633,6 @@ function AutoResizeTextarea({ value, onChange, placeholder, className, rows = 1 
 
   const handleChange = (e) => {
     onChange(e);
-    // Auto-resize: reset height ke auto dulu, lalu set ke scrollHeight
     const el = e.target;
     el.style.height = 'auto';
     el.style.height = el.scrollHeight + 'px';
@@ -957,7 +954,6 @@ function AgendaGuruApp() {
   const splitIntoPages = useCallback((rows) => {
     if (rows.length === 0) return [[]];
     
-    // Estimasi tinggi row berdasarkan panjang teks (tanpa menghitung baris baru)
     const estimateRowHeight = (row) => {
       let height = 1.0;
       const kompetensiLength = (row.kompetensi || '').length;
@@ -1396,6 +1392,7 @@ function AgendaGuruApp() {
                     </tbody>
                   </table>
                 </div>
+                {/* Tanda Tangan di setiap halaman - DIPASTIKAN TETAP */}
                 <TandaTangan cover={cover} />
               </div>
             ))}
