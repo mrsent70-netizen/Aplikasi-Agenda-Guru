@@ -308,15 +308,15 @@ function TandaTangan({ cover }) {
         <p>Mengetahui,</p>
         <p className="font-semibold">Kepala Sekolah</p>
         <div className="h-6 ttd-gap" />
-        <p className="font-semibold border-b border-neutral-400 pb-0.5">Hj.AMAROH,S.Pd.MM</p>
-        <p className="mt-1">NIP. 19671121 199003 2 009</p>
+        <p className="font-semibold border-b border-neutral-400 pb-0.5">.........................................</p>
+        <p className="mt-1">NIP. .........................................</p>
       </div>
       <div className="text-center min-w-[220px]">
         <p>Bandar Lampung, {today}</p>
         <p className="font-semibold">Guru Mata Pelajaran</p>
         <div className="h-6 ttd-gap" />
-        <p className="font-semibold border-b border-neutral-400 pb-0.5">{cover.namaGuru || 'SENTOT HARDIONO,S.Pd'}</p>
-        <p className="mt-1">NIP. {cover.nip || '19701215 200012 1 001'}</p>
+        <p className="font-semibold border-b border-neutral-400 pb-0.5">{cover.namaGuru || '.........................................'}</p>
+        <p className="mt-1">NIP. {cover.nip || '.........................................'}</p>
       </div>
     </div>
   );
@@ -548,58 +548,71 @@ function AgendaGuruApp() {
   // Kompetensi/Indikator atau Selesai/Alasan/Absensi akan dihitung lebih
   // berat sehingga jumlah baris pada halaman tersebut otomatis berkurang.
   const MAX_ROWS_PER_PAGE = 8;
+
   const agendaPages = useMemo(() => {
     const pages = [];
     let page = [];
-    let pageWeight = 0;
+    let usedHeight = 0;
 
-    const getRowWeight = (row) => {
+    // 1 = tinggi normal. Tambahan hanya diberikan jika row benar-benar
+    // melebar karena isi teks. Jadi row normal tetap dihitung 1.
+    const getRowHeight = (row) => {
       const kompetensi = String(row.kompetensi || '');
       const selesai = String(row.selesai || '');
       const absensi = String(row.absensi || '');
 
-      // Perkiraan jumlah baris tampilan berdasarkan lebar kolom cetak.
-      // Angka ini sengaja konservatif agar tidak terjadi baris terpotong.
-      const kompetensiLines = Math.max(
-        1,
-        kompetensi.split(/\\n/).reduce((sum, part) => sum + Math.max(1, Math.ceil(part.length / 34)), 0)
-      );
-      const selesaiLines = Math.max(
-        1,
-        selesai.split(/\\n/).reduce((sum, part) => sum + Math.max(1, Math.ceil(part.length / 30)), 0)
-      );
-      const absensiLines = absensi
-        ? Math.max(
-            1,
-            absensi.split(/\\n/).reduce((sum, part) => sum + Math.max(1, Math.ceil(part.length / 34)), 0)
-          )
-        : 1;
+      // Perkiraan lebar efektif kolom pada kertas A4 landscape.
+      const hitungBaris = (text, charsPerLine) => {
+        if (!text) return 1;
+        return text.split(/\n/).reduce((total, bagian) => {
+          return total + Math.max(1, Math.ceil(bagian.length / charsPerLine));
+        }, 0);
+      };
 
+      const kompetensiLines = hitungBaris(kompetensi, 42);
+      const selesaiLines = hitungBaris(selesai, 38);
+      const absensiLines = hitungBaris(absensi, 42);
+
+      // Tinggi row mengikuti bagian yang paling tinggi.
       const visualLines = Math.max(kompetensiLines, selesaiLines + absensiLines);
+
+      // Normal = 1 row.
+      // Maksimal tambahan tinggi 3, sehingga row sangat panjang
+      // tidak membuat halaman berikutnya ikut berkurang.
       return Math.max(1, Math.min(4, visualLines));
     };
 
     filteredAgenda.forEach((row) => {
-      const weight = getRowWeight(row);
+      const rowHeight = getRowHeight(row);
 
-      // Baris yang sangat tinggi tetap dimasukkan sendiri ke satu halaman.
-      if (page.length > 0 && (page.length >= MAX_ROWS_PER_PAGE || pageWeight + weight > MAX_ROWS_PER_PAGE)) {
+      // Kapasitas halaman selalu dimulai kembali dari 8.
+      // Jika row berikutnya tidak muat, pindahkan hanya row tersebut
+      // ke halaman berikutnya.
+      if (
+        page.length > 0 &&
+        (page.length >= MAX_ROWS_PER_PAGE ||
+         usedHeight + rowHeight > MAX_ROWS_PER_PAGE)
+      ) {
         pages.push(page);
         page = [];
-        pageWeight = 0;
+        usedHeight = 0;
       }
 
       page.push(row);
-      pageWeight += weight;
+      usedHeight += rowHeight;
 
-      if (page.length >= MAX_ROWS_PER_PAGE) {
+      // Jika tepat mencapai kapasitas, halaman ditutup.
+      if (usedHeight >= MAX_ROWS_PER_PAGE) {
         pages.push(page);
         page = [];
-        pageWeight = 0;
+        usedHeight = 0;
       }
     });
 
-    if (page.length > 0 || pages.length === 0) pages.push(page);
+    if (page.length > 0 || pages.length === 0) {
+      pages.push(page);
+    }
+
     return pages;
   }, [filteredAgenda]);
 
