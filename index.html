@@ -263,9 +263,9 @@
     padding: 4px 6px;
     vertical-align: middle;
   }
+  
   /* Input dan textarea dengan ukuran tetap - TIDAK auto-resize */
-  .agenda-table td input,
-  .agenda-table td textarea {
+  .agenda-table td input {
     width: 100%;
     border: none;
     background: transparent;
@@ -277,19 +277,33 @@
     box-sizing: border-box;
     min-height: 32px;
     height: 32px;
-    resize: none;
-    overflow: hidden;
   }
+  
+  /* Textarea dengan ukuran tetap tapi bisa di-scroll */
   .agenda-table td textarea {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    line-height: 1.4;
+    padding: 4px 4px;
+    outline: none;
+    font-family: inherit;
+    box-sizing: border-box;
+    min-height: 32px;
     height: 36px;
-    min-height: 36px;
+    resize: none;
+    overflow-y: auto;
+    scrollbar-width: thin;
   }
+  
   .agenda-table td input:focus,
   .agenda-table td textarea:focus {
     outline: 2px solid #22c55e;
     outline-offset: -2px;
     border-radius: 2px;
   }
+  
   .agenda-table .col-tanggal { width: 10%; min-width: 80px; }
   .agenda-table .col-jam { width: 7%; min-width: 50px; }
   .agenda-table .col-kelas { width: 8%; min-width: 55px; }
@@ -612,7 +626,7 @@ function TandaTangan({ cover }) {
 const AgendaRow = memo(({ row, index, updateAgenda, removeAgenda, setOpenAbsenId, isPrinting, previewMode, formatTgl }) => {
   const rowClass = index % 2 === 0 ? 'agenda-row-even' : 'agenda-row-odd';
   
-  // Handler dengan useCallback di dalam memo
+  // Handler dengan useCallback
   const handleTanggalChange = useCallback((e) => {
     updateAgenda(row.id, 'tanggal', e.target.value);
   }, [row.id, updateAgenda]);
@@ -676,7 +690,13 @@ const AgendaRow = memo(({ row, index, updateAgenda, removeAgenda, setOpenAbsenId
         <input value={row.kdRpp} onChange={handleKdRppChange} placeholder="3.1" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
       </td>
       <td className="border border-green-700 p-0 col-kompetensi">
-        <input value={row.kompetensi} onChange={handleKompetensiChange} placeholder="KD / indikator" className="w-full px-2 py-2 bg-transparent outline-none text-[11px]" />
+        <textarea 
+          value={row.kompetensi} 
+          onChange={handleKompetensiChange} 
+          placeholder="KD / indikator" 
+          className="w-full px-2 py-1 bg-transparent outline-none text-[11px] resize-none"
+          rows={2}
+        />
       </td>
       <td className="border border-green-700 p-0 col-x">
         <input value={row.x} onChange={handleXChange} className="w-full text-center py-2 bg-transparent outline-none" />
@@ -689,7 +709,13 @@ const AgendaRow = memo(({ row, index, updateAgenda, removeAgenda, setOpenAbsenId
       </td>
       <td className="border border-green-700 p-0 col-absensi">
         <div className="flex items-center gap-0.5">
-          <input value={row.absensi} onChange={handleAbsensiChange} placeholder="Hadir 32, atau klik ikon" className="w-full px-1 py-2 bg-transparent outline-none text-[11px]" />
+          <textarea 
+            value={row.absensi} 
+            onChange={handleAbsensiChange} 
+            placeholder="Hadir 32, atau klik ikon" 
+            className="w-full px-1 py-1 bg-transparent outline-none text-[11px] resize-none"
+            rows={2}
+          />
           <button onClick={handleOpenAbsen} className="no-print shrink-0 p-1 rounded hover:bg-green-100 text-green-700" title="Isi absensi per siswa">
             <Users size={13} />
           </button>
@@ -900,15 +926,14 @@ function AgendaGuruApp() {
   const splitIntoPages = useCallback((rows) => {
     if (rows.length === 0) return [[]];
     
+    // Estimasi tinggi row berdasarkan panjang teks (tanpa menghitung baris baru)
     const estimateRowHeight = (row) => {
       let height = 1.0;
-      const kompetensiText = row.kompetensi || '';
-      const kompetensiLength = kompetensiText.length;
-      height += Math.floor(kompetensiLength / 50) * 0.25;
+      const kompetensiLength = (row.kompetensi || '').length;
+      height += Math.floor(kompetensiLength / 60) * 0.2;
       
-      const absensiText = row.absensi || '';
-      const absensiLength = absensiText.length;
-      height += Math.floor(absensiLength / 40) * 0.25;
+      const absensiLength = (row.absensi || '').length;
+      height += Math.floor(absensiLength / 50) * 0.2;
       
       return Math.max(1.0, Math.min(3.5, height));
     };
