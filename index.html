@@ -344,11 +344,43 @@
     margin-top: 2px;
     color: #4b5563;
   }
+  
+  /* Toast notifikasi */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+    background: #14532d;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+  }
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  .toast.error {
+    background: #dc2626;
+  }
+  .toast.success {
+    background: #16a34a;
+  }
 </style>
 <style id="page-size-style">@page { size: A4 landscape; margin: 8mm; }</style>
 </head>
 <body>
 <div id="root"></div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast"></div>
 
 <script type="text/plain" id="app-source">
 const { useState, useEffect, useRef, useMemo, useCallback } = React;
@@ -398,6 +430,9 @@ const Users = (p) => <IconBase {...p} paths={[
 ]} />;
 const XIcon = (p) => <IconBase {...p} paths={[['path', { d: 'M18 6 6 18' }], ['path', { d: 'm6 6 12 12' }]]} />;
 const CheckIcon = (p) => <IconBase {...p} paths={[['path', { d: 'M20 6 9 17l-5-5' }]]} />;
+const CloudIcon = (p) => <IconBase {...p} paths={[
+  ['path', { d: 'M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z' }],
+]} />;
 
 const STORAGE_KEY = 'agenda-guru-smpn13-data';
 const API_URL = 'https://script.google.com/macros/s/AKfycbxbr-E1Ib58X6j4cjeoVbeHMq-6Yvt8_GY3ARDmMPDsJ3tNDWxvmzYMd9shIZwKTcrS/exec';
@@ -481,6 +516,18 @@ function buildDefaultAgenda() {
 }
 
 const defaultCover = { namaGuru: '', nip: '', mapel: '', sekolah: 'SMP Negeri 13 Bandar Lampung', alamat: '' };
+
+// Toast notification helper
+function showToast(message, type = 'success') {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.textContent = message;
+  toast.className = `toast ${type} show`;
+  clearTimeout(toast._hideTimer);
+  toast._hideTimer = setTimeout(() => {
+    toast.className = 'toast';
+  }, 2500);
+}
 
 function PanelAbsensi({ row, roster, onUpdateStatus, onApply, onClose, onGoToSiswa }) {
   const detail = row.absensiDetail || {};
@@ -570,17 +617,11 @@ function AgendaGuruApp() {
   const [openAbsenId, setOpenAbsenId] = useState(null);
   const [filterTgl, setFilterTgl] = useState('');
   const [filterTeks, setFilterTeks] = useState('');
-  const [status, setStatus] = useState('idle');
   const [loaded, setLoaded] = useState(false);
-  const saveTimer = useRef(null);
   const [previewMode, setPreviewMode] = useState(false);
   const [isPrinting, setIsPrinting] = useState(false);
-  const [syncStatus, setSyncStatus] = useState(API_URL ? 'connecting' : 'off');
-  const lastUpdatedRef = useRef(0);
-  const skipNextSaveRef = useRef(false);
-  // Ref untuk menghindari re-render berlebihan saat mengetik
-  const typingTimerRef = useRef(null);
-  const isTypingRef = useRef(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [syncStatus, setSyncStatus] = useState(API_URL ? 'online' : 'off');
 
   useEffect(() => {
     const before = () => setIsPrinting(true);
@@ -606,33 +647,45 @@ function AgendaGuruApp() {
     return text.split('\n').reduce((sum, line) => sum + Math.max(1, Math.ceil(line.length / charsPerLine)), 1);
   };
 
-  const applyRemoteData = (dataStr) => {
+  // ============ FUNGSI SIMPAN MANUAL ============
+  const saveData = useCallback(async (showToastMsg = true) => {
+    setIsSaving(true);
+    const payload = { cover, jadwal, agenda, siswa };
+    const payloadStr = JSON.stringify(payload);
+    
     try {
-      const data = JSON.parse(dataStr);
-      skipNextSaveRef.current = true;
-      if (data.cover) setCover(data.cover);
-      if (data.jadwal) setJadwal(data.jadwal);
-      if (data.agenda) setAgenda(data.agenda);
-      if (data.siswa) setSiswa(data.siswa);
-    } catch (e) {}
-  };
-
-  const fetchRemote = async (isInitial) => {
-    if (!API_URL) return;
-    try {
-      setSyncStatus((s) => (isInitial ? 'connecting' : s));
-      const res = await fetch(API_URL, { method: 'GET' });
-      const json = await res.json();
-      if (json.ok && json.data && json.updatedAt > lastUpdatedRef.current) {
-        lastUpdatedRef.current = json.updatedAt;
-        applyRemoteData(json.data);
+      // Simpan ke localStorage
+      localStorage.setItem(STORAGE_KEY, payloadStr);
+      
+      // Sinkron ke server jika ada API
+      if (API_URL) {
+        setSyncStatus('syncing');
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ data: payloadStr }),
+        });
+        const json = await res.json();
+        if (json.ok) {
+          setSyncStatus('online');
+          if (showToastMsg) showToast('✅ Data berhasil disimpan', 'success');
+        } else {
+          setSyncStatus('error');
+          if (showToastMsg) showToast('⚠️ Gagal sinkron ke server', 'error');
+        }
+      } else {
+        if (showToastMsg) showToast('✅ Data berhasil disimpan', 'success');
       }
-      setSyncStatus('online');
     } catch (e) {
+      console.error('Save error:', e);
       setSyncStatus('error');
+      if (showToastMsg) showToast('❌ Gagal menyimpan data', 'error');
+    } finally {
+      setIsSaving(false);
     }
-  };
+  }, [cover, jadwal, agenda, siswa]);
 
+  // ============ LOAD DATA ============
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -643,93 +696,18 @@ function AgendaGuruApp() {
         if (data.agenda) setAgenda(data.agenda);
         if (data.siswa) setSiswa(data.siswa);
       }
-    } catch (e) {} finally {
-      (async () => {
-        await fetchRemote(true);
-        setLoaded(true);
-      })();
+    } catch (e) {
+      console.error('Load error:', e);
+    } finally {
+      setLoaded(true);
     }
   }, []);
 
-  useEffect(() => {
-    if (!API_URL) return;
-    const interval = setInterval(() => fetchRemote(false), 30000); // 30 detik, lebih jarang
-    const onVisible = () => {
-      if (document.visibilityState === 'visible') fetchRemote(false);
-    };
-    document.addEventListener('visibilitychange', onVisible);
-    window.addEventListener('focus', onVisible);
-    return () => {
-      clearInterval(interval);
-      document.removeEventListener('visibilitychange', onVisible);
-      window.removeEventListener('focus', onVisible);
-    };
-  }, []);
-
-  // ============ PERBAIKAN: SAVE DENGAN DEBOUNCE LEBIH LAMA ============
-  useEffect(() => {
-    if (!loaded) return;
-    if (skipNextSaveRef.current) {
-      skipNextSaveRef.current = false;
-      return;
-    }
-    
-    // Reset timer setiap kali ada perubahan
-    if (typingTimerRef.current) {
-      clearTimeout(typingTimerRef.current);
-    }
-    
-    setStatus('saving');
-    
-    // Debounce lebih lama: 1500ms setelah selesai mengetik
-    typingTimerRef.current = setTimeout(async () => {
-      isTypingRef.current = false;
-      const payload = { cover, jadwal, agenda, siswa };
-      const payloadStr = JSON.stringify(payload);
-      
-      try {
-        localStorage.setItem(STORAGE_KEY, payloadStr);
-        setStatus('saved');
-      } catch (e) {
-        setStatus('error');
-      }
-      
-      // Sinkron ke server hanya jika ada API
-      if (API_URL) {
-        try {
-          setSyncStatus('syncing');
-          const res = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ data: payloadStr }),
-          });
-          const json = await res.json();
-          if (json.ok) {
-            lastUpdatedRef.current = json.updatedAt;
-            setSyncStatus('online');
-          } else {
-            setSyncStatus('error');
-          }
-        } catch (e) {
-          setSyncStatus('error');
-        }
-      }
-    }, 1500); // 1.5 detik setelah selesai mengetik
-    
-    return () => {
-      if (typingTimerRef.current) {
-        clearTimeout(typingTimerRef.current);
-      }
-    };
-  }, [cover, jadwal, agenda, siswa, loaded]);
-
-  // ============ OPTIMASI: Fungsi update dengan useCallback ============
+  // ============ FUNGSI UPDATE DENGAN useCallback ============
   const updateAgenda = useCallback((id, field, value) => {
     setAgenda(prev => {
-      // Hanya update jika ada perubahan
       const targetRow = prev.find(r => r.id === id);
       if (targetRow && targetRow[field] === value) return prev;
-      
       return prev.map((r) => (r.id === id ? { ...r, [field]: value } : r));
     });
   }, []);
@@ -738,7 +716,6 @@ function AgendaGuruApp() {
     setJadwal((prev) => {
       const targetRow = prev[sem].days[day].find(r => r.id === id);
       if (targetRow && targetRow[field] === value) return prev;
-      
       return {
         ...prev,
         [sem]: { 
@@ -772,10 +749,6 @@ function AgendaGuruApp() {
 
   const setTp = useCallback((sem, value) => {
     setJadwal((prev) => ({ ...prev, [sem]: { ...prev[sem], tp: value } }));
-  }, []);
-
-  const setCoverField = useCallback((key, value) => {
-    setCover((prev) => ({ ...prev, [key]: value }));
   }, []);
 
   const addAgenda = useCallback(() => {
@@ -828,7 +801,7 @@ function AgendaGuruApp() {
     setOpenAbsenId(null);
   }, [agenda, siswa, updateAgenda]);
 
-  // ============ PERBAIKAN: Split halaman ============
+  // ============ SPLIT HALAMAN ============
   const MAX_ROWS_PER_PAGE = 8;
   
   const splitIntoPages = useCallback((rows) => {
@@ -907,21 +880,19 @@ function AgendaGuruApp() {
     a.download = `agenda-guru-${(cover.namaGuru || 'guru').replace(/\s+/g, '-').toLowerCase()}.json`;
     a.click();
     URL.revokeObjectURL(url);
+    showToast('📥 Data berhasil diekspor', 'success');
   }, [cover, jadwal, agenda, siswa]);
 
-  const statusLabel = status === 'saving' ? 'Menyimpan…' : status === 'saved' ? 'Tersimpan ✓' : status === 'error' ? 'Gagal menyimpan' : 'Siap';
-  const syncLabel = { off: '', connecting: '🔄 Menghubungkan…', syncing: '☁️ Sinkron…', online: '☁️ Tersambung ✓', error: '⚠️ Sinkron gagal' }[syncStatus];
-  const rowOpen = agenda.find((r) => r.id === openAbsenId);
-
-  const doPrint = useCallback(() => {
+  const doPrint = useCallback(async () => {
+    // Simpan data sebelum print
+    await saveData(false);
     const el = document.getElementById('page-size-style');
     if (el) el.textContent = `@page { size: A4 landscape; margin: 8mm 6mm 8mm 45mm; }`;
-    // Simpan dulu sebelum print
-    if (saveTimer.current) clearTimeout(saveTimer.current);
-    const payload = { cover, jadwal, agenda, siswa };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     setTimeout(() => window.print(), 30);
-  }, [cover, jadwal, agenda, siswa]);
+  }, [saveData]);
+
+  const syncLabel = { off: '', syncing: '☁️ Sinkron…', online: '☁️ Tersambung', error: '⚠️ Offline' }[syncStatus];
+  const rowOpen = agenda.find((r) => r.id === openAbsenId);
 
   const AgendaRow = React.memo(({ row, index }) => {
     const rowClass = index % 2 === 0 ? 'agenda-row-even' : 'agenda-row-odd';
@@ -1012,9 +983,19 @@ function AgendaGuruApp() {
                 );
               })}
             </div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-green-200 text-xs font-medium text-neutral-500">{statusLabel}</span>
+            <button 
+              onClick={() => saveData(true)} 
+              disabled={isSaving}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition ${
+                isSaving ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-green-700 text-white hover:bg-green-800'
+              }`}
+            >
+              <Save size={14} /> {isSaving ? 'Menyimpan...' : 'Simpan'}
+            </button>
             {syncLabel && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-green-200 text-xs font-medium text-neutral-500">{syncLabel}</span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-green-200 text-xs font-medium text-neutral-500">
+                <CloudIcon size={12} /> {syncLabel}
+              </span>
             )}
           </div>
         </div>
@@ -1058,9 +1039,15 @@ function AgendaGuruApp() {
             </div>
 
             <div className="pb-6 flex flex-wrap justify-center gap-2 no-print">
-              <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-green-700 text-white text-xs font-semibold">
-                <Save size={14} /> {statusLabel}
-              </span>
+              <button 
+                onClick={() => saveData(true)} 
+                disabled={isSaving}
+                className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition ${
+                  isSaving ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-green-700 text-white hover:bg-green-800'
+                }`}
+              >
+                <Save size={14} /> {isSaving ? 'Menyimpan...' : 'Simpan Data'}
+              </button>
               <button onClick={exportJson} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-green-300 text-xs font-medium">
                 <Download size={14} /> Ekspor JSON
               </button>
@@ -1356,8 +1343,8 @@ function AgendaGuruApp() {
       )}
 
       <div className="no-print max-w-6xl mx-auto px-4 pb-8 text-center text-[10px] text-neutral-400">
-        Aplikasi Buku Agenda Guru • SMPN 13 Bandar Lampung • Data tersimpan otomatis di browser (localStorage)
-        <span className="block text-[9px] text-neutral-300">Auto-save setiap 1.5 detik setelah selesai mengetik</span>
+        Aplikasi Buku Agenda Guru • SMPN 13 Bandar Lampung • Data disimpan secara manual via tombol <b>Simpan</b>
+        <span className="block text-[9px] text-neutral-300">Klik Simpan untuk menyimpan perubahan • Data tersimpan di browser (localStorage)</span>
       </div>
     </div>
   );
