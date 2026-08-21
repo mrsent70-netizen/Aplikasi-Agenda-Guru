@@ -263,25 +263,29 @@
     padding: 4px 6px;
     vertical-align: middle;
   }
-  .agenda-table td textarea,
-  .agenda-table td input {
+  /* Input dan textarea dengan ukuran tetap - TIDAK auto-resize */
+  .agenda-table td input,
+  .agenda-table td textarea {
     width: 100%;
     border: none;
     background: transparent;
     font-size: 12px;
-    line-height: 1.5;
-    padding: 2px 4px;
+    line-height: 1.4;
+    padding: 4px 4px;
+    outline: none;
+    font-family: inherit;
+    box-sizing: border-box;
+    min-height: 32px;
+    height: 32px;
     resize: none;
     overflow: hidden;
-    outline: none;
-    min-height: 28px;
-    font-family: inherit;
   }
   .agenda-table td textarea {
-    height: auto;
+    height: 36px;
+    min-height: 36px;
   }
-  .agenda-table td textarea:focus,
-  .agenda-table td input:focus {
+  .agenda-table td input:focus,
+  .agenda-table td textarea:focus {
     outline: 2px solid #22c55e;
     outline-offset: -2px;
     border-radius: 2px;
@@ -383,7 +387,7 @@
 <div id="toast" class="toast"></div>
 
 <script type="text/plain" id="app-source">
-const { useState, useEffect, useRef, useMemo, useCallback } = React;
+const { useState, useEffect, useRef, useMemo, useCallback, memo } = React;
 
 function IconBase({ paths, size = 16, className = '', ...rest }) {
   return (
@@ -604,6 +608,102 @@ function TandaTangan({ cover }) {
   );
 }
 
+// ============ KOMPONEN ROW YANG DIOPTIMASI ============
+const AgendaRow = memo(({ row, index, updateAgenda, removeAgenda, setOpenAbsenId, isPrinting, previewMode, formatTgl }) => {
+  const rowClass = index % 2 === 0 ? 'agenda-row-even' : 'agenda-row-odd';
+  
+  // Handler dengan useCallback di dalam memo
+  const handleTanggalChange = useCallback((e) => {
+    updateAgenda(row.id, 'tanggal', e.target.value);
+  }, [row.id, updateAgenda]);
+
+  const handleJamKeChange = useCallback((e) => {
+    updateAgenda(row.id, 'jamKe', e.target.value);
+  }, [row.id, updateAgenda]);
+
+  const handleKelasChange = useCallback((e) => {
+    updateAgenda(row.id, 'kelas', e.target.value);
+  }, [row.id, updateAgenda]);
+
+  const handleKdRppChange = useCallback((e) => {
+    updateAgenda(row.id, 'kdRpp', e.target.value);
+  }, [row.id, updateAgenda]);
+
+  const handleKompetensiChange = useCallback((e) => {
+    updateAgenda(row.id, 'kompetensi', e.target.value);
+  }, [row.id, updateAgenda]);
+
+  const handleXChange = useCallback((e) => {
+    updateAgenda(row.id, 'x', e.target.value);
+  }, [row.id, updateAgenda]);
+
+  const handleYChange = useCallback((e) => {
+    updateAgenda(row.id, 'y', e.target.value);
+  }, [row.id, updateAgenda]);
+
+  const handleSelesaiChange = useCallback((e) => {
+    updateAgenda(row.id, 'selesai', e.target.value);
+  }, [row.id, updateAgenda]);
+
+  const handleAbsensiChange = useCallback((e) => {
+    updateAgenda(row.id, 'absensi', e.target.value);
+  }, [row.id, updateAgenda]);
+
+  const handleOpenAbsen = useCallback(() => {
+    setOpenAbsenId(row.id);
+  }, [row.id, setOpenAbsenId]);
+
+  const handleRemove = useCallback(() => {
+    removeAgenda(row.id);
+  }, [row.id, removeAgenda]);
+
+  return (
+    <tr className={`agenda-row ${rowClass}`}>
+      <td className="border border-green-700 p-0 col-tanggal">
+        {isPrinting || previewMode ? (
+          <div className="px-1 py-2 text-[11px]">{formatTgl(row.tanggal)}</div>
+        ) : (
+          <input type="date" value={row.tanggal} onChange={handleTanggalChange} className="w-full px-1 py-2 bg-transparent outline-none text-[11px]" />
+        )}
+      </td>
+      <td className="border border-green-700 p-0 col-jam">
+        <input value={row.jamKe} onChange={handleJamKeChange} placeholder="1-2" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
+      </td>
+      <td className="border border-green-700 p-0 col-kelas">
+        <input list="daftar-kelas" value={row.kelas} onChange={handleKelasChange} placeholder="IX A" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
+      </td>
+      <td className="border border-green-700 p-0 col-kd">
+        <input value={row.kdRpp} onChange={handleKdRppChange} placeholder="3.1" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
+      </td>
+      <td className="border border-green-700 p-0 col-kompetensi">
+        <input value={row.kompetensi} onChange={handleKompetensiChange} placeholder="KD / indikator" className="w-full px-2 py-2 bg-transparent outline-none text-[11px]" />
+      </td>
+      <td className="border border-green-700 p-0 col-x">
+        <input value={row.x} onChange={handleXChange} className="w-full text-center py-2 bg-transparent outline-none" />
+      </td>
+      <td className="border border-green-700 p-0 col-y">
+        <input value={row.y} onChange={handleYChange} className="w-full text-center py-2 bg-transparent outline-none" />
+      </td>
+      <td className="border border-green-700 p-0 col-selesai">
+        <input value={row.selesai} onChange={handleSelesaiChange} placeholder="Selesai / Belum" className="w-full px-1 py-2 bg-transparent outline-none text-[11px]" />
+      </td>
+      <td className="border border-green-700 p-0 col-absensi">
+        <div className="flex items-center gap-0.5">
+          <input value={row.absensi} onChange={handleAbsensiChange} placeholder="Hadir 32, atau klik ikon" className="w-full px-1 py-2 bg-transparent outline-none text-[11px]" />
+          <button onClick={handleOpenAbsen} className="no-print shrink-0 p-1 rounded hover:bg-green-100 text-green-700" title="Isi absensi per siswa">
+            <Users size={13} />
+          </button>
+        </div>
+      </td>
+      <td className="border border-green-700 p-0 text-center col-action no-print">
+        <button onClick={handleRemove} className="p-1.5 hover:bg-red-50 rounded text-red-500">
+          <Trash2 size={12} />
+        </button>
+      </td>
+    </tr>
+  );
+});
+
 function AgendaGuruApp() {
   const [tab, setTab] = useState('cover');
   const [cover, setCover] = useState(defaultCover);
@@ -635,17 +735,12 @@ function AgendaGuruApp() {
   }, []);
 
   const BULAN_ID = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-  const formatTgl = (iso) => {
+  const formatTgl = useCallback((iso) => {
     if (!iso) return '-';
     const [y, m, d] = iso.split('-');
     const bulan = BULAN_ID[parseInt(m, 10) - 1] || m;
     return `${parseInt(d, 10)} ${bulan} ${y}`;
-  };
-
-  const estimateRows = (text, charsPerLine = 24) => {
-    if (!text) return 1;
-    return text.split('\n').reduce((sum, line) => sum + Math.max(1, Math.ceil(line.length / charsPerLine)), 1);
-  };
+  }, []);
 
   // ============ FUNGSI SIMPAN MANUAL ============
   const saveData = useCallback(async (showToastMsg = true) => {
@@ -654,10 +749,8 @@ function AgendaGuruApp() {
     const payloadStr = JSON.stringify(payload);
     
     try {
-      // Simpan ke localStorage
       localStorage.setItem(STORAGE_KEY, payloadStr);
       
-      // Sinkron ke server jika ada API
       if (API_URL) {
         setSyncStatus('syncing');
         const res = await fetch(API_URL, {
@@ -810,21 +903,14 @@ function AgendaGuruApp() {
     const estimateRowHeight = (row) => {
       let height = 1.0;
       const kompetensiText = row.kompetensi || '';
-      const kompetensiLines = kompetensiText.split('\n').length;
       const kompetensiLength = kompetensiText.length;
-      height += Math.max(0, kompetensiLines - 1) * 0.5;
       height += Math.floor(kompetensiLength / 50) * 0.25;
       
       const absensiText = row.absensi || '';
-      const absensiLines = absensiText.split('\n').length;
       const absensiLength = absensiText.length;
-      height += Math.max(0, absensiLines - 1) * 0.5;
       height += Math.floor(absensiLength / 40) * 0.25;
       
-      if (row.selesai && row.selesai.length > 15) {
-        height += 0.15;
-      }
-      return Math.max(1.0, Math.min(4.0, height));
+      return Math.max(1.0, Math.min(3.5, height));
     };
     
     const pages = [];
@@ -840,7 +926,7 @@ function AgendaGuruApp() {
         const rowHeight = estimateRowHeight(rows[i]);
         const tempHeight = totalHeight + rowHeight;
         
-        if (tempHeight > 10.5 && rowCount > 0) {
+        if (tempHeight > 9.5 && rowCount > 0) {
           break;
         }
         
@@ -884,7 +970,6 @@ function AgendaGuruApp() {
   }, [cover, jadwal, agenda, siswa]);
 
   const doPrint = useCallback(async () => {
-    // Simpan data sebelum print
     await saveData(false);
     const el = document.getElementById('page-size-style');
     if (el) el.textContent = `@page { size: A4 landscape; margin: 8mm 6mm 8mm 45mm; }`;
@@ -893,55 +978,6 @@ function AgendaGuruApp() {
 
   const syncLabel = { off: '', syncing: '☁️ Sinkron…', online: '☁️ Tersambung', error: '⚠️ Offline' }[syncStatus];
   const rowOpen = agenda.find((r) => r.id === openAbsenId);
-
-  const AgendaRow = React.memo(({ row, index }) => {
-    const rowClass = index % 2 === 0 ? 'agenda-row-even' : 'agenda-row-odd';
-    return (
-      <tr key={row.id} className={`agenda-row ${rowClass}`}>
-        <td className="border border-green-700 p-0 col-tanggal">
-          {isPrinting || previewMode ? (
-            <div className="px-1 py-2 text-[11px]">{formatTgl(row.tanggal)}</div>
-          ) : (
-            <input type="date" value={row.tanggal} onChange={(e) => updateAgenda(row.id, 'tanggal', e.target.value)} className="w-full px-1 py-2 bg-transparent outline-none text-[11px]" />
-          )}
-        </td>
-        <td className="border border-green-700 p-0 col-jam">
-          <input value={row.jamKe} onChange={(e) => updateAgenda(row.id, 'jamKe', e.target.value)} placeholder="1-2" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
-        </td>
-        <td className="border border-green-700 p-0 col-kelas">
-          <input list="daftar-kelas" value={row.kelas} onChange={(e) => updateAgenda(row.id, 'kelas', e.target.value)} placeholder="IX A" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
-        </td>
-        <td className="border border-green-700 p-0 col-kd">
-          <input value={row.kdRpp} onChange={(e) => updateAgenda(row.id, 'kdRpp', e.target.value)} placeholder="3.1" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
-        </td>
-        <td className="border border-green-700 p-0 col-kompetensi">
-          <textarea value={row.kompetensi} onChange={(e) => updateAgenda(row.id, 'kompetensi', e.target.value)} placeholder="KD / indikator" rows={Math.max(1, estimateRows(row.kompetensi, 30))} className="w-full px-2 py-1 bg-transparent outline-none resize-none text-[11px]" />
-        </td>
-        <td className="border border-green-700 p-0 col-x">
-          <input value={row.x} onChange={(e) => updateAgenda(row.id, 'x', e.target.value)} className="w-full text-center py-2 bg-transparent outline-none" />
-        </td>
-        <td className="border border-green-700 p-0 col-y">
-          <input value={row.y} onChange={(e) => updateAgenda(row.id, 'y', e.target.value)} className="w-full text-center py-2 bg-transparent outline-none" />
-        </td>
-        <td className="border border-green-700 p-0 col-selesai">
-          <input value={row.selesai} onChange={(e) => updateAgenda(row.id, 'selesai', e.target.value)} placeholder="Selesai / Belum" className="w-full px-1 py-2 bg-transparent outline-none text-[11px]" />
-        </td>
-        <td className="border border-green-700 p-0 col-absensi">
-          <div className="flex items-start gap-1">
-            <textarea value={row.absensi} onChange={(e) => updateAgenda(row.id, 'absensi', e.target.value)} placeholder="Hadir 32, atau klik ikon di samping" rows={Math.max(1, estimateRows(row.absensi, 35))} className="w-full px-1 py-1 bg-transparent outline-none text-[11px] resize-none" />
-            <button onClick={() => setOpenAbsenId(row.id)} className="no-print shrink-0 mt-0.5 p-1 rounded hover:bg-green-100 text-green-700" title="Isi absensi per siswa">
-              <Users size={13} />
-            </button>
-          </div>
-        </td>
-        <td className="border border-green-700 p-0 text-center col-action no-print">
-          <button onClick={() => removeAgenda(row.id)} className="p-1.5 hover:bg-red-50 rounded text-red-500">
-            <Trash2 size={12} />
-          </button>
-        </td>
-      </tr>
-    );
-  });
 
   return (
     <div className={`min-h-screen bg-green-50 text-neutral-900 ${previewMode ? 'preview-mode' : ''}`}>
@@ -1028,7 +1064,7 @@ function AgendaGuruApp() {
                     <div className="md:w-36 shrink-0 text-[11px] font-bold tracking-widest uppercase text-neutral-500">{f.label}</div>
                     <div className="flex-1 border-b-2 border-dashed border-green-700/60 pb-1">
                       {f.multiline ? (
-                        <textarea value={cover[f.key]} onChange={(e) => setCover({ ...cover, [f.key]: e.target.value })} placeholder={f.placeholder} rows={3} className="w-full bg-transparent outline-none resize-none text-sm font-medium" />
+                        <textarea value={cover[f.key]} onChange={(e) => setCover({ ...cover, [f.key]: e.target.value })} placeholder={f.placeholder} rows={2} className="w-full bg-transparent outline-none resize-none text-sm font-medium" />
                       ) : (
                         <input value={cover[f.key]} onChange={(e) => setCover({ ...cover, [f.key]: e.target.value })} placeholder={f.placeholder} className="w-full bg-transparent outline-none text-sm font-medium" />
                       )}
@@ -1066,7 +1102,7 @@ function AgendaGuruApp() {
           <div id="jadwal-content" className="space-y-8">
             <div className="bg-white border border-green-200 rounded-2xl p-4 md:p-6 text-xs md:text-sm leading-relaxed text-neutral-600 font-tubuh no-print flex flex-wrap items-center justify-between gap-3">
               <span>
-                Jadwal setiap hari kini <b>independen</b>: jumlah jam, jam masuk-pulang, dan kegiatan (Upacara, IMTAQ, Istirahat, MBG + Sholat, dst) bisa berbeda-beda per hari. Baris kegiatan non-mengajar cukup ditandai dengan mengisi kolom <b>No</b> dengan tanda "-".
+                Jadwal setiap hari independen: jumlah jam, jam masuk-pulang, dan kegiatan bisa berbeda-beda per hari. Baris kegiatan non-mengajar ditandai dengan mengisi kolom <b>No</b> dengan tanda "-".
               </span>
               <div className="shrink-0 flex gap-2">
                 <button onClick={doPrint} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-green-300 text-xs font-medium">
@@ -1235,7 +1271,7 @@ function AgendaGuruApp() {
               <div className="no-print">
                 <h3 className="font-judul text-xl md:text-2xl font-bold">Agenda Harian Mengajar</h3>
                 <p className="text-[11px] text-neutral-500 mt-1">Diisi setiap hari mengajar, sesuai jam pada jadwal</p>
-                <p className="text-[10px] text-neutral-400 mt-0.5">Halaman 1-7 tetap 8 row, hanya halaman dengan row tinggi yang berkurang</p>
+                <p className="text-[10px] text-neutral-400 mt-0.5">Target 8 row per halaman, berkurang jika ada row tinggi</p>
               </div>
               <div className="no-print flex flex-wrap items-center gap-2">
                 <div className="flex items-center gap-1.5 bg-white border border-green-300 rounded-full px-2 py-1">
@@ -1288,7 +1324,17 @@ function AgendaGuruApp() {
                         </tr>
                       ) : (
                         pageRows.map((row, idx) => (
-                          <AgendaRow key={row.id} row={row} index={idx} />
+                          <AgendaRow 
+                            key={row.id}
+                            row={row}
+                            index={idx}
+                            updateAgenda={updateAgenda}
+                            removeAgenda={removeAgenda}
+                            setOpenAbsenId={setOpenAbsenId}
+                            isPrinting={isPrinting}
+                            previewMode={previewMode}
+                            formatTgl={formatTgl}
+                          />
                         ))
                       )}
                     </tbody>
@@ -1310,7 +1356,7 @@ function AgendaGuruApp() {
                 <b>X</b> = Banyak pertemuan untuk 1 KD • <b>Y</b> = Pertemuan ke- • <b>KD RPP</b> = Nomor KD & RPP
               </div>
               <div className="bg-white/80 rounded-lg border border-green-200 p-2">
-                Klik ikon orang di kolom Absensi untuk mencentang H/S/I/A per siswa — ringkasan terisi otomatis (mis. "1. ANDRE ( A )").
+                Klik ikon orang di kolom Absensi untuk mencentang H/S/I/A per siswa — ringkasan terisi otomatis.
               </div>
               <div className="bg-white/80 rounded-lg border border-green-200 p-2">
                 Guru: <b>{cover.namaGuru || '-'}</b> • Mapel: <b>{cover.mapel || '-'}</b> • {totalSlot} slot jam mengajar/minggu (ganjil)
