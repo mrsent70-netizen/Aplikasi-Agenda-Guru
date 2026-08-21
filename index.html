@@ -806,47 +806,89 @@ function AgendaGuruApp() {
     });
   }, [agenda, filterTgl, filterTeks]);
 
-  // Fungsi untuk membagi row ke halaman berdasarkan tinggi konten
-  // Maksimal 8 row per halaman, tetapi bisa kurang jika row tinggi
+  // Fungsi untuk membagi row ke halaman 
+  // Target: 8 row per halaman, tapi jika ada row yang sangat tinggi (banyak teks), 
+  // halaman tersebut akan mengurangi jumlah row agar muat
   const MAX_ROWS_PER_PAGE = 8;
+  const MAX_HEIGHT_UNITS = 9; // total tinggi maksimal per halaman dalam unit
   
   const splitIntoPages = useCallback((rows) => {
+    if (rows.length === 0) return [[]];
+    
     const pages = [];
     let currentPage = [];
     let currentHeight = 0;
     
     // Estimasi tinggi per row berdasarkan konten
     const estimateRowHeight = (row) => {
-      let height = 1; // base height
-      // Tambahkan tinggi berdasarkan konten di kolom kompetensi dan absensi
-      const kompetensiLines = (row.kompetensi || '').split('\n').length;
-      const absensiLines = (row.absensi || '').split('\n').length;
-      height += Math.max(0, kompetensiLines - 1) * 0.6;
-      height += Math.max(0, absensiLines - 1) * 0.6;
-      // Tambahan untuk teks panjang yang wrap
-      const kompetensiLength = (row.kompetensi || '').length;
-      const absensiLength = (row.absensi || '').length;
-      height += Math.floor(kompetensiLength / 60) * 0.3;
-      height += Math.floor(absensiLength / 50) * 0.3;
-      return Math.max(1, Math.min(4, height));
+      let height = 1.2; // base height (sedikit lebih tinggi dari minimum)
+      
+      // Tambahkan tinggi berdasarkan konten di kolom kompetensi
+      const kompetensiText = row.kompetensi || '';
+      const kompetensiLines = kompetensiText.split('\n').length;
+      const kompetensiLength = kompetensiText.length;
+      height += Math.max(0, kompetensiLines - 1) * 0.7;
+      height += Math.floor(kompetensiLength / 55) * 0.3;
+      
+      // Tambahkan tinggi berdasarkan konten di kolom absensi
+      const absensiText = row.absensi || '';
+      const absensiLines = absensiText.split('\n').length;
+      const absensiLength = absensiText.length;
+      height += Math.max(0, absensiLines - 1) * 0.7;
+      height += Math.floor(absensiLength / 45) * 0.3;
+      
+      // Jika ada teks di kolom selesai, tambahkan sedikit tinggi
+      if (row.selesai && row.selesai.length > 20) {
+        height += 0.3;
+      }
+      
+      // Batasi tinggi maksimum per row
+      return Math.max(1.2, Math.min(4.5, height));
+    };
+    
+    // Hitung total tinggi untuk sekumpulan row
+    const getTotalHeight = (pageRows) => {
+      return pageRows.reduce((sum, row) => sum + estimateRowHeight(row), 0);
     };
     
     for (const row of rows) {
       const rowHeight = estimateRowHeight(row);
       
-      // Jika menambahkan row ini melebihi max row atau tinggi, mulai halaman baru
-      if (currentPage.length >= MAX_ROWS_PER_PAGE || (currentHeight + rowHeight > 8 && currentPage.length > 0)) {
-        pages.push(currentPage);
-        currentPage = [];
-        currentHeight = 0;
+      // Coba tambahkan row ke halaman saat ini
+      const tempPage = [...currentPage, row];
+      const tempHeight = getTotalHeight(tempPage);
+      
+      // Jika halaman saat ini kosong, selalu tambahkan row (minimal 1 row per halaman)
+      if (currentPage.length === 0) {
+        currentPage.push(row);
+        currentHeight = rowHeight;
+        continue;
       }
       
-      currentPage.push(row);
-      currentHeight += rowHeight;
+      // Cek apakah menambahkan row ini melebihi batas
+      const wouldExceedMaxRows = tempPage.length > MAX_ROWS_PER_PAGE;
+      const wouldExceedMaxHeight = tempHeight > MAX_HEIGHT_UNITS;
+      
+      if (wouldExceedMaxRows || wouldExceedMaxHeight) {
+        // Jika melebihi batas, simpan halaman saat ini dan mulai halaman baru
+        pages.push(currentPage);
+        currentPage = [row];
+        currentHeight = rowHeight;
+      } else {
+        // Tambahkan row ke halaman saat ini
+        currentPage.push(row);
+        currentHeight = tempHeight;
+      }
     }
     
-    if (currentPage.length > 0 || pages.length === 0) {
+    // Tambahkan halaman terakhir jika tidak kosong
+    if (currentPage.length > 0) {
       pages.push(currentPage);
+    }
+    
+    // Pastikan tidak ada halaman kosong
+    if (pages.length === 0) {
+      pages.push([]);
     }
     
     return pages;
@@ -1206,7 +1248,7 @@ function AgendaGuruApp() {
               <div className="no-print">
                 <h3 className="font-judul text-xl md:text-2xl font-bold">Agenda Harian Mengajar</h3>
                 <p className="text-[11px] text-neutral-500 mt-1">Diisi setiap hari mengajar, sesuai jam pada jadwal</p>
-                <p className="text-[10px] text-neutral-400 mt-0.5">Jumlah row per halaman menyesuaikan dengan tinggi konten (maksimal 8 row)</p>
+                <p className="text-[10px] text-neutral-400 mt-0.5">Target 8 row per halaman, berkurang jika ada row yang tinggi</p>
               </div>
               <div className="no-print flex flex-wrap items-center gap-2">
                 <div className="flex items-center gap-1.5 bg-white border border-green-300 rounded-full px-2 py-1">
@@ -1290,7 +1332,10 @@ function AgendaGuruApp() {
             </div>
 
             <div className="mt-3 text-[10px] text-neutral-500 no-print">
-              Total baris: {filteredAgenda.length} dari {agenda.length} • Halaman: {agendaPages.length} • Filter: {filterTgl || 'Semua tanggal'} {filterTeks ? `• Cari: ${filterTeks}` : ''}
+              Total baris: {filteredAgenda.length} dari {agenda.length} • Halaman: {agendaPages.length} • 
+              Jumlah row per halaman: {agendaPages.map((p, i) => `${i+1}:${p.length}`).join(', ')}
+              {filterTgl ? ` • Filter tanggal: ${filterTgl}` : ''}
+              {filterTeks ? ` • Cari: ${filterTeks}` : ''}
             </div>
           </div>
         )}
