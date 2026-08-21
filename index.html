@@ -532,12 +532,22 @@ function AgendaGuruApp() {
     });
   }, [agenda, filterTgl, filterTeks]);
 
-  const ROWS_PER_PAGE = 8;
+  const ROW_BUDGET = 8; // "kapasitas" per halaman dalam satuan baris normal
   const agendaPages = useMemo(() => {
     const pages = [];
-    for (let i = 0; i < filteredAgenda.length; i += ROWS_PER_PAGE) {
-      pages.push(filteredAgenda.slice(i, i + ROWS_PER_PAGE));
-    }
+    let current = [];
+    let used = 0;
+    filteredAgenda.forEach((row) => {
+      const weight = Math.max(1, estimateRows(row.absensi, 28), estimateRows(row.kompetensi, 24));
+      if (current.length > 0 && used + weight > ROW_BUDGET) {
+        pages.push(current);
+        current = [];
+        used = 0;
+      }
+      current.push(row);
+      used += weight;
+    });
+    if (current.length > 0) pages.push(current);
     if (pages.length === 0) pages.push([]);
     return pages;
   }, [filteredAgenda]);
@@ -935,7 +945,7 @@ function AgendaGuruApp() {
                   <h3 className="font-judul text-xl font-bold">Agenda Harian Mengajar</h3>
                   <p className="text-[11px] text-neutral-500">SMP Negeri 13 Bandar Lampung • Halaman {pageIdx + 1} dari {agendaPages.length}</p>
                 </div>
-                <div className="mt-5 overflow-x-auto rounded-xl border border-green-700 bg-white print-wrap">
+                <div className="mt-5 overflow-x-auto rounded-xl border border-green-700 bg-white table-scroll-wrap">
                   <table className="w-full text-[12px] border-collapse agenda-table">
                     <thead>
                       <tr className="bg-green-700 text-white text-[11px] tracking-wide">
