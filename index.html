@@ -27,7 +27,6 @@
   body { font-family: 'Inter', system-ui, sans-serif; }
   .font-judul { font-family: 'EB Garamond', Georgia, serif; }
   .font-tubuh { font-family: 'Inter', system-ui, sans-serif; }
-  
   @media print {
     .no-print, .preview-toolbar { display: none !important; }
     body { background: white !important; }
@@ -52,107 +51,9 @@
     .cover-page-wrap { display: flex !important; align-items: center !important; justify-content: center !important; min-height: 180mm !important; }
     .print-only-title { display: block !important; margin-bottom: 8px; padding-top: 4px; }
     .page-top-gap { padding-top: 14mm !important; }
-    
-    .agenda-page-container {
-      page-break-after: always;
-      break-after: page;
-      display: block;
-    }
-    .agenda-page-container:last-child {
-      page-break-after: avoid;
-      break-after: avoid;
-    }
-    .agenda-table-wrapper {
-      width: 100%;
-      overflow: visible;
-    }
-    .agenda-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 9px;
-    }
-    .agenda-table th,
-    .agenda-table td {
-      border: 1px solid #14532d;
-      padding: 2px 3px;
-      vertical-align: middle;
-    }
-    .agenda-table .col-tanggal { width: 10%; min-width: 70px; }
-    .agenda-table .col-jam { width: 7%; min-width: 45px; }
-    .agenda-table .col-kelas { width: 8%; min-width: 50px; }
-    .agenda-table .col-kd { width: 8%; min-width: 50px; }
-    .agenda-table .col-kompetensi { width: 18%; min-width: 100px; }
-    .agenda-table .col-x { width: 4%; min-width: 25px; }
-    .agenda-table .col-y { width: 4%; min-width: 25px; }
-    .agenda-table .col-selesai { width: 12%; min-width: 70px; }
-    .agenda-table .col-absensi { width: 20%; min-width: 120px; }
-    .agenda-table .col-action { width: 4%; min-width: 25px; display: none; }
-    
-    .agenda-table td textarea,
-    .agenda-table td input {
-      width: 100%;
-      border: none;
-      background: transparent;
-      font-size: 8px;
-      line-height: 1.2;
-      padding: 1px 2px;
-      resize: none;
-      overflow: hidden;
-      min-height: 16px;
-    }
-    .agenda-table td textarea {
-      height: auto;
-    }
-    .agenda-row {
-      page-break-inside: avoid;
-      break-inside: avoid;
-    }
-    .agenda-table tbody tr {
-      page-break-inside: avoid;
-      break-inside: avoid;
-    }
-    
-    /* Tanda Tangan - tetap di setiap halaman */
-    .ttd-container {
-      margin-top: 8px;
-      padding-top: 6px;
-      border-top: 1px dashed #86efac;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px;
-      page-break-inside: avoid;
-      break-inside: avoid;
-      page-break-after: avoid;
-      break-after: avoid;
-    }
-    .ttd-item {
-      text-align: center;
-      min-width: 180px;
-      font-size: 8px;
-    }
-    .ttd-item .ttd-label {
-      font-weight: 600;
-      font-size: 7px;
-      letter-spacing: 0.5px;
-    }
-    .ttd-item .ttd-space {
-      height: 16px;
-    }
-    .ttd-item .ttd-name {
-      font-weight: 700;
-      border-bottom: 1px solid #a3a3a3;
-      padding-bottom: 1px;
-      display: inline-block;
-      min-width: 150px;
-      font-size: 8px;
-    }
-    .ttd-item .ttd-nip {
-      font-size: 7px;
-      margin-top: 1px;
-    }
+    .mobile-card-view { display: none !important; }
+    .desktop-table-view { display: block !important; }
   }
-  
   .preview-mode .no-print { display: none !important; }
   .preview-mode .print-wrap { display: flex !important; flex-wrap: wrap !important; overflow: visible !important; gap: 6px !important; }
   .preview-mode .print-avoid-break { padding: 10px !important; }
@@ -173,241 +74,22 @@
   .preview-mode .cover-page-wrap { display: flex !important; align-items: center !important; justify-content: center !important; min-height: 70vh !important; }
   .preview-mode .print-only-title { display: block !important; margin-bottom: 8px; padding-top: 4px; }
   .preview-mode .page-top-gap { padding-top: 14mm !important; }
-  
-  .preview-mode .agenda-page-container {
-    display: block;
-    margin-bottom: 20px;
-    border: 1px dashed #ccc;
-    padding: 10px;
-    border-radius: 8px;
-  }
-  .preview-mode .agenda-table-wrapper {
-    width: 100%;
-    overflow: auto;
-  }
-  .preview-mode .agenda-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 10px;
-  }
-  .preview-mode .agenda-table th,
-  .preview-mode .agenda-table td {
-    border: 1px solid #14532d;
-    padding: 3px 4px;
-    vertical-align: middle;
-  }
-  .preview-mode .agenda-table td textarea,
-  .preview-mode .agenda-table td input {
-    width: 100%;
-    border: none;
-    background: transparent;
-    font-size: 10px;
-    line-height: 1.4;
-    padding: 2px 3px;
-    resize: none;
-    overflow: hidden;
-  }
-  .preview-mode .agenda-table td textarea {
-    height: auto;
-    min-height: 24px;
-  }
-  .preview-mode .ttd-container {
-    margin-top: 10px;
-    padding-top: 8px;
-    border-top: 1px dashed #86efac;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  .preview-mode .ttd-item {
-    text-align: center;
-    min-width: 200px;
-    font-size: 10px;
-  }
-  .preview-mode .ttd-item .ttd-label {
-    font-weight: 600;
-    font-size: 9px;
-  }
-  .preview-mode .ttd-item .ttd-space {
-    height: 24px;
-  }
-  .preview-mode .ttd-item .ttd-name {
-    font-weight: 700;
-    border-bottom: 1px solid #a3a3a3;
-    padding-bottom: 2px;
-    display: inline-block;
-    min-width: 180px;
-  }
-  .preview-mode .ttd-item .ttd-nip {
-    font-size: 9px;
-    margin-top: 2px;
-  }
-  
-  .preview-toolbar { position: fixed; top: 0; left: 0; right: 0; z-index: 60; background: #14532d; color: #fff; padding: 10px 16px; display: flex; justify-content: center; gap: 10px; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,.2); flex-wrap: wrap; }
+  .preview-mode .mobile-card-view { display: none !important; }
+  .preview-mode .desktop-table-view { display: block !important; }
+  .preview-toolbar { position: fixed; top: 0; left: 0; right: 0; z-index: 60; background: #14532d; color: #fff; padding: 10px 16px; display: flex; justify-content: center; gap: 10px; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,.2); }
   .preview-mode .preview-body { padding-top: 56px; }
-  
-  .agenda-page-container {
-    display: block;
-    margin-bottom: 16px;
-  }
-  .agenda-table-wrapper {
-    width: 100%;
-    overflow-x: auto;
-  }
-  .agenda-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-  }
-  .agenda-table th,
-  .agenda-table td {
-    border: 1px solid #14532d;
-    padding: 4px 6px;
-    vertical-align: middle;
-  }
-  
-  /* Input dengan ukuran tetap */
-  .agenda-table td input {
-    width: 100%;
-    border: none;
-    background: transparent;
-    font-size: 12px;
-    line-height: 1.4;
-    padding: 4px 4px;
-    outline: none;
-    font-family: inherit;
-    box-sizing: border-box;
-    min-height: 32px;
-    height: 32px;
-  }
-  
-  /* Textarea dengan auto-resize dan scroll */
-  .agenda-table td textarea {
-    width: 100%;
-    border: none;
-    background: transparent;
-    font-size: 12px;
-    line-height: 1.4;
-    padding: 4px 4px;
-    outline: none;
-    font-family: inherit;
-    box-sizing: border-box;
-    min-height: 32px;
-    height: 32px;
-    resize: none;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    transition: height 0.1s ease;
-  }
-  
-  .agenda-table td input:focus,
-  .agenda-table td textarea:focus {
-    outline: 2px solid #22c55e;
-    outline-offset: -2px;
-    border-radius: 2px;
-  }
-  
-  .agenda-table .col-tanggal { width: 10%; min-width: 80px; }
-  .agenda-table .col-jam { width: 7%; min-width: 50px; }
-  .agenda-table .col-kelas { width: 8%; min-width: 55px; }
-  .agenda-table .col-kd { width: 8%; min-width: 55px; }
-  .agenda-table .col-kompetensi { width: 18%; min-width: 120px; }
-  .agenda-table .col-x { width: 4%; min-width: 30px; }
-  .agenda-table .col-y { width: 4%; min-width: 30px; }
-  .agenda-table .col-selesai { width: 12%; min-width: 80px; }
-  .agenda-table .col-absensi { width: 20%; min-width: 140px; }
-  .agenda-table .col-action { width: 4%; min-width: 30px; }
-  
-  .agenda-row-odd { background-color: #f0fdf4; }
-  .agenda-row-even { background-color: #ffffff; }
-  
-  .agenda-table thead th {
-    background-color: #14532d;
-    color: white;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    text-align: center;
-  }
-  
-  /* Tanda Tangan - tampilan layar */
-  .ttd-container {
-    margin-top: 12px;
-    padding-top: 10px;
-    border-top: 1px dashed #86efac;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-  .ttd-item {
-    text-align: center;
-    min-width: 220px;
-    font-size: 11px;
-  }
-  .ttd-item .ttd-label {
-    font-weight: 600;
-    font-size: 10px;
-    letter-spacing: 0.5px;
-    color: #4b5563;
-  }
-  .ttd-item .ttd-space {
-    height: 28px;
-  }
-  .ttd-item .ttd-name {
-    font-weight: 700;
-    border-bottom: 1px solid #9ca3af;
-    padding-bottom: 2px;
-    display: inline-block;
-    min-width: 200px;
-  }
-  .ttd-item .ttd-nip {
-    font-size: 10px;
-    margin-top: 2px;
-    color: #4b5563;
-  }
-  
-  /* Toast notifikasi */
-  .toast {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 100;
-    background: #14532d;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 500;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    transform: translateY(100px);
-    opacity: 0;
-    transition: all 0.3s ease;
-    pointer-events: none;
-  }
-  .toast.show {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  .toast.error {
-    background: #dc2626;
-  }
-  .toast.success {
-    background: #16a34a;
-  }
 </style>
 <style id="page-size-style">@page { size: A4 landscape; margin: 8mm; }</style>
 </head>
 <body>
 <div id="root"></div>
 
-<!-- Toast Notification -->
-<div id="toast" class="toast"></div>
-
 <script type="text/plain" id="app-source">
-const { useState, useEffect, useRef, useMemo, useCallback, memo } = React;
+const { useState, useEffect, useRef, useMemo } = React;
 
+/* ------------------------------------------------------------------ */
+/* Ikon sederhana (gaya lucide), tidak butuh paket npm/bundler          */
+/* ------------------------------------------------------------------ */
 function IconBase({ paths, size = 16, className = '', ...rest }) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...rest}>
@@ -453,11 +135,13 @@ const Users = (p) => <IconBase {...p} paths={[
 ]} />;
 const XIcon = (p) => <IconBase {...p} paths={[['path', { d: 'M18 6 6 18' }], ['path', { d: 'm6 6 12 12' }]]} />;
 const CheckIcon = (p) => <IconBase {...p} paths={[['path', { d: 'M20 6 9 17l-5-5' }]]} />;
-const CloudIcon = (p) => <IconBase {...p} paths={[
-  ['path', { d: 'M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z' }],
-]} />;
 
+/* ------------------------------------------------------------------ */
+/* Data & util                                                         */
+/* ------------------------------------------------------------------ */
 const STORAGE_KEY = 'agenda-guru-smpn13-data';
+// Tempel URL Web App Google Apps Script Bapak di sini (lihat panduan di file AppsScript-Backend.gs).
+// Kalau dikosongkan, aplikasi tetap jalan seperti biasa tapi TIDAK sinkron antar perangkat.
 const API_URL = 'https://script.google.com/macros/s/AKfycbxbr-E1Ib58X6j4cjeoVbeHMq-6Yvt8_GY3ARDmMPDsJ3tNDWxvmzYMd9shIZwKTcrS/exec';
 const DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
 const STATUS_LIST = ['H', 'S', 'I', 'A'];
@@ -540,18 +224,9 @@ function buildDefaultAgenda() {
 
 const defaultCover = { namaGuru: '', nip: '', mapel: '', sekolah: 'SMP Negeri 13 Bandar Lampung', alamat: '' };
 
-// Toast notification helper
-function showToast(message, type = 'success') {
-  const toast = document.getElementById('toast');
-  if (!toast) return;
-  toast.textContent = message;
-  toast.className = `toast ${type} show`;
-  clearTimeout(toast._hideTimer);
-  toast._hideTimer = setTimeout(() => {
-    toast.className = 'toast';
-  }, 2500);
-}
-
+/* ------------------------------------------------------------------ */
+/* Panel absensi per siswa                                             */
+/* ------------------------------------------------------------------ */
 function PanelAbsensi({ row, roster, onUpdateStatus, onApply, onClose, onGoToSiswa }) {
   const detail = row.absensiDetail || {};
   return (
@@ -605,158 +280,30 @@ function PanelAbsensi({ row, roster, onUpdateStatus, onApply, onClose, onGoToSis
   );
 }
 
+/* ------------------------------------------------------------------ */
+/* Komponen utama                                                      */
+/* ------------------------------------------------------------------ */
 function TandaTangan({ cover }) {
   const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
   return (
-    <div className="ttd-container">
-      <div className="ttd-item">
-        <p className="ttd-label">Mengetahui,</p>
-        <p className="font-semibold text-xs">Kepala Sekolah</p>
-        <div className="ttd-space" />
-        <p className="ttd-name">Hj.AMAROH,S.Pd.MM</p>
-        <p className="ttd-nip">NIP. 19671121 199003 2 009</p>
+    <div className="mt-2 pt-2 border-t border-dashed border-green-300 flex flex-wrap justify-between gap-8 text-xs font-tubuh ttd-block print-avoid-break">
+      <div className="text-center min-w-[220px]">
+        <p>Mengetahui,</p>
+        <p className="font-semibold">Kepala Sekolah</p>
+        <div className="h-6 ttd-gap" />
+        <p className="font-semibold border-b border-neutral-400 pb-0.5">.........................................</p>
+        <p className="mt-1">NIP. .........................................</p>
       </div>
-      <div className="ttd-item">
-        <p className="ttd-label">Bandar Lampung, {today}</p>
-        <p className="font-semibold text-xs">Guru Mata Pelajaran</p>
-        <div className="ttd-space" />
-        <p className="ttd-name">{cover.namaGuru || 'SENTOT HARDIONO,S.Pd'}</p>
-        <p className="ttd-nip">NIP. {cover.nip || '19701215 200012 1 001'}</p>
+      <div className="text-center min-w-[220px]">
+        <p>Bandar Lampung, {today}</p>
+        <p className="font-semibold">Guru Mata Pelajaran</p>
+        <div className="h-6 ttd-gap" />
+        <p className="font-semibold border-b border-neutral-400 pb-0.5">{cover.namaGuru || '.........................................'}</p>
+        <p className="mt-1">NIP. {cover.nip || '.........................................'}</p>
       </div>
     </div>
   );
 }
-
-// ============ TEXTAREA AUTO-RESIZE ============
-function AutoResizeTextarea({ value, onChange, placeholder, className, rows = 1 }) {
-  const textareaRef = useRef(null);
-
-  const handleChange = (e) => {
-    onChange(e);
-    const el = e.target;
-    el.style.height = 'auto';
-    el.style.height = el.scrollHeight + 'px';
-  };
-
-  return (
-    <textarea
-      ref={textareaRef}
-      value={value}
-      onChange={handleChange}
-      placeholder={placeholder}
-      className={className}
-      rows={rows}
-      style={{ overflow: 'hidden' }}
-    />
-  );
-}
-
-// ============ KOMPONEN ROW YANG DIOPTIMASI ============
-const AgendaRow = memo(({ row, index, updateAgenda, removeAgenda, setOpenAbsenId, isPrinting, previewMode, formatTgl }) => {
-  const rowClass = index % 2 === 0 ? 'agenda-row-even' : 'agenda-row-odd';
-  
-  const handleTanggalChange = useCallback((e) => {
-    updateAgenda(row.id, 'tanggal', e.target.value);
-  }, [row.id, updateAgenda]);
-
-  const handleJamKeChange = useCallback((e) => {
-    updateAgenda(row.id, 'jamKe', e.target.value);
-  }, [row.id, updateAgenda]);
-
-  const handleKelasChange = useCallback((e) => {
-    updateAgenda(row.id, 'kelas', e.target.value);
-  }, [row.id, updateAgenda]);
-
-  const handleKdRppChange = useCallback((e) => {
-    updateAgenda(row.id, 'kdRpp', e.target.value);
-  }, [row.id, updateAgenda]);
-
-  const handleKompetensiChange = useCallback((e) => {
-    updateAgenda(row.id, 'kompetensi', e.target.value);
-  }, [row.id, updateAgenda]);
-
-  const handleXChange = useCallback((e) => {
-    updateAgenda(row.id, 'x', e.target.value);
-  }, [row.id, updateAgenda]);
-
-  const handleYChange = useCallback((e) => {
-    updateAgenda(row.id, 'y', e.target.value);
-  }, [row.id, updateAgenda]);
-
-  const handleSelesaiChange = useCallback((e) => {
-    updateAgenda(row.id, 'selesai', e.target.value);
-  }, [row.id, updateAgenda]);
-
-  const handleAbsensiChange = useCallback((e) => {
-    updateAgenda(row.id, 'absensi', e.target.value);
-  }, [row.id, updateAgenda]);
-
-  const handleOpenAbsen = useCallback(() => {
-    setOpenAbsenId(row.id);
-  }, [row.id, setOpenAbsenId]);
-
-  const handleRemove = useCallback(() => {
-    removeAgenda(row.id);
-  }, [row.id, removeAgenda]);
-
-  return (
-    <tr className={`agenda-row ${rowClass}`}>
-      <td className="border border-green-700 p-0 col-tanggal">
-        {isPrinting || previewMode ? (
-          <div className="px-1 py-2 text-[11px]">{formatTgl(row.tanggal)}</div>
-        ) : (
-          <input type="date" value={row.tanggal} onChange={handleTanggalChange} className="w-full px-1 py-2 bg-transparent outline-none text-[11px]" />
-        )}
-      </td>
-      <td className="border border-green-700 p-0 col-jam">
-        <input value={row.jamKe} onChange={handleJamKeChange} placeholder="1-2" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
-      </td>
-      <td className="border border-green-700 p-0 col-kelas">
-        <input value={row.kelas} onChange={handleKelasChange} placeholder="IX A" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
-      </td>
-      <td className="border border-green-700 p-0 col-kd">
-        <input value={row.kdRpp} onChange={handleKdRppChange} placeholder="3.1" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
-      </td>
-      <td className="border border-green-700 p-0 col-kompetensi">
-        <AutoResizeTextarea
-          value={row.kompetensi}
-          onChange={handleKompetensiChange}
-          placeholder="KD / indikator"
-          className="w-full px-2 py-1 bg-transparent outline-none text-[11px] resize-none"
-          rows={1}
-        />
-      </td>
-      <td className="border border-green-700 p-0 col-x">
-        <input value={row.x} onChange={handleXChange} className="w-full text-center py-2 bg-transparent outline-none" />
-      </td>
-      <td className="border border-green-700 p-0 col-y">
-        <input value={row.y} onChange={handleYChange} className="w-full text-center py-2 bg-transparent outline-none" />
-      </td>
-      <td className="border border-green-700 p-0 col-selesai">
-        <input value={row.selesai} onChange={handleSelesaiChange} placeholder="Selesai / Belum" className="w-full px-1 py-2 bg-transparent outline-none text-[11px]" />
-      </td>
-      <td className="border border-green-700 p-0 col-absensi">
-        <div className="flex items-center gap-0.5">
-          <AutoResizeTextarea
-            value={row.absensi}
-            onChange={handleAbsensiChange}
-            placeholder="Hadir 32, atau klik ikon"
-            className="w-full px-1 py-1 bg-transparent outline-none text-[11px] resize-none"
-            rows={1}
-          />
-          <button onClick={handleOpenAbsen} className="no-print shrink-0 p-1 rounded hover:bg-green-100 text-green-700" title="Isi absensi per siswa">
-            <Users size={13} />
-          </button>
-        </div>
-      </td>
-      <td className="border border-green-700 p-0 text-center col-action no-print">
-        <button onClick={handleRemove} className="p-1.5 hover:bg-red-50 rounded text-red-500">
-          <Trash2 size={12} />
-        </button>
-      </td>
-    </tr>
-  );
-});
 
 function AgendaGuruApp() {
   const [tab, setTab] = useState('cover');
@@ -771,11 +318,14 @@ function AgendaGuruApp() {
   const [openAbsenId, setOpenAbsenId] = useState(null);
   const [filterTgl, setFilterTgl] = useState('');
   const [filterTeks, setFilterTeks] = useState('');
+  const [status, setStatus] = useState('idle');
   const [loaded, setLoaded] = useState(false);
+  const saveTimer = useRef(null);
   const [previewMode, setPreviewMode] = useState(false);
   const [isPrinting, setIsPrinting] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [syncStatus, setSyncStatus] = useState(API_URL ? 'online' : 'off');
+  const [syncStatus, setSyncStatus] = useState(API_URL ? 'connecting' : 'off');
+  const lastUpdatedRef = useRef(0);
+  const skipNextSaveRef = useRef(false);
 
   useEffect(() => {
     const before = () => setIsPrinting(true);
@@ -789,50 +339,49 @@ function AgendaGuruApp() {
   }, []);
 
   const BULAN_ID = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-  const formatTgl = useCallback((iso) => {
+  const formatTgl = (iso) => {
     if (!iso) return '-';
     const [y, m, d] = iso.split('-');
     const bulan = BULAN_ID[parseInt(m, 10) - 1] || m;
     return `${parseInt(d, 10)} ${bulan} ${y}`;
-  }, []);
+  };
 
-  // ============ FUNGSI SIMPAN MANUAL ============
-  const saveData = useCallback(async (showToastMsg = true) => {
-    setIsSaving(true);
-    const payload = { cover, jadwal, agenda, siswa };
-    const payloadStr = JSON.stringify(payload);
-    
+  // Memperkirakan jumlah baris textarea, memperhitungkan teks yang melipat sendiri (word-wrap)
+  const estimateRows = (text, charsPerLine = 24) => {
+    if (!text) return 1;
+    return text.split('\n').reduce((sum, line) => sum + Math.max(1, Math.ceil(line.length / charsPerLine)), 0);
+  };
+
+  const applyRemoteData = (dataStr) => {
     try {
-      localStorage.setItem(STORAGE_KEY, payloadStr);
-      
-      if (API_URL) {
-        setSyncStatus('syncing');
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ data: payloadStr }),
-        });
-        const json = await res.json();
-        if (json.ok) {
-          setSyncStatus('online');
-          if (showToastMsg) showToast('✅ Data berhasil disimpan', 'success');
-        } else {
-          setSyncStatus('error');
-          if (showToastMsg) showToast('⚠️ Gagal sinkron ke server', 'error');
-        }
-      } else {
-        if (showToastMsg) showToast('✅ Data berhasil disimpan', 'success');
-      }
+      const data = JSON.parse(dataStr);
+      skipNextSaveRef.current = true;
+      if (data.cover) setCover(data.cover);
+      if (data.jadwal) setJadwal(data.jadwal);
+      if (data.agenda) setAgenda(data.agenda);
+      if (data.siswa) setSiswa(data.siswa);
     } catch (e) {
-      console.error('Save error:', e);
-      setSyncStatus('error');
-      if (showToastMsg) showToast('❌ Gagal menyimpan data', 'error');
-    } finally {
-      setIsSaving(false);
+      // data rusak/kosong, abaikan
     }
-  }, [cover, jadwal, agenda, siswa]);
+  };
 
-  // ============ LOAD DATA ============
+  const fetchRemote = async (isInitial) => {
+    if (!API_URL) return;
+    try {
+      setSyncStatus((s) => (isInitial ? 'connecting' : s));
+      const res = await fetch(API_URL, { method: 'GET' });
+      const json = await res.json();
+      if (json.ok && json.data && json.updatedAt > lastUpdatedRef.current) {
+        lastUpdatedRef.current = json.updatedAt;
+        applyRemoteData(json.data);
+      }
+      setSyncStatus('online');
+    } catch (e) {
+      setSyncStatus('error');
+    }
+  };
+
+  // Muat dari localStorage dulu (biar langsung kelihatan / offline-ready), lalu tarik dari server
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -844,98 +393,125 @@ function AgendaGuruApp() {
         if (data.siswa) setSiswa(data.siswa);
       }
     } catch (e) {
-      console.error('Load error:', e);
+      // abaikan, pakai default
     } finally {
-      setLoaded(true);
+      (async () => {
+        await fetchRemote(true);
+        setLoaded(true);
+      })();
     }
   }, []);
 
-  // ============ FUNGSI UPDATE DENGAN useCallback ============
-  const updateAgenda = useCallback((id, field, value) => {
-    setAgenda(prev => {
-      const targetRow = prev.find(r => r.id === id);
-      if (targetRow && targetRow[field] === value) return prev;
-      return prev.map((r) => (r.id === id ? { ...r, [field]: value } : r));
-    });
+  // Polling berkala + saat tab/aplikasi dibuka lagi (aktif), supaya HP ikut update
+  useEffect(() => {
+    if (!API_URL) return;
+    const interval = setInterval(() => fetchRemote(false), 15000);
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') fetchRemote(false);
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('focus', onVisible);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('focus', onVisible);
+    };
   }, []);
 
-  const updateRow = useCallback((sem, day, id, field, value) => {
-    setJadwal((prev) => {
-      const targetRow = prev[sem].days[day].find(r => r.id === id);
-      if (targetRow && targetRow[field] === value) return prev;
-      return {
-        ...prev,
-        [sem]: { 
-          ...prev[sem], 
-          days: { 
-            ...prev[sem].days, 
-            [day]: prev[sem].days[day].map((r) => 
-              (r.id === id ? { ...r, [field]: value } : r)
-            ) 
-          } 
-        },
-      };
-    });
-  }, []);
+  useEffect(() => {
+    if (!loaded) return;
+    if (skipNextSaveRef.current) {
+      skipNextSaveRef.current = false;
+      return;
+    }
+    setStatus('saving');
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(async () => {
+      const payload = { cover, jadwal, agenda, siswa };
+      const payloadStr = JSON.stringify(payload);
+      try {
+        localStorage.setItem(STORAGE_KEY, payloadStr);
+        setStatus('saved');
+      } catch (e) {
+        setStatus('error');
+      }
+      if (API_URL) {
+        try {
+          setSyncStatus('syncing');
+          const res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ data: payloadStr }),
+          });
+          const json = await res.json();
+          if (json.ok) {
+            lastUpdatedRef.current = json.updatedAt;
+            setSyncStatus('online');
+          } else {
+            setSyncStatus('error');
+          }
+        } catch (e) {
+          setSyncStatus('error');
+        }
+      }
+    }, 500);
+    return () => clearTimeout(saveTimer.current);
+  }, [cover, jadwal, agenda, siswa, loaded]);
 
-  const addRow = useCallback((sem, day) => {
+  const updateRow = (sem, day, id, field, value) => {
+    setJadwal((prev) => ({
+      ...prev,
+      [sem]: { ...prev[sem], days: { ...prev[sem].days, [day]: prev[sem].days[day].map((r) => (r.id === id ? { ...r, [field]: value } : r)) } },
+    }));
+  };
+  const addRow = (sem, day) => {
     setJadwal((prev) => {
       const rows = prev[sem].days[day];
       const newRow = { id: uid(day.slice(0, 2).toLowerCase()), no: String(rows.length), pukul: '', kegiatan: '' };
       return { ...prev, [sem]: { ...prev[sem], days: { ...prev[sem].days, [day]: [...rows, newRow] } } };
     });
-  }, []);
-
-  const removeRow = useCallback((sem, day, id) => {
+  };
+  const removeRow = (sem, day, id) => {
     setJadwal((prev) => {
       const rows = prev[sem].days[day];
       if (rows.length <= 1) return prev;
       return { ...prev, [sem]: { ...prev[sem], days: { ...prev[sem].days, [day]: rows.filter((r) => r.id !== id) } } };
     });
-  }, []);
+  };
+  const setTp = (sem, value) => setJadwal((prev) => ({ ...prev, [sem]: { ...prev[sem], tp: value } }));
 
-  const setTp = useCallback((sem, value) => {
-    setJadwal((prev) => ({ ...prev, [sem]: { ...prev[sem], tp: value } }));
-  }, []);
-
-  const addAgenda = useCallback(() => {
-    setAgenda((prev) => [
-      ...prev,
-      { id: uid('ag'), tanggal: new Date().toISOString().slice(0, 10), jamKe: '', kelas: '', kdRpp: '', kompetensi: '', x: '', y: '', selesai: '', absensi: '', absensiDetail: {}, keterangan: '' },
-    ]);
-  }, []);
-
-  const removeAgenda = useCallback((id) => {
-    setAgenda((prev) => (prev.length <= 1 ? prev : prev.filter((r) => r.id !== id)));
-  }, []);
-
-  const addKelas = useCallback(() => {
+  const addKelas = () => {
     const nama = kelasBaru.trim();
     if (!nama || siswa[nama]) return;
     setSiswa((prev) => ({ ...prev, [nama]: [] }));
     setKelasBaru('');
-  }, [kelasBaru, siswa]);
-
-  const removeKelas = useCallback((nama) => {
+  };
+  const removeKelas = (nama) => {
     setSiswa((prev) => {
       const next = { ...prev };
       delete next[nama];
       return next;
     });
-  }, []);
-
-  const setRosterText = useCallback((nama, text) => {
+  };
+  const setRosterText = (nama, text) => {
     const names = text.split('\n').map((s) => s.trim()).filter(Boolean);
     setSiswa((prev) => ({ ...prev, [nama]: names }));
-  }, []);
+  };
 
-  const updateAbsenStatus = useCallback((rowId, nama, st) => {
-    setAgenda((prev) => prev.map((r) => 
-      (r.id === rowId ? { ...r, absensiDetail: { ...(r.absensiDetail || {}), [nama]: st } } : r)
-    ));
-  }, []);
+  const updateAgenda = (id, field, value) => setAgenda((prev) => prev.map((r) => (r.id === id ? { ...r, [field]: value } : r)));
+  const addAgenda = () => {
+    setAgenda((prev) => [
+      ...prev,
+      { id: uid('ag'), tanggal: new Date().toISOString().slice(0, 10), jamKe: '', kelas: '', kdRpp: '', kompetensi: '', x: '', y: '', selesai: '', absensi: '', absensiDetail: {}, keterangan: '' },
+    ]);
+  };
+  const removeAgenda = (id) => setAgenda((prev) => (prev.length <= 1 ? prev : prev.filter((r) => r.id !== id)));
 
-  const applyAbsen = useCallback((rowId) => {
+  const updateAbsenStatus = (rowId, nama, st) => {
+    setAgenda((prev) => prev.map((r) => (r.id === rowId ? { ...r, absensiDetail: { ...(r.absensiDetail || {}), [nama]: st } } : r)));
+  };
+
+  const applyAbsen = (rowId) => {
     const row = agenda.find((r) => r.id === rowId);
     if (!row) return;
     const roster = siswa[row.kelas] || [];
@@ -946,53 +522,7 @@ function AgendaGuruApp() {
     const ringkasan = [...lines, `Hadir: ${totalHadir}/${roster.length}`].join('\n');
     updateAgenda(rowId, 'absensi', ringkasan);
     setOpenAbsenId(null);
-  }, [agenda, siswa, updateAgenda]);
-
-  // ============ SPLIT HALAMAN ============
-  const MAX_ROWS_PER_PAGE = 8;
-  
-  const splitIntoPages = useCallback((rows) => {
-    if (rows.length === 0) return [[]];
-    
-    const estimateRowHeight = (row) => {
-      let height = 1.0;
-      const kompetensiLength = (row.kompetensi || '').length;
-      height += Math.floor(kompetensiLength / 60) * 0.2;
-      
-      const absensiLength = (row.absensi || '').length;
-      height += Math.floor(absensiLength / 50) * 0.2;
-      
-      return Math.max(1.0, Math.min(3.5, height));
-    };
-    
-    const pages = [];
-    let i = 0;
-    const totalRows = rows.length;
-    
-    while (i < totalRows) {
-      let pageRows = [];
-      let totalHeight = 0;
-      let rowCount = 0;
-      
-      while (i < totalRows && rowCount < MAX_ROWS_PER_PAGE) {
-        const rowHeight = estimateRowHeight(rows[i]);
-        const tempHeight = totalHeight + rowHeight;
-        
-        if (tempHeight > 9.5 && rowCount > 0) {
-          break;
-        }
-        
-        pageRows.push(rows[i]);
-        totalHeight = tempHeight;
-        rowCount++;
-        i++;
-      }
-      
-      pages.push(pageRows);
-    }
-    
-    return pages;
-  }, []);
+  };
 
   const filteredAgenda = useMemo(() => {
     return agenda.filter((r) => {
@@ -1002,15 +532,29 @@ function AgendaGuruApp() {
     });
   }, [agenda, filterTgl, filterTeks]);
 
+  const ROW_BUDGET = 8; // "kapasitas" per halaman dalam satuan baris normal
   const agendaPages = useMemo(() => {
-    const filtered = filteredAgenda;
-    if (filtered.length === 0) return [[]];
-    return splitIntoPages(filtered);
-  }, [filteredAgenda, splitIntoPages]);
+    const pages = [];
+    let current = [];
+    let used = 0;
+    filteredAgenda.forEach((row) => {
+      const weight = Math.max(1, estimateRows(row.absensi, 45), estimateRows(row.kompetensi, 55));
+      if (current.length > 0 && used + weight > ROW_BUDGET) {
+        pages.push(current);
+        current = [];
+        used = 0;
+      }
+      current.push(row);
+      used += weight;
+    });
+    if (current.length > 0) pages.push(current);
+    if (pages.length === 0) pages.push([]);
+    return pages;
+  }, [filteredAgenda]);
 
   const totalSlot = useMemo(() => DAYS.reduce((sum, d) => sum + jadwal.ganjil.days[d].filter((r) => r.no !== '-').length, 0), [jadwal]);
 
-  const exportJson = useCallback(() => {
+  const exportJson = () => {
     const blob = new Blob([JSON.stringify({ cover, jadwal, agenda, siswa }, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -1018,18 +562,17 @@ function AgendaGuruApp() {
     a.download = `agenda-guru-${(cover.namaGuru || 'guru').replace(/\s+/g, '-').toLowerCase()}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    showToast('📥 Data berhasil diekspor', 'success');
-  }, [cover, jadwal, agenda, siswa]);
+  };
 
-  const doPrint = useCallback(async () => {
-    await saveData(false);
+  const statusLabel = status === 'saving' ? 'Menyimpan…' : status === 'saved' ? 'Tersimpan ✓' : status === 'error' ? 'Gagal menyimpan' : 'Siap';
+  const syncLabel = { off: '', connecting: '🔄 Menghubungkan…', syncing: '☁️ Sinkron…', online: '☁️ Tersambung ✓', error: '⚠️ Sinkron gagal' }[syncStatus];
+  const rowOpen = agenda.find((r) => r.id === openAbsenId);
+
+  const doPrint = () => {
     const el = document.getElementById('page-size-style');
     if (el) el.textContent = `@page { size: A4 landscape; margin: 8mm 6mm 8mm 45mm; }`;
     setTimeout(() => window.print(), 30);
-  }, [saveData]);
-
-  const syncLabel = { off: '', syncing: '☁️ Sinkron…', online: '☁️ Tersambung', error: '⚠️ Offline' }[syncStatus];
-  const rowOpen = agenda.find((r) => r.id === openAbsenId);
+  };
 
   return (
     <div className={`min-h-screen bg-green-50 text-neutral-900 ${previewMode ? 'preview-mode' : ''}`}>
@@ -1071,19 +614,9 @@ function AgendaGuruApp() {
                 );
               })}
             </div>
-            <button 
-              onClick={() => saveData(true)} 
-              disabled={isSaving}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition ${
-                isSaving ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-green-700 text-white hover:bg-green-800'
-              }`}
-            >
-              <Save size={14} /> {isSaving ? 'Menyimpan...' : 'Simpan'}
-            </button>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-green-200 text-xs font-medium text-neutral-500">{statusLabel}</span>
             {syncLabel && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-green-200 text-xs font-medium text-neutral-500">
-                <CloudIcon size={12} /> {syncLabel}
-              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-green-200 text-xs font-medium text-neutral-500">{syncLabel}</span>
             )}
           </div>
         </div>
@@ -1116,7 +649,7 @@ function AgendaGuruApp() {
                     <div className="md:w-36 shrink-0 text-[11px] font-bold tracking-widest uppercase text-neutral-500">{f.label}</div>
                     <div className="flex-1 border-b-2 border-dashed border-green-700/60 pb-1">
                       {f.multiline ? (
-                        <textarea value={cover[f.key]} onChange={(e) => setCover({ ...cover, [f.key]: e.target.value })} placeholder={f.placeholder} rows={2} className="w-full bg-transparent outline-none resize-none text-sm font-medium" />
+                        <textarea value={cover[f.key]} onChange={(e) => setCover({ ...cover, [f.key]: e.target.value })} placeholder={f.placeholder} rows={3} className="w-full bg-transparent outline-none resize-none text-sm font-medium" />
                       ) : (
                         <input value={cover[f.key]} onChange={(e) => setCover({ ...cover, [f.key]: e.target.value })} placeholder={f.placeholder} className="w-full bg-transparent outline-none text-sm font-medium" />
                       )}
@@ -1127,15 +660,9 @@ function AgendaGuruApp() {
             </div>
 
             <div className="pb-6 flex flex-wrap justify-center gap-2 no-print">
-              <button 
-                onClick={() => saveData(true)} 
-                disabled={isSaving}
-                className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition ${
-                  isSaving ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-green-700 text-white hover:bg-green-800'
-                }`}
-              >
-                <Save size={14} /> {isSaving ? 'Menyimpan...' : 'Simpan Data'}
-              </button>
+              <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-green-700 text-white text-xs font-semibold">
+                <Save size={14} /> {statusLabel}
+              </span>
               <button onClick={exportJson} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-green-300 text-xs font-medium">
                 <Download size={14} /> Ekspor JSON
               </button>
@@ -1154,7 +681,7 @@ function AgendaGuruApp() {
           <div id="jadwal-content" className="space-y-8">
             <div className="bg-white border border-green-200 rounded-2xl p-4 md:p-6 text-xs md:text-sm leading-relaxed text-neutral-600 font-tubuh no-print flex flex-wrap items-center justify-between gap-3">
               <span>
-                Jadwal setiap hari independen: jumlah jam, jam masuk-pulang, dan kegiatan bisa berbeda-beda per hari. Baris kegiatan non-mengajar ditandai dengan mengisi kolom <b>No</b> dengan tanda "-".
+                Jadwal setiap hari kini <b>independen</b>: jumlah jam, jam masuk-pulang, dan kegiatan (Upacara, IMTAQ, Istirahat, MBG + Sholat, dst) bisa berbeda-beda per hari. Baris kegiatan non-mengajar cukup ditandai dengan mengisi kolom <b>No</b> dengan tanda "-".
               </span>
               <div className="shrink-0 flex gap-2">
                 <button onClick={doPrint} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-green-300 text-xs font-medium">
@@ -1323,7 +850,6 @@ function AgendaGuruApp() {
               <div className="no-print">
                 <h3 className="font-judul text-xl md:text-2xl font-bold">Agenda Harian Mengajar</h3>
                 <p className="text-[11px] text-neutral-500 mt-1">Diisi setiap hari mengajar, sesuai jam pada jadwal</p>
-                <p className="text-[10px] text-neutral-400 mt-0.5">Target 8 row per halaman, berkurang jika ada row tinggi</p>
               </div>
               <div className="no-print flex flex-wrap items-center gap-2">
                 <div className="flex items-center gap-1.5 bg-white border border-green-300 rounded-full px-2 py-1">
@@ -1347,62 +873,161 @@ function AgendaGuruApp() {
               </div>
             </div>
 
+            {/* ===== Tampilan kartu khusus HP (layar sempit) ===== */}
+            <div className="mobile-card-view md:hidden space-y-3 mt-4">
+              {filteredAgenda.length === 0 && (
+                <div className="text-center text-sm text-neutral-500 py-6">Belum ada entri. Tekan tombol di bawah untuk menambah.</div>
+              )}
+              {filteredAgenda.map((row) => (
+                <div key={row.id} className="bg-white rounded-2xl border border-green-300 p-4 space-y-3 shadow-sm">
+                  <div className="flex items-center gap-2">
+                    <input type="date" value={row.tanggal} onChange={(e) => updateAgenda(row.id, 'tanggal', e.target.value)} className="flex-1 text-sm font-semibold border border-green-200 rounded-lg px-3 py-2.5" />
+                    <button onClick={() => removeAgenda(row.id)} className="p-2.5 rounded-lg bg-red-50 text-red-500">
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="text-[10px] font-bold uppercase text-neutral-400">Jam Ke</label>
+                      <input value={row.jamKe} onChange={(e) => updateAgenda(row.id, 'jamKe', e.target.value)} placeholder="1-2" className="w-full text-sm border border-green-200 rounded-lg px-3 py-2.5 text-center mt-1" />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold uppercase text-neutral-400">Kelas</label>
+                      <input list="daftar-kelas" value={row.kelas} onChange={(e) => updateAgenda(row.id, 'kelas', e.target.value)} placeholder="IX A" className="w-full text-sm font-semibold border border-green-200 rounded-lg px-3 py-2.5 text-center mt-1" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold uppercase text-neutral-400">Kompetensi Dasar / Indikator</label>
+                    <textarea value={row.kompetensi} onChange={(e) => updateAgenda(row.id, 'kompetensi', e.target.value)} placeholder="KD / indikator" rows={estimateRows(row.kompetensi, 34)} className="w-full text-sm border border-green-200 rounded-lg px-3 py-2.5 mt-1" />
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <label className="text-[10px] font-bold uppercase text-neutral-400">No KD/RPP</label>
+                      <input value={row.kdRpp} onChange={(e) => updateAgenda(row.id, 'kdRpp', e.target.value)} placeholder="3.1" className="w-full text-sm border border-green-200 rounded-lg px-2 py-2.5 text-center mt-1" />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold uppercase text-neutral-400">X</label>
+                      <input value={row.x} onChange={(e) => updateAgenda(row.id, 'x', e.target.value)} className="w-full text-sm border border-green-200 rounded-lg px-2 py-2.5 text-center mt-1" />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold uppercase text-neutral-400">Y</label>
+                      <input value={row.y} onChange={(e) => updateAgenda(row.id, 'y', e.target.value)} className="w-full text-sm border border-green-200 rounded-lg px-2 py-2.5 text-center mt-1" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold uppercase text-neutral-400">Selesai / Belum + Alasan</label>
+                    <input value={row.selesai} onChange={(e) => updateAgenda(row.id, 'selesai', e.target.value)} placeholder="Selesai / Belum" className="w-full text-sm border border-green-200 rounded-lg px-3 py-2.5 mt-1" />
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold uppercase text-neutral-400">Absensi Siswa</label>
+                    <button onClick={() => setOpenAbsenId(row.id)} className="w-full mt-1 flex items-center justify-center gap-2 bg-green-700 text-white rounded-lg py-3 text-sm font-semibold active:bg-green-800">
+                      <Users size={17} /> Isi Absensi Siswa
+                    </button>
+                    {row.absensi && <p className="text-xs text-neutral-500 whitespace-pre-line mt-2 bg-green-50 rounded-lg p-2">{row.absensi}</p>}
+                  </div>
+                </div>
+              ))}
+              <button onClick={addAgenda} className="w-full flex items-center justify-center gap-2 bg-white border-2 border-dashed border-green-400 text-green-700 rounded-2xl py-4 text-sm font-bold active:bg-green-50">
+                <Plus size={18} /> Tambah Entri Baru
+              </button>
+            </div>
+
+            {/* ===== Tampilan tabel untuk layar lebar / cetak ===== */}
+            <div className="desktop-table-view hidden md:block">
             {agendaPages.map((pageRows, pageIdx) => (
-              <div key={pageIdx} className={`agenda-page-container ${pageIdx > 0 ? 'page-top-gap' : ''}`}>
+              <div key={pageIdx} className={`agenda-page-block ${pageIdx > 0 ? 'page-top-gap' : ''} ${pageIdx < agendaPages.length - 1 ? 'print-page-break' : ''}`}>
                 <div className="hidden print-only-title">
                   <h3 className="font-judul text-xl font-bold">Agenda Harian Mengajar</h3>
                   <p className="text-[11px] text-neutral-500">SMP Negeri 13 Bandar Lampung • Halaman {pageIdx + 1} dari {agendaPages.length}</p>
                 </div>
-                <div className="mt-3 rounded-xl border border-green-700 bg-white overflow-hidden agenda-table-wrapper">
-                  <table className="w-full border-collapse agenda-table">
+                <div className="mt-5 overflow-x-auto rounded-xl border border-green-700 bg-white table-scroll-wrap">
+                  <table className="w-full text-[12px] border-collapse agenda-table">
                     <thead>
-                      <tr className="bg-green-700 text-white text-[10px] tracking-wide">
-                        <th className="p-1.5 border border-green-800 col-tanggal">Tanggal</th>
-                        <th className="p-1.5 border border-green-800 col-jam">Jam Ke</th>
-                        <th className="p-1.5 border border-green-800 col-kelas">Kelas</th>
-                        <th className="p-1.5 border border-green-800 col-kd">No. KD/RPP</th>
-                        <th className="p-1.5 border border-green-800 col-kompetensi">Kompetensi Dasar / Indikator</th>
-                        <th className="p-1.5 border border-green-800 col-x">X</th>
-                        <th className="p-1.5 border border-green-800 col-y">Y</th>
-                        <th className="p-1.5 border border-green-800 col-selesai">Selesai / Belum + Alasan</th>
-                        <th className="p-1.5 border border-green-800 col-absensi">Absensi Siswa</th>
-                        <th className="p-1.5 border border-green-800 col-action no-print"></th>
+                      <tr className="bg-green-700 text-white text-[11px] tracking-wide">
+                        <th className="p-2 border border-green-800 w-28">Tanggal</th>
+                        <th className="p-2 border border-green-800 w-16">Jam Ke</th>
+                        <th className="p-2 border border-green-800 w-24">Kelas</th>
+                        <th className="p-2 border border-green-800 w-20">No. KD/RPP</th>
+                        <th className="p-2 border border-green-800" style={{ minWidth: 200 }}>Kompetensi Dasar / Indikator</th>
+                        <th className="p-2 border border-green-800 w-9">X</th>
+                        <th className="p-2 border border-green-800 w-9">Y</th>
+                        <th className="p-2 border border-green-800 w-32">Selesai / Belum + Alasan</th>
+                        <th className="p-2 border border-green-800" style={{ minWidth: 260 }}>Absensi Siswa</th>
+                        <th className="p-1 border border-green-800 w-8 no-print" />
                       </tr>
                     </thead>
                     <tbody>
-                      {pageRows.length === 0 ? (
-                        <tr>
-                          <td colSpan="10" className="text-center py-8 text-neutral-400 text-sm">Tidak ada data agenda yang sesuai filter</td>
+                      {pageRows.map((row, i) => (
+                        <tr key={row.id} className={i % 2 === 0 ? 'bg-white' : 'bg-green-50'}>
+                          <td className="border border-green-100 p-0">
+                            {isPrinting || previewMode ? (
+                              <div className="px-1 py-2 text-[12px]">{formatTgl(row.tanggal)}</div>
+                            ) : (
+                              <input type="date" value={row.tanggal} onChange={(e) => updateAgenda(row.id, 'tanggal', e.target.value)} className="w-full px-1 py-2 bg-transparent outline-none text-[12px]" />
+                            )}
+                          </td>
+                          <td className="border border-green-100 p-0">
+                            <input value={row.jamKe} onChange={(e) => updateAgenda(row.id, 'jamKe', e.target.value)} placeholder="1-2" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
+                          </td>
+                          <td className="border border-green-100 p-0">
+                            <input list="daftar-kelas" value={row.kelas} onChange={(e) => updateAgenda(row.id, 'kelas', e.target.value)} placeholder="IX A" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
+                          </td>
+                          <td className="border border-green-100 p-0">
+                            <input value={row.kdRpp} onChange={(e) => updateAgenda(row.id, 'kdRpp', e.target.value)} placeholder="3.1" className="w-full px-1 py-2 bg-transparent outline-none text-center" />
+                          </td>
+                          <td className="border border-green-100 p-0">
+                            <textarea value={row.kompetensi} onChange={(e) => updateAgenda(row.id, 'kompetensi', e.target.value)} placeholder="KD / indikator" rows={estimateRows(row.kompetensi, 24)} className="w-full px-2 py-2 bg-transparent outline-none resize-none" />
+                          </td>
+                          <td className="border border-green-100 p-0">
+                            <input value={row.x} onChange={(e) => updateAgenda(row.id, 'x', e.target.value)} className="w-full text-center py-2 bg-transparent outline-none" />
+                          </td>
+                          <td className="border border-green-100 p-0">
+                            <input value={row.y} onChange={(e) => updateAgenda(row.id, 'y', e.target.value)} className="w-full text-center py-2 bg-transparent outline-none" />
+                          </td>
+                          <td className="border border-green-100 p-0">
+                            <input value={row.selesai} onChange={(e) => updateAgenda(row.id, 'selesai', e.target.value)} placeholder="Selesai / Belum" className="w-full px-1 py-2 bg-transparent outline-none" />
+                          </td>
+                          <td className="border border-green-100 p-0">
+                            <div className="flex items-start gap-1">
+                              <textarea value={row.absensi} onChange={(e) => updateAgenda(row.id, 'absensi', e.target.value)} placeholder="Hadir 32, atau klik ikon di samping" rows={Math.max(2, estimateRows(row.absensi, 28))} className="w-full px-1 py-2 bg-transparent outline-none text-[12px] resize-none" />
+                              <button onClick={() => setOpenAbsenId(row.id)} className="no-print shrink-0 mt-1 p-1 rounded hover:bg-green-100 text-green-700" title="Isi absensi per siswa">
+                                <Users size={13} />
+                              </button>
+                            </div>
+                          </td>
+                          <td className="border border-green-100 p-0 text-center no-print">
+                            <button onClick={() => removeAgenda(row.id)} className="p-1.5 hover:bg-red-50 rounded text-red-500">
+                              <Trash2 size={12} />
+                            </button>
+                          </td>
                         </tr>
-                      ) : (
-                        pageRows.map((row, idx) => (
-                          <AgendaRow 
-                            key={row.id}
-                            row={row}
-                            index={idx}
-                            updateAgenda={updateAgenda}
-                            removeAgenda={removeAgenda}
-                            setOpenAbsenId={setOpenAbsenId}
-                            isPrinting={isPrinting}
-                            previewMode={previewMode}
-                            formatTgl={formatTgl}
-                          />
-                        ))
-                      )}
+                      ))}
                     </tbody>
                   </table>
+                  {pageIdx === 0 && (
+                    <datalist id="daftar-kelas">
+                      {Object.keys(siswa).map((k) => (
+                        <option key={k} value={k} />
+                      ))}
+                    </datalist>
+                  )}
                 </div>
-                {/* Tanda Tangan di setiap halaman - DIPASTIKAN TETAP */}
                 <TandaTangan cover={cover} />
               </div>
             ))}
+            </div>
 
             <div className="mt-4 grid md:grid-cols-3 gap-2 text-[11px] font-tubuh no-print">
               <div className="bg-white/80 rounded-lg border border-green-200 p-2">
                 <b>X</b> = Banyak pertemuan untuk 1 KD • <b>Y</b> = Pertemuan ke- • <b>KD RPP</b> = Nomor KD & RPP
               </div>
               <div className="bg-white/80 rounded-lg border border-green-200 p-2">
-                Klik ikon orang di kolom Absensi untuk mencentang H/S/I/A per siswa — ringkasan terisi otomatis.
+                Klik ikon orang di kolom Absensi untuk mencentang H/S/I/A per siswa — ringkasan terisi otomatis (mis. "1. ANDRE ( A )").
               </div>
               <div className="bg-white/80 rounded-lg border border-green-200 p-2">
                 Guru: <b>{cover.namaGuru || '-'}</b> • Mapel: <b>{cover.mapel || '-'}</b> • {totalSlot} slot jam mengajar/minggu (ganjil)
@@ -1410,10 +1035,7 @@ function AgendaGuruApp() {
             </div>
 
             <div className="mt-3 text-[10px] text-neutral-500 no-print">
-              Total baris: {filteredAgenda.length} dari {agenda.length} • Halaman: {agendaPages.length} • 
-              Jumlah row per halaman: {agendaPages.map((p, i) => `${i+1}:${p.length}`).join(', ')}
-              {filterTgl ? ` • Filter tanggal: ${filterTgl}` : ''}
-              {filterTeks ? ` • Cari: ${filterTeks}` : ''}
+              Total baris: {filteredAgenda.length} dari {agenda.length} • Filter: {filterTgl || 'Semua tanggal'} {filterTeks ? `• Cari: ${filterTeks}` : ''}
             </div>
           </div>
         )}
@@ -1435,8 +1057,7 @@ function AgendaGuruApp() {
       )}
 
       <div className="no-print max-w-6xl mx-auto px-4 pb-8 text-center text-[10px] text-neutral-400">
-        Aplikasi Buku Agenda Guru • SMPN 13 Bandar Lampung • Data disimpan secara manual via tombol <b>Simpan</b>
-        <span className="block text-[9px] text-neutral-300">Klik Simpan untuk menyimpan perubahan • Data tersimpan di browser (localStorage)</span>
+        Aplikasi Buku Agenda Guru • SMPN 13 Bandar Lampung • Data tersimpan otomatis di browser (localStorage)
       </div>
     </div>
   );
