@@ -342,8 +342,8 @@ function AgendaGuruApp() {
   const formatTgl = (iso) => {
     if (!iso) return '-';
     const [y, m, d] = iso.split('-');
-    const bulan = BULAN_ID[parseInt(m, 5) - 1] || m;
-    return `${parseInt(d, 5)} ${bulan} ${y}`;
+    const bulan = BULAN_ID[parseInt(m, 10) - 1] || m;
+    return `${parseInt(d, 10)} ${bulan} ${y}`;
   };
 
   // Memperkirakan jumlah baris textarea, memperhitungkan teks yang melipat sendiri (word-wrap)
