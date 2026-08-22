@@ -966,9 +966,9 @@ function AgendaGuruApp() {
                         <tr key={row.id} className={i % 2 === 0 ? 'bg-white' : 'bg-green-50'}>
                           <td className="border border-green-100 p-0">
                             {isPrinting || previewMode ? (
-                              <div className="px-1 py-2 text-[12px]">{formatTgl(row.tanggal)}</div>
+                              <div className="px-1 py-2 text-[10px]">{formatTgl(row.tanggal)}</div>
                             ) : (
-                              <input type="date" value={row.tanggal} onChange={(e) => updateAgenda(row.id, 'tanggal', e.target.value)} className="w-full px-1 py-2 bg-transparent outline-none text-[12px]" />
+                              <input type="date" value={row.tanggal} onChange={(e) => updateAgenda(row.id, 'tanggal', e.target.value)} className="w-full px-1 py-2 bg-transparent outline-none text-[10px]" />
                             )}
                           </td>
                           <td className="border border-green-100 p-0">
